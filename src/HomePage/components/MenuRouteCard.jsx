@@ -9,10 +9,10 @@ const MenuRouteCard = ({cardTitle, cardIconPath, }) => {
     <Card sx={{ width: '210px', height: '210px', margin: '20px', borderRadius: '5px'}}>
       <CardActionArea>
         <div style={{backgroundColor: '#26A69A', height: '120px', paddingTop: '10px'}}>
-          <img src={cardIconPath} width='100px' alt='Menu card picture'/>
+          <img src={cardIconPath} width='100px'/>
         </div>
         <CardContent>
-          <Typography variant='h5' component='div' align='left'>
+          <Typography variant='h5' component='div' align='left' sx={{lineHeight: '25px'}}>
             {cardTitle}
           </Typography>
         </CardContent>
