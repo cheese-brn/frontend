@@ -1,4 +1,3 @@
-/*eslint no-unused-vars: "warn"*/
 import React from 'react';
 import {Card, CardActionArea, CardContent, Typography} from "@mui/material";
 import PropTypes from 'prop-types';
