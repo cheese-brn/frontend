@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import { useParams } from "react-router-dom";
-import {Paper, Typography, Grid} from "@mui/material";
+import {Paper, Typography, Grid, TextField} from "@mui/material";
 
 // For debug purposes
 function sleep(ms) {
@@ -10,12 +10,14 @@ function sleep(ms) {
 const StainView = () => {
 	const data = useParams();
 	const [model, setModel] = useState({});
+	const [editMode, setEditMode] = useState(false);
+
 	useEffect(() => {
-		sleep(5000);
-		let result;
+		// sleep(5000);
+		let stainData;
 		switch (data.stainID) {
-			case 0:
-				result = {
+			case '0':
+				stainData = {
 					genus: 'Лактококус',
 					type: 'Лактис',
 					name: '977',
@@ -107,17 +109,20 @@ const StainView = () => {
 					};
 				break;
 		}
-		setModel(result);
-
+		setModel(stainData);
 		}, [data.stainID])
 
 
-
+// TODO: fix 'A component is changing an uncontrolled input to be controlled' issue
 	return(
 			<Paper sx={{margin: '0 10px 0 10px', padding: '10px'}}>
 				<Typography variant='h4'>
 					Паспорт штамма
 				</Typography>
+				<TextField id='stain-view__genus-field' label='Род' inputProps={{readOnly: true}} value={model?.genus}/>
+				<TextField id='stain-view__type-field' label='Вид' inputProps={{readOnly: true}} value={model?.type}/>
+				<TextField id='stain-view__name-field' label='Наименование' inputProps={{readOnly: true}} value={model?.name}/>
+				<TextField id='stain-view__modification-field' label='Модификация' inputProps={{readOnly: true}} value={model?.modification}/>
 				{data.stainID}
 			</Paper>
 	);
