@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import { useParams } from "react-router-dom";
 import {Paper, Typography, Grid, TextField, Divider, Stack, Button} from "@mui/material";
 
@@ -10,6 +10,7 @@ import {Paper, Typography, Grid, TextField, Divider, Stack, Button} from "@mui/m
 const StainView = () => {
 	const data = useParams();
 	const [model, setModel] = useState({});
+	const modelCopy = useRef(null);
 	const [isReadOnly, setIsReadOnly] = useState(true);
 
 	//const [actualProps, setActualProps] = useState([]);
@@ -113,13 +114,20 @@ const StainView = () => {
 				return null;
 		}
 		setModel(stainData);
-		}, [data.stainID])
+		modelCopy.current = stainData;
+		}, [data.stainID]);
+
 	// TODO: Сделать нормально
 	const costilStyle = {
 		marginBottom: '14px'
 	};
 
-// TODO: fix 'A component is changing an uncontrolled input to be controlled' issue
+	const handleChangeGeneric = (event) => {
+			setModel({...model, [event.target.name]: event.target.value})
+	}
+
+	// TODO: fix 'A component is changing an uncontrolled input to be controlled' issue
+	// TODO: Разобраться с цветовой палитрой
 	return(
 			<Paper sx={{margin: '0 10px 0 10px', padding: '10px'}}>
 				<Grid container spacing='5'>
@@ -132,64 +140,66 @@ const StainView = () => {
 								sx={costilStyle}
 								id='stain-view__genus-field'
 								label='Род'
+								name='genus'
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.genus}
-							/>
-							<TextField
-								sx={costilStyle}
-								id='stain-view__test-field'
-								label='тест'
-
-								onChange={ event => {
-									let modelCopy = model;
-									modelCopy.genus = event.target.value;
-									console.log(event.target.value);
-									setModel(modelCopy)
-								}}
+								onChange={ handleChangeGeneric }
 							/>
 							<TextField
 								sx={costilStyle}
 								id='stain-view__type-field'
 								label='Вид'
+								name='type'
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.type}
+								onChange={ handleChangeGeneric }
 							/>
 							<TextField
 								sx={costilStyle}
 								id='stain-view__name-field'
 								label='Наименование'
+								name='name'
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.name}
+								onChange={ handleChangeGeneric }
 							/>
 							<TextField
 								sx={costilStyle}
 								id='stain-view__modification-field'
 								label='Модификация'
+								name='modification'
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.modification}
+								onChange={ handleChangeGeneric }
 							/>
 							<TextField
 								sx={costilStyle}
 								id='stain-view__obtaining-method-field'
 								label='Способ получения'
+								name='obtainingMethod'
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.obtainingMethod}
+								onChange={ handleChangeGeneric }
 							/>
 							<TextField
 								sx={costilStyle}
 								id='stain-view__origin-field'
 								label='Происхождение'
+								name='origin'
 								multiline
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.origin}
+								onChange={ handleChangeGeneric }
 							/>
 							<TextField
 								sx={costilStyle}
 								id='stain-view__annotation-field'
 								label='Аннотация'
+								name='annotation'
 								multiline
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.annotation}
+								onChange={ handleChangeGeneric }
 							/>
 						</Stack>
 						{}
@@ -202,18 +212,43 @@ const StainView = () => {
 						<Typography>
 							{`${model.author}, ${model.lastEdit}`}
 						</Typography>
-						{isReadOnly && <Button
-							variant='contained'
-							onClick={() => {
-								setIsReadOnly(false);
-							}}
-						>
-							Редактировать
-						</Button>
+						{isReadOnly &&
+							<Button
+								variant='contained'
+								onClick={() => {
+									setIsReadOnly(false);
+								}}
+							>
+								Редактировать
+							</Button>
 						}
-						{!isReadOnly && <>
-							
-						</>}
+						{!isReadOnly && <div>
+							<Button
+								variant='contained'
+								color='success'
+								onClick={() => {
+									setIsReadOnly(true);
+									// TODO: отправка модели на бэк
+								}}>
+								Сохранить изменения
+							</Button>
+							<Button
+								variant='contained'
+								onClick={() => {
+									setIsReadOnly(true);
+									console.log(model)
+									console.log(modelCopy.current)
+									setModel({...modelCopy.current});
+								}}>
+								Отменить изменения
+							</Button>
+						</div>}
+						<Button
+							variant='outlined'
+							color='error'
+						>
+							Удалить штамм
+						</Button>
 					</Grid>
 				</Grid>
 			</Paper>
