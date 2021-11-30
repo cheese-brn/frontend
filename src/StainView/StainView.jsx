@@ -131,7 +131,7 @@ const StainView = () => {
 	return(
 			<Paper sx={{margin: '0 10px 0 10px', padding: '10px'}}>
 				<Grid container spacing='5'>
-					<Grid container sm='6' md='7' lg='8' sx={{paddingRight: '15px'}}>
+					<Grid container sm='6' md='7' lg='8' sx={{paddingRight: '15px', paddingLeft:'20px', }}>
 						<Stack orientation='vertical' width={'100%'}>
 							<Typography variant='h4'>
 								Паспорт штамма
@@ -206,13 +206,14 @@ const StainView = () => {
 					</Grid>
 					<Divider orientation="vertical" flexItem/>
 					<Grid item sx={{textAlign: 'left', marginLeft: '15px'}}>
-						<Typography variant='h6'>
-							{`Последнее редактирование:`}
-						</Typography>
-						<Typography>
-							{`${model.author}, ${model.lastEdit}`}
-						</Typography>
-						{isReadOnly &&
+						<Stack>
+							<Typography variant='h6'>
+								{`Последнее редактирование:`}
+							</Typography>
+							<Typography>
+								{`${model.author}, ${model.lastEdit}`}
+							</Typography>
+							{isReadOnly &&
 							<Button
 								variant='contained'
 								onClick={() => {
@@ -221,34 +222,41 @@ const StainView = () => {
 							>
 								Редактировать
 							</Button>
-						}
-						{!isReadOnly && <div>
+							}
+							{!isReadOnly && <>
+								<Button
+									variant='contained'
+									color='success'
+									sx={{marginTop: '20px'}}
+									onClick={() => {
+										setIsReadOnly(true);
+										// TODO: отправка модели на бэк
+
+									}}>
+									Сохранить изменения
+								</Button>
+								<Button
+									variant='contained'
+									color='warning'
+									sx={{marginTop: '20px'}}
+									onClick={() => {
+										setIsReadOnly(true);
+										console.log(model)
+										console.log(modelCopy.current)
+										setModel({...modelCopy.current});
+									}}>
+									Отменить изменения
+								</Button>
+							</>}
 							<Button
-								variant='contained'
-								color='success'
-								onClick={() => {
-									setIsReadOnly(true);
-									// TODO: отправка модели на бэк
-								}}>
-								Сохранить изменения
+								variant='outlined'
+								color='error'
+								sx={{marginTop: '20px'}}
+							>
+								Удалить штамм
 							</Button>
-							<Button
-								variant='contained'
-								onClick={() => {
-									setIsReadOnly(true);
-									console.log(model)
-									console.log(modelCopy.current)
-									setModel({...modelCopy.current});
-								}}>
-								Отменить изменения
-							</Button>
-						</div>}
-						<Button
-							variant='outlined'
-							color='error'
-						>
-							Удалить штамм
-						</Button>
+						</Stack>
+
 					</Grid>
 				</Grid>
 			</Paper>
