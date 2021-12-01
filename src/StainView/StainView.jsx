@@ -2,20 +2,14 @@ import React, {useEffect, useState, useRef} from "react";
 import { useParams } from "react-router-dom";
 import {Paper, Typography, Grid, TextField, Divider, Stack, Button} from "@mui/material";
 
-// For debug purposes
-// function sleep(ms) {
-// 	return new Promise(resolve => setTimeout(resolve, ms));
-// }
-
 const StainView = () => {
 	const data = useParams();
 	const [model, setModel] = useState({});
 	const modelCopy = useRef(null);
 	const [isReadOnly, setIsReadOnly] = useState(true);
+	const [basicProps, setBasicProps] = useState([]);
 
-	//const [actualProps, setActualProps] = useState([]);
 	useEffect(() => {
-		// sleep(5000);
 		let stainData;
 		switch (data.stainID) {
 			case '0':
@@ -117,6 +111,13 @@ const StainView = () => {
 		modelCopy.current = stainData;
 		}, [data.stainID]);
 
+	useEffect(() => {
+		let props = model?.actualProps?.map((prop, key) => {
+			return(<p key={`basic-prop-${key}`}>туст</p>)
+		});
+		setBasicProps(props);
+	}, [model?.actualProps]);
+
 	// TODO: Сделать нормально
 	const costilStyle = {
 		marginBottom: '14px'
@@ -201,8 +202,8 @@ const StainView = () => {
 								value={model?.annotation}
 								onChange={ handleChangeGeneric }
 							/>
+							{basicProps}
 						</Stack>
-						{}
 					</Grid>
 					<Divider orientation="vertical" flexItem/>
 					<Grid item sx={{textAlign: 'left', marginLeft: '15px'}}>
