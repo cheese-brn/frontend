@@ -3,19 +3,19 @@ const menuCardsContents = {
 		title: 'Новый паспорт штамма',
 		logo: '/assets/new-stain.svg',
 		id: 'new-stain',
-		linkTo: '/',
+		route: '',
 	},
 	dictionaries: {
 		title: 'Справочники',
-		logo: '/assets/directory.svg',
-		id: 'directory',
-		linkTo: '/',
+		logo: '/assets/dictionaries.svg',
+		id: 'dictionaries',
+		route: 'dictionaries',
 	},
 	viewCatalogue: {
 		title: 'Просмотр каталога',
 		logo: '/assets/catalogue.svg',
 		id: 'catalogue',
-		linkTo: '/',
+		route: '',
 	},
 }
 

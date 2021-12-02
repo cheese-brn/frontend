@@ -4,7 +4,6 @@ import MenuRouteCard from "./components/MenuRouteCard";
 import LastStainsCard from "./components/LastStainsCard";
 
 import {Paper, Grid} from '@mui/material';
-import {Link} from 'react-router-dom';
 // TODO: Сделать layout правильно
 const HomePage = () => {
 
@@ -23,6 +22,7 @@ const HomePage = () => {
 					key={menuCardsContents[card].id}
 					cardTitle={menuCardsContents[card].title}
 					cardIconPath={menuCardsContents[card].logo}
+					route={menuCardsContents[card].route}
 				/>)
 		});
 		setMenu(cards)
