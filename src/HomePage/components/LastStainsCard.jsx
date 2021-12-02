@@ -1,22 +1,25 @@
 import React, {useMemo} from 'react';
 import {Card, CardContent, Typography, List, ListItemButton, Divider,} from "@mui/material";
+import {Link} from 'react-router-dom';
 import PropTypes from "prop-types";
 
 const LastStainsCard = ({stainsArray}) => {
-	console.log('last stains rendered')
+
 	const lastStains = useMemo(() => {
 		return stainsArray.map((stain, key) =>
 			<>
-			<ListItemButton key={`stain-${key}`}>
-				<div style={{width: 'inherit'}}>
-					<Typography variant='h6'>
-						{stain.stainName}
-					</Typography>
-					<Typography variant='subtitle1'>
-						{stain.lastEdit}
-					</Typography>
-				</div>
-			</ListItemButton>
+			<Link to={`/stain/${stain.id}`} style={{color: 'black', textDecoration: 'none'}} key={`stain-${key}`}>
+				<ListItemButton >
+					<div style={{width: 'inherit'}}>
+						<Typography variant='h6'>
+							{stain.stainName}
+						</Typography>
+						<Typography variant='subtitle1'>
+							{`${stain.author} - ${stain.lastEdit}`}
+						</Typography>
+					</div>
+				</ListItemButton>
+			</Link>
 			<Divider/>
 		</>
 		);
@@ -30,7 +33,7 @@ const LastStainsCard = ({stainsArray}) => {
 				</Typography>
 			</div>
 			<CardContent>
-				<List sx={{padding: '0'}}>
+				<List sx={{padding: '0', overflowY:'auto'}}>
 					{lastStains}
 				</List>
 			</CardContent>
