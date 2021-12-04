@@ -1,17 +1,28 @@
 import React, {useEffect, useReducer, useState} from "react";
-import {Paper, Typography, Button,} from '@mui/material';
+import {Paper, Typography, Button, Modal} from '@mui/material';
 import DictionaryPage from "./components/DictionaryPage";
 import DictionaryTable from "./components/DictionaryTable";
-import {OPEN_GENUSES, OPEN_PROPERTIES, OPEN_TYPES} from "./constants";
+// TODO: Может, есть способ сделать это адекватно?
+import {
+	OPEN_GENUSES,
+	OPEN_PROPERTIES,
+	OPEN_TYPES,
+	OPEN_MODAL,
+	CLOSE_MODAL,
+	CHANGE_PAGE,
+	changePage,
+	closeModal
+} from "./constants";
 
 const reducer = (state, action) => {
 	switch (action.type) {
-		case OPEN_GENUSES:
-			return({viewTarget: OPEN_GENUSES});
-		case OPEN_PROPERTIES:
-			return({viewTarget: OPEN_PROPERTIES})
-		case OPEN_TYPES:
-			return({viewTarget: OPEN_TYPES})
+		case CHANGE_PAGE:
+			return ({...state, viewTarget: action.payload});
+		case OPEN_MODAL:
+			return({...state, targetId: action.payload});
+		case CLOSE_MODAL:
+			console.log('да закройся ааааа')
+			return {...state, targetId: null};
 	}
 };
 
@@ -45,10 +56,8 @@ const Dictionaries = () => {
 	useEffect(() => {
 		// тут получаем данные с сервера
 		if (!state.viewTarget) {
-			console.log('нету')
 			return;
 		}
-		console.log('есть')
 		let content, name;
 		switch (state.viewTarget) {
 			case OPEN_GENUSES:
@@ -77,28 +86,41 @@ const Dictionaries = () => {
 	}, [state.viewTarget]);
 	// TODO: Протестировать работу с большим количеством строк, если плохо - виртуализировать
 	return(
-		<Paper sx={{margin: '0 10px 0 10px', padding: '10px'}}>
-			<Typography variant='h4' component='div' align='left'>Справочники приложения</Typography>
-			<div style={{display: 'flex',}}>
-				<DictionaryPage displayName='Рода' onClick={() => dispatch({type: OPEN_GENUSES})}/>
-				<DictionaryPage displayName='Виды' onClick={() => dispatch({type: OPEN_TYPES})}/>
-				<DictionaryPage displayName='Свойства' onClick={() => dispatch({type: OPEN_PROPERTIES})}/>
-			</div>
-			<Typography variant='h6' component='div' align='left'>
-				Для редактирования элемента нажмите на него в таблице
-			</Typography>
-			{dictionaryName &&
-			<Button
-				variant='contained'
-				color='success'
+		<>
+			<Paper sx={{margin: '0 10px 0 10px', padding: '10px'}}>
+				<Typography variant='h4' component='div' align='left'>Справочники приложения</Typography>
+				<div style={{display: 'flex',}}>
+					<DictionaryPage displayName='Рода' onClick={() => dispatch(changePage(OPEN_GENUSES))}/>
+					<DictionaryPage displayName='Виды' onClick={() => dispatch(changePage(OPEN_TYPES))}/>
+					<DictionaryPage displayName='Свойства' onClick={() => dispatch(changePage(OPEN_PROPERTIES))}/>
+				</div>
+				<div style={{display: 'flex',}}>
+					<Typography variant='h6' component='div' align='left'>
+						Для редактирования элемента нажмите на него в таблице
+					</Typography>
+					{dictionaryName &&
+					<Button
+						variant='contained'
+						color='success'
+						sx={{marginLeft: '20px'}}
+					>
+						{`Добавить ${dictionaryName}`}
+					</Button>
+					}
+				</div>
+				{dictionaryName &&
+					<DictionaryTable columns={tableContent.columns} rows={tableContent.rows} dispatch={dispatch} />
+				}
+			</Paper>
+			<Modal
+				open={Boolean(state.targetId)}
+				onClose={() => dispatch(closeModal())}
 			>
-				{`Добавить ${dictionaryName}`}
-			</Button>
-			}
-			{dictionaryName &&
-				<DictionaryTable columns={tableContent.columns} rows={tableContent.rows}/>
-			}
-		</Paper>
+				<Paper sx={{width: '200px', height: '200px'}}>
+					модалОЧКА
+				</Paper>
+			</Modal>
+		</>
 	);
 }
 

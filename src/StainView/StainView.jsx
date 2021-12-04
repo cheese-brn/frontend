@@ -242,8 +242,6 @@ const StainView = () => {
 									sx={{marginTop: '20px'}}
 									onClick={() => {
 										setIsReadOnly(true);
-										console.log(model)
-										console.log(modelCopy.current)
 										setModel({...modelCopy.current});
 									}}>
 									Отменить изменения
