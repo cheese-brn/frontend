@@ -4,6 +4,7 @@ import HomePage from "./HomePage/HomePage";
 import StainView from "./StainView";
 import {AppBar, Toolbar, Typography, IconButton, Breadcrumbs} from "@mui/material";
 import {BrowserRouter, Routes, Route, Outlet} from "react-router-dom";
+import Dictionaries from "./Dictionaries";
 
 const App = () => {
   return (
@@ -29,10 +30,10 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<HomePage/>}/>
-          <Route path='test' element={<StainView/>}/>
           <Route path='stain' element={<StainView/>}>
             <Route path=':stainID' element={<StainView/>}/>
           </Route>
+          <Route path='dictionaries' element={<Dictionaries/>}/>
           <Route path='*' element={
             <div>
               404
