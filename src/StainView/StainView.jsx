@@ -1,6 +1,7 @@
 import React, {useEffect, useState, useRef} from "react";
 import { useParams } from "react-router-dom";
 import {Paper, Typography, Grid, TextField, Divider, Stack, Button} from "@mui/material";
+import SimplePropertyInput from "./components/SimplePropertyInput";
 
 const StainView = () => {
 	const data = useParams();
@@ -113,18 +114,30 @@ const StainView = () => {
 
 	useEffect(() => {
 		let props = model?.actualProps?.map((prop, key) => {
-			return(<p key={`basic-prop-${key}`}>туст</p>)
+			return(<SimplePropertyInput
+				prop={prop}
+				propKey={key}
+				readOnly={isReadOnly}
+				key={`basic-prop-${key}`}
+				onChange={handleSubPropChange}
+			/>);
 		});
 		setBasicProps(props);
-	}, [model?.actualProps]);
+	}, [model?.actualProps, isReadOnly]);
 
 	// TODO: Сделать нормально
 	const costilStyle = {
 		marginBottom: '14px'
 	};
 
-	const handleChangeGeneric = (event) => {
+	const handleGenericChange = (event) => {
 			setModel({...model, [event.target.name]: event.target.value})
+	}
+	const handleSubPropChange = (propKey, subPropKey, newValue) => {
+		const {actualProps} = model;
+		// TODO: изменение свойств
+
+		setModel({...model, actualProps});
 	}
 
 	// TODO: fix 'A component is changing an uncontrolled input to be controlled' issue
@@ -144,7 +157,7 @@ const StainView = () => {
 								name='genus'
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.genus}
-								onChange={ handleChangeGeneric }
+								onChange={ handleGenericChange }
 							/>
 							<TextField
 								sx={costilStyle}
@@ -153,7 +166,7 @@ const StainView = () => {
 								name='type'
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.type}
-								onChange={ handleChangeGeneric }
+								onChange={ handleGenericChange }
 							/>
 							<TextField
 								sx={costilStyle}
@@ -162,7 +175,7 @@ const StainView = () => {
 								name='name'
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.name}
-								onChange={ handleChangeGeneric }
+								onChange={ handleGenericChange }
 							/>
 							<TextField
 								sx={costilStyle}
@@ -171,7 +184,7 @@ const StainView = () => {
 								name='modification'
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.modification}
-								onChange={ handleChangeGeneric }
+								onChange={ handleGenericChange }
 							/>
 							<TextField
 								sx={costilStyle}
@@ -180,7 +193,7 @@ const StainView = () => {
 								name='obtainingMethod'
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.obtainingMethod}
-								onChange={ handleChangeGeneric }
+								onChange={ handleGenericChange }
 							/>
 							<TextField
 								sx={costilStyle}
@@ -190,7 +203,7 @@ const StainView = () => {
 								multiline
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.origin}
-								onChange={ handleChangeGeneric }
+								onChange={ handleGenericChange }
 							/>
 							<TextField
 								sx={costilStyle}
@@ -200,8 +213,11 @@ const StainView = () => {
 								multiline
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.annotation}
-								onChange={ handleChangeGeneric }
+								onChange={ handleGenericChange }
 							/>
+							<Typography variant='h5' align='left'>
+								Свойства штамма
+							</Typography>
 							{basicProps}
 						</Stack>
 					</Grid>

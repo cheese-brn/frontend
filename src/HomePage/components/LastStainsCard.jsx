@@ -6,9 +6,9 @@ import PropTypes from "prop-types";
 const LastStainsCard = ({stainsArray}) => {
 
 	const lastStains = useMemo(() => {
-		return stainsArray.map((stain, key) =>
+		return stainsArray.map((stain, index) =>
 			<>
-			<Link to={`/stain/${stain.id}`} style={{color: 'black', textDecoration: 'none'}} key={`stain-${key}`}>
+			<Link to={`/stain/${stain.id}`} style={{color: 'black', textDecoration: 'none'}} key={`stain-${index}`}>
 				<ListItemButton >
 					<div style={{width: 'inherit'}}>
 						<Typography variant='h6'>
