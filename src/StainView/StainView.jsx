@@ -1,9 +1,10 @@
-import React, {useEffect, useState, useRef} from "react";
-import { useParams } from "react-router-dom";
+import React, {useEffect, useState, useRef, useReducer} from "react";
+import {useParams, useNavigate} from "react-router-dom";
 import {Paper, Typography, Grid, TextField, Divider, Stack, Button} from "@mui/material";
 import SimplePropertyInput from "./components/SimplePropertyInput";
 
 const StainView = () => {
+	const navigate = useNavigate();
 	const {stainID} = useParams();
 	const [model, setModel] = useState({
 					"id":0,
@@ -21,114 +22,9 @@ const StainView = () => {
 	const [basicProps, setBasicProps] = useState([]);
 
 	useEffect(() => {
-		// switch (stainID) {
-		// 	case '0':
-		// 		stainData = {
-		// 			"id":1,
-		// 			"rod":"Lactococcus",
-		// 			"vid":"lactis",
-		// 			"annotation":"Может использоваться в исследованиях в качестве индикаторного штамма с селективным маркером",
-		// 			"exemplar":"977",
-		// 			"modification":"C15",
-		// 			"obtainingMethod":"Культивирование в отсутствии лактозы (Я.Р.Каган, И.Я.Сергеева)",
-		// 			"origin":"Лактозоотрицательный мутант штамма L. lactis 977.2",
-		// 			"factParams":[
-		// 				{
-		// 					"name":"Наличие плазмид",
-		// 					"description":"описание",
-		// 					"subProps":[
-		// 						{
-		// 							"name":"Наличие плазмид",
-		// 							"value":"Нд"
-		// 						}
-		// 					]
-		// 				},
-		// 				{
-		// 					"name":"Форма и расположение клеток",
-		// 					"description":"описание",
-		// 					"subProps":[
-		// 						{
-		// 							"name":"Форма и расположение клеток",
-		// 							"value":"Кокки, диплококки"
-		// 						}
-		// 					]
-		// 				},
-		// 				{
-		// 					"name":"Форма и величина колоний",
-		// 					"description":"описание",
-		// 					"subProps":[
-		// 						{
-		// 							"name":"Поверхностные",
-		// 							"value":"Круглые каплевидные с ровным краем диам. 2 мм"
-		// 						},
-		// 						{
-		// 							"name":"Глубинные",
-		// 							"value":"дискообразные"
-		// 						}
-		// 					]
-		// 				},
-		// 				{
-		// 					"name":"Аммиак из аргинина",
-		// 					"description":"описание",
-		// 					"subProps":[
-		// 						{
-		// 							"name":"Аммиак из аргинина",
-		// 							"value":"Образует"
-		// 						}
-		// 					]
-		// 				},
-		// 				{
-		// 					"name":"Утилизация цитрата",
-		// 					"description":"описание",
-		// 					"subProps":[
-		// 						{
-		// 							"name":"Утилизация цитрата",
-		// 							"value":"Не утилизирует"
-		// 						}
-		// 					]
-		// 				},
-		// 				{
-		// 					"name":"Ферментация углеводов",
-		// 					"description":"описание",
-		// 					"subProps":[
-		// 						{
-		// 							"name":"Ферментирует",
-		// 							"value":"глюкозу, галактозу, мальтозу, манит (слабо)"
-		// 						},
-		// 						{
-		// 							"name":"Не ферментирует",
-		// 							"value":"лактозу, сахарозу"
-		// 						}
-		// 					]
-		// 				},
-		// 				{
-		// 					"name":"Характер сгустка",
-		// 					"description":"описание",
-		// 					"subProps":[
-		// 						{
-		// 							"name":"Характер сгустка",
-		// 							"value":"-"
-		// 						}
-		// 					]
-		// 				},
-		// 				{
-		// 					"name":"Температура роста",
-		// 					"description":"описание",
-		// 					"subProps":[
-		// 						{
-		// 							"name":"Температура роста",
-		// 							"value":"Нд"
-		// 						}
-		// 					]
-		// 				}
-		// 			]
-		// 		};
-		// 		break;
-		// 	default:
-		// 		return null;
-		// }
-		fetch('/strain/10').then(response => response.json()).then(res => {console.log(res); setModel(res)})
+		fetch('/strain/6').then(response => response.json()).then(res => {console.log(res); setModel(res)})
 		modelCopy.current = model;
+		console.log(model)
 		}, [stainID]);
 
 	useEffect(() => {
@@ -233,9 +129,20 @@ const StainView = () => {
 								value={model?.annotation}
 								onChange={ handleGenericChange }
 							/>
-							<Typography variant='h5' align='left'>
-								Свойства штамма
-							</Typography>
+							<div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '10px'}}>
+								<Typography variant='h5' align='left'>
+									Свойства штамма
+								</Typography>
+								{!isReadOnly &&
+								<Button
+									variant='contained'
+									color='success'
+									sx={{padding: '3px 8px 3px 8px'}}
+								>
+									Добавить свойство
+								</Button>
+								}
+							</div>
 							{basicProps}
 						</Stack>
 					</Grid>
@@ -245,6 +152,7 @@ const StainView = () => {
 							<Typography variant='h6'>
 								{`Последнее редактирование:`}
 							</Typography>
+							{/*TODO: доделать, связано с CB-8*/}
 							{/*<Typography>*/}
 							{/*	{`${model.author}, ${model.lastEdit}`}*/}
 							{/*</Typography>*/}
@@ -285,6 +193,11 @@ const StainView = () => {
 								variant='outlined'
 								color='error'
 								sx={{marginTop: '20px'}}
+								onClick={() => {
+									// TODO: Модалка подтверждения удаления
+									fetch(`/strain/delete/${model.id}`, {method: 'POST', headers: {'Content-Type': 'application/json'}})
+									navigate(-1);
+								}}
 							>
 								Удалить штамм
 							</Button>
