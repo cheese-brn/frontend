@@ -1,133 +1,61 @@
 import React, {useEffect, useState, useRef} from "react";
-import { useParams } from "react-router-dom";
+import {useParams, useNavigate} from "react-router-dom";
 import {Paper, Typography, Grid, TextField, Divider, Stack, Button} from "@mui/material";
+import SimplePropertyInput from "./components/SimplePropertyInput";
 
 const StainView = () => {
-	const data = useParams();
-	const [model, setModel] = useState({});
+	const navigate = useNavigate();
+	const {strainID} = useParams();
+	const [model, setModel] = useState({
+					"id":0,
+					"rod":"",
+					"vid":"",
+					"annotation":"",
+					"exemplar":"",
+					"modification":"",
+					"obtainingMethod":"",
+					"origin":"",
+					"factParams":[],
+	});
 	const modelCopy = useRef(null);
 	const [isReadOnly, setIsReadOnly] = useState(true);
 	const [basicProps, setBasicProps] = useState([]);
 
 	useEffect(() => {
-		let stainData;
-		switch (data.stainID) {
-			case '0':
-				stainData = {
-					id: 0,
-					genus: 'Лактококус',
-					type: 'Лактис',
-					name: '977',
-					modification: 'С15',
-					obtainingMethod: 'Культивирование в отсутствии лактозы (Я.Р. Каган, И.Я. Сергеева)',
-					origin: 'Лактозоотрицательынй мутант штамма L. lactis 9772',
-					annotation: 'Может использоваться в исследованиях в качестве индикаторного штамма с селективным маркером\n\n\nasdadasdd',
-					lastEdit: 'Вчера, 20:00',
-					author: 'Иванов Иван Иванович',
-					actualProps: [
-						{
-							name: 'Наличие плазмид',
-							description: 'Ну есть плазмиды и есть. Или нету',
-							subProps: [
-								{
-									name: '',
-									value:['НД',]
-								}],
-						},
-						{
-							name: 'Маркеры',
-							description: 'Для доски',
-							subProps: [
-								{
-									name: '',
-									value:['Лизогенный; Lac Str',]
-								},
-							],
-						},
-						{
-							name: 'Фаготип',
-							description: 'Тип фагов',
-							subProps: [
-								{
-									name: '',
-									value:[
-										'Какие-то символы, кодировкой сделаем как надо',
-										'Но их будет много раз',
-										'так что храним в массиве',
-									]
-								},
-							],
-						},
-							{
-								name: 'Форма и расположение клеток',
-								description: 'Клеточная форма и расположение',
-								subProps: [
-									{
-										name: '',
-										value: [
-											'Кокки',
-											'Диплококки',
-										]
-									}
-								],
-							},
-							{
-								name: 'Форма и величина колоний',
-								description: 'Колониальная форма и величина',
-								subProps: [
-									{
-										name: 'Поверхностные',
-										value: 'Круглые каплевидные бла-бла-бла',
-									},
-									{
-										name: 'Глубинные',
-										value: 'дискообразные',
-									}
-								],
-							},
-						],
-						 // functionalProps: [
-						 // 	{
-						 // 		name: 'Кислотообразование в молоке',
-						 // 		description: 'Образование кислоты в среде молока',
-						 // 		subProps: [
-						 // 			{
-						 // 				name: 'С глюкозой',
-						 // 				value:
-						 // 			},
-						 // 			{
-						 // 				name: 'Без глюкозы',
-						 // 				value:
-						 // 			}
-						 // 		],
-						 // 	}
-						 // ],
-					};
-				break;
-			default:
-				return null;
-		}
-		setModel(stainData);
-		modelCopy.current = stainData;
-		}, [data.stainID]);
+		// TODO: получать id штамма извне
+		fetch('/strain/6').then(response => response.json()).then(res => {console.log(res); setModel(res)})
+		modelCopy.current = model;
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [strainID]);
 
 	useEffect(() => {
-		let props = model?.actualProps?.map((prop, key) => {
-			return(<p key={`basic-prop-${key}`}>туст</p>)
+		let props = model?.factParams?.map((prop, key) => {
+			return(<SimplePropertyInput
+				prop={prop}
+				propertyIndex={key}
+				readOnly={isReadOnly}
+				key={`basic-prop-${key}`}
+				valueChangeCallback={handleSubPropChange}
+			/>);
 		});
 		setBasicProps(props);
-	}, [model?.actualProps]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [model?.factParams, isReadOnly]);
 
 	// TODO: Сделать нормально
 	const costilStyle = {
 		marginBottom: '14px'
 	};
 
-	const handleChangeGeneric = (event) => {
+	const handleCommonFieldChange = (event) => {
 			setModel({...model, [event.target.name]: event.target.value})
 	}
+	const handleSubPropChange = (propKey, subPropKey, newValue) => {
+		let newModel = JSON.parse(JSON.stringify(model));
+		newModel.factParams[propKey].subProps[subPropKey].value = newValue;
+		setModel(newModel);
+	}
 
-	// TODO: fix 'A component is changing an uncontrolled input to be controlled' issue
 	// TODO: Разобраться с цветовой палитрой
 	return(
 			<Paper sx={{margin: '0 10px 0 10px', padding: '10px'}}>
@@ -141,28 +69,28 @@ const StainView = () => {
 								sx={costilStyle}
 								id='stain-view__genus-field'
 								label='Род'
-								name='genus'
+								name='rod'
 								inputProps={{readOnly: isReadOnly}}
-								value={model?.genus}
-								onChange={ handleChangeGeneric }
+								value={model?.rod}
+								onChange={ handleCommonFieldChange }
 							/>
 							<TextField
 								sx={costilStyle}
 								id='stain-view__type-field'
 								label='Вид'
-								name='type'
+								name='vid'
 								inputProps={{readOnly: isReadOnly}}
-								value={model?.type}
-								onChange={ handleChangeGeneric }
+								value={model?.vid}
+								onChange={ handleCommonFieldChange }
 							/>
 							<TextField
 								sx={costilStyle}
 								id='stain-view__name-field'
 								label='Наименование'
-								name='name'
+								name='exemplar'
 								inputProps={{readOnly: isReadOnly}}
-								value={model?.name}
-								onChange={ handleChangeGeneric }
+								value={model?.exemplar}
+								onChange={ handleCommonFieldChange }
 							/>
 							<TextField
 								sx={costilStyle}
@@ -171,7 +99,7 @@ const StainView = () => {
 								name='modification'
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.modification}
-								onChange={ handleChangeGeneric }
+								onChange={ handleCommonFieldChange }
 							/>
 							<TextField
 								sx={costilStyle}
@@ -180,28 +108,43 @@ const StainView = () => {
 								name='obtainingMethod'
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.obtainingMethod}
-								onChange={ handleChangeGeneric }
+								onChange={ handleCommonFieldChange }
+								multiline
 							/>
 							<TextField
 								sx={costilStyle}
 								id='stain-view__origin-field'
 								label='Происхождение'
 								name='origin'
-								multiline
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.origin}
-								onChange={ handleChangeGeneric }
+								onChange={ handleCommonFieldChange }
+								multiline
 							/>
 							<TextField
 								sx={costilStyle}
 								id='stain-view__annotation-field'
 								label='Аннотация'
 								name='annotation'
-								multiline
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.annotation}
-								onChange={ handleChangeGeneric }
+								onChange={ handleCommonFieldChange }
+								multiline
 							/>
+							<div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '10px'}}>
+								<Typography variant='h5' align='left'>
+									Свойства штамма
+								</Typography>
+								{!isReadOnly &&
+								<Button
+									variant='contained'
+									color='success'
+									sx={{padding: '3px 8px 3px 8px'}}
+								>
+									Добавить свойство
+								</Button>
+								}
+							</div>
 							{basicProps}
 						</Stack>
 					</Grid>
@@ -211,9 +154,10 @@ const StainView = () => {
 							<Typography variant='h6'>
 								{`Последнее редактирование:`}
 							</Typography>
-							<Typography>
-								{`${model.author}, ${model.lastEdit}`}
-							</Typography>
+							{/*TODO: доделать, связано с CB-8*/}
+							{/*<Typography>*/}
+							{/*	{`${model.author}, ${model.lastEdit}`}*/}
+							{/*</Typography>*/}
 							{isReadOnly &&
 							<Button
 								variant='contained'
@@ -251,6 +195,11 @@ const StainView = () => {
 								variant='outlined'
 								color='error'
 								sx={{marginTop: '20px'}}
+								onClick={() => {
+									// TODO: Модалка подтверждения удаления
+									fetch(`/strain/delete/${model.id}`, {method: 'POST', headers: {'Content-Type': 'application/json'}})
+									navigate(-1);
+								}}
 							>
 								Удалить штамм
 							</Button>
