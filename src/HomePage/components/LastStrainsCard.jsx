@@ -3,12 +3,13 @@ import {Card, CardContent, Typography, List, ListItemButton, Divider,} from "@mu
 import {Link} from 'react-router-dom';
 import PropTypes from "prop-types";
 
-const LastStainsCard = ({stainsArray}) => {
-
-	const lastStains = useMemo(() => {
-		return stainsArray.map((stain, index) =>
+const lastStrainsCard = ({strainsArray}) => {
+	// Чё это было вообще
+	// eslint-disable-next-line react-hooks/rules-of-hooks
+	const lastStrains = useMemo(() => {
+		return strainsArray.map((stain, index) =>
 			<>
-			<Link to={`/stain/${stain.id}`} style={{color: 'black', textDecoration: 'none'}} key={`stain-${index}`}>
+			<Link to={`/strain/${stain.id}`} style={{color: 'black', textDecoration: 'none'}} key={`stain-${index}`}>
 				<ListItemButton >
 					<div style={{width: 'inherit'}}>
 						<Typography variant='h6'>
@@ -23,7 +24,7 @@ const LastStainsCard = ({stainsArray}) => {
 			<Divider/>
 		</>
 		);
-	}, [stainsArray]);
+	}, [strainsArray]);
 
 	return(
 		<Card sx={{ width: '360px', height: '500px', margin: '20px', borderRadius: '5px', padding: '0'}}>
@@ -34,15 +35,15 @@ const LastStainsCard = ({stainsArray}) => {
 			</div>
 			<CardContent>
 				<List sx={{padding: '0', overflowY:'auto'}}>
-					{lastStains}
+					{lastStrains}
 				</List>
 			</CardContent>
 		</Card>
 	);
 }
 
-LastStainsCard.propTypes = {
-	stainsArray: PropTypes.array,
+lastStrainsCard.propTypes = {
+	strainsArray: PropTypes.array,
 }
 
-export default LastStainsCard;
+export default lastStrainsCard;

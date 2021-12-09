@@ -1,11 +1,11 @@
-import React, {useEffect, useState, useRef, useReducer} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import {useParams, useNavigate} from "react-router-dom";
 import {Paper, Typography, Grid, TextField, Divider, Stack, Button} from "@mui/material";
 import SimplePropertyInput from "./components/SimplePropertyInput";
 
 const StainView = () => {
 	const navigate = useNavigate();
-	const {stainID} = useParams();
+	const {strainID} = useParams();
 	const [model, setModel] = useState({
 					"id":0,
 					"rod":"",
@@ -22,22 +22,24 @@ const StainView = () => {
 	const [basicProps, setBasicProps] = useState([]);
 
 	useEffect(() => {
+		// TODO: получать id штамма извне
 		fetch('/strain/6').then(response => response.json()).then(res => {console.log(res); setModel(res)})
 		modelCopy.current = model;
-		console.log(model)
-		}, [stainID]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [strainID]);
 
 	useEffect(() => {
 		let props = model?.factParams?.map((prop, key) => {
 			return(<SimplePropertyInput
 				prop={prop}
-				propKey={key}
+				propertyIndex={key}
 				readOnly={isReadOnly}
 				key={`basic-prop-${key}`}
-				onChange={handleSubPropChange}
+				valueChangeCallback={handleSubPropChange}
 			/>);
 		});
 		setBasicProps(props);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [model?.factParams, isReadOnly]);
 
 	// TODO: Сделать нормально
@@ -45,14 +47,13 @@ const StainView = () => {
 		marginBottom: '14px'
 	};
 
-	const handleGenericChange = (event) => {
+	const handleCommonFieldChange = (event) => {
 			setModel({...model, [event.target.name]: event.target.value})
 	}
 	const handleSubPropChange = (propKey, subPropKey, newValue) => {
-		const {actualProps} = model;
-		// TODO: изменение свойств
-
-		setModel({...model, actualProps});
+		let newModel = JSON.parse(JSON.stringify(model));
+		newModel.factParams[propKey].subProps[subPropKey].value = newValue;
+		setModel(newModel);
 	}
 
 	// TODO: Разобраться с цветовой палитрой
@@ -71,7 +72,7 @@ const StainView = () => {
 								name='rod'
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.rod}
-								onChange={ handleGenericChange }
+								onChange={ handleCommonFieldChange }
 							/>
 							<TextField
 								sx={costilStyle}
@@ -80,7 +81,7 @@ const StainView = () => {
 								name='vid'
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.vid}
-								onChange={ handleGenericChange }
+								onChange={ handleCommonFieldChange }
 							/>
 							<TextField
 								sx={costilStyle}
@@ -89,7 +90,7 @@ const StainView = () => {
 								name='exemplar'
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.exemplar}
-								onChange={ handleGenericChange }
+								onChange={ handleCommonFieldChange }
 							/>
 							<TextField
 								sx={costilStyle}
@@ -98,7 +99,7 @@ const StainView = () => {
 								name='modification'
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.modification}
-								onChange={ handleGenericChange }
+								onChange={ handleCommonFieldChange }
 							/>
 							<TextField
 								sx={costilStyle}
@@ -107,27 +108,28 @@ const StainView = () => {
 								name='obtainingMethod'
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.obtainingMethod}
-								onChange={ handleGenericChange }
+								onChange={ handleCommonFieldChange }
+								multiline
 							/>
 							<TextField
 								sx={costilStyle}
 								id='stain-view__origin-field'
 								label='Происхождение'
 								name='origin'
-								multiline
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.origin}
-								onChange={ handleGenericChange }
+								onChange={ handleCommonFieldChange }
+								multiline
 							/>
 							<TextField
 								sx={costilStyle}
 								id='stain-view__annotation-field'
 								label='Аннотация'
 								name='annotation'
-								multiline
 								inputProps={{readOnly: isReadOnly}}
 								value={model?.annotation}
-								onChange={ handleGenericChange }
+								onChange={ handleCommonFieldChange }
+								multiline
 							/>
 							<div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '10px'}}>
 								<Typography variant='h5' align='left'>

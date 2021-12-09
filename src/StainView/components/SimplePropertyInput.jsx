@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
-import React, {useState} from "react";
+import React from "react";
 import {Typography, Button, Divider, TextField} from "@mui/material";
 
 // TODO: разобраться с PropTypes
 const SimplePropertyInput = props => {
-	const { prop, readOnly, propKey} = props;
-	const {name, subProps, description, handleSubPropChange} = prop;
+	const { prop, readOnly, propertyIndex, valueChangeCallback} = props;
+	const {name, subProps, description, } = prop;
 
 	const smallButtonStyle = {
 		padding: '0 4px 0 4px',
@@ -20,13 +20,21 @@ const SimplePropertyInput = props => {
 				{!readOnly && <Button variant='contained' color='success' sx={smallButtonStyle}>+</Button>}
 				{!readOnly && <Button variant='contained' color='error' sx={smallButtonStyle}>-</Button>}
 			</div>
-			{subProps.map((subProp, key)=>
-				<div key={`prop-${propKey}-subprop-${key}`} style={{textAlign: 'left', display: 'flex', flexDirection: 'column'}}>
+			{subProps.map((subProp, subPropertyIndex)=>
+				<div key={`prop-${propertyIndex}-subprop-${subPropertyIndex}`} style={{textAlign: 'left', display: 'flex', flexDirection: 'column'}}>
 						{readOnly && <Typography variant={'p'}>{`${subProp.name ? `${subProp.name}: ` : ``}${subProp.value}`}</Typography>}
 						{!readOnly &&
 						<>
-							{subProp.name && <Typography variant={'p'}>{subProp.name}</Typography>}
-							<TextField/>
+							<TextField
+								label={subProp.name}
+								value={subProp.value}
+								sx={{marginTop: '10px'}}
+								onChange={(event) => {
+									valueChangeCallback(propertyIndex, subPropertyIndex, event.target.value)
+								}}
+								multiline
+							/>
+
 						</>
 						}
 						<Divider/>
