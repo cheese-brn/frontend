@@ -118,7 +118,7 @@ const Dictionaries = () => {
 				{state.targetId &&
 					<Paper sx={{width: '600px', maxHeight: '450px', margin: 'auto', padding: '20px'}}>
 						<Typography variant='h5'>
-							{`Редактирование: ${dictionaryName} - ${tableContent.rows[state.targetId].name}`}
+							{`Редактирование: ${dictionaryName} - ${tableContent.rows[state.targetId - 1].name}`}
 						</Typography>
 						{viewTarget === OPEN_PROPERTIES &&
 						<>
