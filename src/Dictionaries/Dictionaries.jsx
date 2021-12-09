@@ -69,8 +69,12 @@ const Dictionaries = () => {
 	}, [viewTarget]);
 
 	useEffect(() => {
+
 		if (state.targetId) {
-			fetch(`/vid/list/${state.targetId}`)
+			let prefix;
+			if (viewTarget === OPEN_GENUSES) prefix = 'vid';
+			else if (viewTarget === OPEN_PROPERTIES) prefix = 'subproperty';
+			fetch(`/${prefix}/list/${state.targetId}`)
 				.then(response => response.json())
 				.then(array => setChildrenArray(array))
 		}
@@ -108,7 +112,7 @@ const Dictionaries = () => {
 			</Paper>
 			{/*Явно есть способ сделать модалку лучше, с учётом разности назначений.*/}
 			{/*Скорее всего - вынести в компоненты*/}
-			{/*Вдобавок тут ещё с children какой-то баг*/}
+			{/*TODO: доработать пустые подсвойства*/}
 			<Modal
 				open={Boolean(state.targetId)}
 				onClose={() => dispatch(closeModal())}
@@ -125,8 +129,8 @@ const Dictionaries = () => {
 							<Typography>
 								Подсвойства:
 							</Typography>
-							{childrenArray.map((type, index) =>
-								<p key={`type-${index}`}>{`${type.name} - ${type.childrenCount}`}</p>
+							{childrenArray.map((subProp, index) =>
+								<p key={`type-${index}`}>{`${subProp.name}`}</p>
 							)}
 						</>
 						}
