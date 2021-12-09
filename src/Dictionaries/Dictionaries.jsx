@@ -6,93 +6,84 @@ import DictionaryTable from "./components/DictionaryTable";
 import {
 	OPEN_GENUSES,
 	OPEN_PROPERTIES,
-	OPEN_TYPES,
 	OPEN_MODAL,
 	CLOSE_MODAL,
-	CHANGE_PAGE,
-	changePage,
 	closeModal
 } from "./constants";
 
 const reducer = (state, action) => {
 	switch (action.type) {
-		case CHANGE_PAGE:
-			return ({...state, viewTarget: action.payload});
 		case OPEN_MODAL:
 			return({...state, targetId: action.payload});
 		case CLOSE_MODAL:
-			console.log('да закройся ааааа')
 			return {...state, targetId: null};
+		default:
+			return state;
 	}
 };
 
 const stateInitializer = (initialState) => {
 	return {
-		viewTarget: initialState
+		targetId: initialState
 	}
 };
 
 const Dictionaries = () => {
-	const genusList = [
-		{name: 'Род1', id: 1, childrenCount: 1,},
-		{name: 'Род2', id: 2, childrenCount: 2,},
-		{name: 'Род3', id: 3, childrenCount: 3,},
-	];
-	const typeList = [
-		{name: 'Вид1', id: 1, childrenCount: 4,},
-		{name: 'Вид2', id: 2, childrenCount: 5,},
-		{name: 'Вид2', id: 3, childrenCount: 6,},
-	];
-	const propsList = [
-		{name: 'Свойство1', id: 1, childrenCount: 7,},
-		{name: 'Свойство2', id: 2, childrenCount: 8,},
-		{name: 'Свойство3', id: 3, childrenCount: 9,},
-	];
-	const [dictionaryName, setDictionaryName] = useState(null)
+	const [dictionaryName, setDictionaryName] = useState(null);
 	const [tableContent, setTableContent] = useState({});
+	const [viewTarget, setViewTarget] = useState(null);
+	const [childrenArray, setChildrenArray] = useState([]);
 
 	const [state, dispatch] = useReducer(reducer, null, stateInitializer);
 
 	useEffect(() => {
-		// тут получаем данные с сервера
-		if (!state.viewTarget) {
+		if (!viewTarget) {
 			return;
 		}
-		let content, name;
-		switch (state.viewTarget) {
+		let name;
+		switch (viewTarget) {
 			case OPEN_GENUSES:
 				name ='Род';
-				content = genusList;
-				break;
+			break;
 			case OPEN_PROPERTIES:
-				name ='Свойства';
-				content = propsList;
-				break;
-			case OPEN_TYPES:
-				name ='Вид';
-				content = typeList;
+				name ='Свойство';
 				break;
 			default:
 				break;
 		}
-		tableContent.columns = [
-			{id: 'name', label: name, minWidth: 200},
-			{id: 'childrenCount', label: 'Дочерних элементов', minWidth: 200},
-		];
-		tableContent.rows = content;
-		setTableContent(tableContent);
-		setDictionaryName(name)
+
+		fetch(`/${viewTarget}/list`)
+			.then(response => response.json())
+			.then(dataArray => {
+				let newContent = {
+					columns: [
+						{id: 'name', label: name, minWidth: 200},
+						{id: 'childrenCount', label: 'Дочерних элементов', minWidth: 200},
+					],
+					rows: dataArray,
+				}
+				setTableContent(newContent);
+				setDictionaryName(name)
+			});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [state.viewTarget]);
+	}, [viewTarget]);
+
+	useEffect(() => {
+		if (state.targetId) {
+			fetch(`/vid/list/${state.targetId}`)
+				.then(response => response.json())
+				.then(array => setChildrenArray(array))
+		}
+	}, [state.targetId]);
+
 	// TODO: Протестировать работу с большим количеством строк, если плохо - виртуализировать
 	return(
 		<>
 			<Paper sx={{margin: '0 10px 0 10px', padding: '10px'}}>
 				<Typography variant='h4' component='div' align='left'>Справочники приложения</Typography>
 				<div style={{display: 'flex',}}>
-					<DictionaryPage displayName='Рода' onClick={() => dispatch(changePage(OPEN_GENUSES))}/>
-					<DictionaryPage displayName='Виды' onClick={() => dispatch(changePage(OPEN_TYPES))}/>
-					<DictionaryPage displayName='Свойства' onClick={() => dispatch(changePage(OPEN_PROPERTIES))}/>
+					<DictionaryPage displayName='Рода' onClick={() => setViewTarget(OPEN_GENUSES)}/>
+					<DictionaryPage displayName='Свойства' onClick={() => setViewTarget(OPEN_PROPERTIES)}/>
 				</div>
 				<div style={{display: 'flex',}}>
 					<Typography variant='h6' component='div' align='left'>
@@ -103,6 +94,9 @@ const Dictionaries = () => {
 						variant='contained'
 						color='success'
 						sx={{marginLeft: '20px'}}
+						onClick={() => {
+							alert('TODO: добавление элемента')
+						}}
 					>
 						{`Добавить ${dictionaryName}`}
 					</Button>
@@ -112,16 +106,45 @@ const Dictionaries = () => {
 					<DictionaryTable columns={tableContent.columns} rows={tableContent.rows} dispatch={dispatch} />
 				}
 			</Paper>
+			{/*Явно есть способ сделать модалку лучше, с учётом разности назначений.*/}
+			{/*Скорее всего - вынести в компоненты*/}
+			{/*Вдобавок тут ещё с children какой-то баг*/}
 			<Modal
 				open={Boolean(state.targetId)}
 				onClose={() => dispatch(closeModal())}
+				// TODO: разобраться с центрированием
+				sx={{paddingTop: '200px'}}
 			>
-				<Paper sx={{width: '200px', height: '200px'}}>
-					модалОЧКА
-				</Paper>
+				{state.targetId &&
+					<Paper sx={{width: '600px', maxHeight: '450px', margin: 'auto', padding: '20px'}}>
+						<Typography variant='h5'>
+							{`Редактирование: ${dictionaryName} - ${tableContent.rows[state.targetId].name}`}
+						</Typography>
+						{viewTarget === OPEN_PROPERTIES &&
+						<>
+							<Typography>
+								Подсвойства:
+							</Typography>
+							{childrenArray.map((type, index) =>
+								<p key={`type-${index}`}>{`${type.name} - ${type.childrenCount}`}</p>
+							)}
+						</>
+						}
+						{viewTarget === OPEN_GENUSES &&
+						<>
+							<Typography>
+								Виды:
+							</Typography>
+							{childrenArray.map((type, index) =>
+								<p key={`type-${index}`}>{`${type.name} - ${type.childrenCount}`}</p>
+							)}
+						</>
+						}
+					</Paper>
+				}
 			</Modal>
 		</>
 	);
-}
+};
 
 export default Dictionaries;
