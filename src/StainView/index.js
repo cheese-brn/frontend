@@ -1,3 +1,3 @@
-import StainView from './StainView';
+import StainView from './StainView'
 
-export default StainView;
+export default StainView
