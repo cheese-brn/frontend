@@ -5,7 +5,7 @@ import {Typography, Button, Divider, TextField} from "@mui/material";
 // TODO: разобраться с PropTypes
 const SimplePropertyInput = props => {
 	const { prop, readOnly, propertyIndex, valueChangeCallback} = props;
-	const {name, subProps, description, } = prop;
+	const {name, subProps, } = prop;
 
 	const smallButtonStyle = {
 		padding: '0 4px 0 4px',

@@ -15,7 +15,7 @@ const menuCardsContents = {
 		title: 'Просмотр каталога',
 		logo: '/assets/catalogue.svg',
 		id: 'catalogue',
-		route: '',
+		route: 'catalogue',
 	},
 }
 

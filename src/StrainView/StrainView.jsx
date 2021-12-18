@@ -3,7 +3,7 @@ import {useParams, useNavigate} from "react-router-dom";
 import {Paper, Typography, Grid, TextField, Divider, Stack, Button} from "@mui/material";
 import SimplePropertyInput from "./components/SimplePropertyInput";
 
-const StainView = () => {
+const StrainView = () => {
 	const navigate = useNavigate();
 	const {strainID} = useParams();
 	const [model, setModel] = useState({
@@ -23,7 +23,7 @@ const StainView = () => {
 
 	useEffect(() => {
 		// TODO: получать id штамма извне
-		fetch('/strain/6').then(response => response.json()).then(res => {console.log(res); setModel(res)})
+		fetch(`/strains/${strainID}`).then(response => response.json()).then(res => {console.log(res); setModel(res)})
 		modelCopy.current = model;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [strainID]);
@@ -211,4 +211,4 @@ const StainView = () => {
 	);
 }
 
-export default StainView;
+export default StrainView;
