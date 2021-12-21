@@ -15,7 +15,7 @@ const menuCardsContents = {
     title: 'Просмотр каталога',
     logo: '/assets/catalogue-icon.svg',
     id: 'catalogue',
-    route: '',
+    route: 'catalogue',
   },
   search: {
     title: 'Поиск паспорта',
@@ -31,4 +31,4 @@ const menuCardsContents = {
   },
 }
 
-export default menuCardsContents
+export default menuCardsContents;
