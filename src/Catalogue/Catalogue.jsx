@@ -42,7 +42,7 @@ const Catalogue = ({appDispatch}) => {
   }
   
     return(
-      <Paper sx={{margin: '0 10px 0 10px', padding: '10px'}}>
+      <Paper sx={{margin: '0 10px 0 10px', padding: '20px'}}>
         <Typography
           variant='h4'
           align='left'
@@ -50,7 +50,7 @@ const Catalogue = ({appDispatch}) => {
           Каталог микроорганизмов
         </Typography>
         <Typography align='left' variant='h5' onClick={handleReturnToGenus} sx={{marginLeft: '20px'}}>
-          {`Каталог / ${genus.current ? genus.current.name : ''}`}
+          {`Род${genus.current ? `: ${genus.current.name}, Вид:` : ''}`}
         </Typography>
         <Divider/>
         <div style={{display: 'flex', flexDirection: 'column'}}>
@@ -59,7 +59,7 @@ const Catalogue = ({appDispatch}) => {
             <div
               key={`catalogue-element-${index}`}
               onClick={() => handleItemSelect(element)}
-              style={{width: '100px', height: '30px', textDecoration: 'underline', cursor: 'pointer'}}>
+              style={{width: '100px', height: '35px', textDecoration: 'underline', cursor: 'pointer'}}>
               <Typography sx={{fontSize: '25px',}} align='left'>
                 {element.name}
               </Typography>
