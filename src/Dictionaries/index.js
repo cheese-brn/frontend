@@ -1,3 +1,3 @@
-import Dictionaries from './Dictionaries'
+import Dictionaries from './Dictionaries';
 
-export default Dictionaries
+export default Dictionaries;
