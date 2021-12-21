@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody} from '@mui/material';
-import {OPEN_MODAL} from '../constants';
+import {OPEN_ITEM} from '../constants';
 
 const DictionaryTable = props => {
 	const {columns, rows, dispatch} = props;
@@ -19,7 +19,7 @@ const DictionaryTable = props => {
 				</TableHead>
 				<TableBody>
 					{rows.map(row =>
-						<TableRow hover role='button' key={row.id} onClick={() => dispatch({type: OPEN_MODAL, payload: row.id})}>
+						<TableRow hover role='button' key={row.id} onClick={() => dispatch({type: OPEN_ITEM, payload: row.id})}>
 							<TableCell>
 								{row.name}
 							</TableCell>

@@ -49,7 +49,7 @@ const Catalogue = ({appDispatch}) => {
         >
           Каталог микроорганизмов
         </Typography>
-        <Typography align='left' variant='h5' onClick={handleReturnToGenus} sx={{marginLeft: '20px'}}>
+        <Typography align='left' variant='h5' onClick={handleReturnToGenus} sx={{marginLeft: '10px'}}>
           {`Род${genus.current ? `: ${genus.current.name}, Вид:` : ''}`}
         </Typography>
         <Divider/>
