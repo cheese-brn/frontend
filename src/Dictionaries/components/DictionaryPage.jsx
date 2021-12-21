@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import {Card, CardActionArea} from "@mui/material";
+import {Card, CardActionArea, Typography} from "@mui/material";
 
 const cardStyle = {
 	width: '140px',
-	height: '70px',
+	height: '50px',
 	margin: '20px',
 	borderRadius: '5px',
 	padding: '0',
@@ -18,7 +18,9 @@ const DictionaryPage = (props) =>{
 	return(
 		<Card sx={ cardStyle }>
 			<CardActionArea sx={{width: '100%', height: '100%'}} onClick={onClick}>
-				{displayName}
+				<Typography variant='h5'>
+					{displayName}
+				</Typography>
 			</CardActionArea>
 		</Card>
 	);
