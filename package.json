@@ -43,8 +43,7 @@
       "react-app/jest",
       "eslint:recommended",
       "plugin:react/recommended",
-      "prettier",
-      "@imaginary-cloud/react"
+      "prettier"
     ]
   },
   "prettier": "@imaginary-cloud/prettier-config",
