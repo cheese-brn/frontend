@@ -14,59 +14,59 @@ const Catalogue = ({appDispatch}) => {
   }, []);
 
   const handleItemSelect = (item) => {
-      if (genus.current) {
-        appDispatch(APP_ACTIONS.SET_QUERY_ACTION({rod: genus.current.id, vid: item.id}));
-        navigate('/strains-list')
-      } else {
-        genus.current = item;
-        fetch(`/vids/rods/${item.id}`)
-          .then(response => response.json())
-          .then(json => {
-
-            setDisplayData(json);
-          })
-      }
-
-  }
-
-  const handleReturnToGenus = () => {
-      if (genus.current) {
-        genus.current = null;
-      }
-      fetch('/rods')
+    if (genus.current) {
+      appDispatch(APP_ACTIONS.SET_QUERY_ACTION({rod: genus.current.id, vid: item.id}));
+      navigate('/strains-list');
+    } else {
+      genus.current = item;
+      fetch(`/vids/rods/${item.id}`)
         .then(response => response.json())
         .then(json => {
-          setDisplayData(json);
-        })
 
-  }
+          setDisplayData(json);
+        });
+    }
+
+  };
+
+  const handleReturnToGenus = () => {
+    if (genus.current) {
+      genus.current = null;
+    }
+    fetch('/rods')
+      .then(response => response.json())
+      .then(json => {
+        setDisplayData(json);
+      });
+
+  };
   
-    return(
-      <Paper sx={{margin: '0 10px 0 10px', padding: '20px'}}>
-        <Typography
-          variant='h4'
-          align='left'
-        >
+  return(
+    <Paper sx={{margin: '0 10px 0 10px', padding: '20px'}}>
+      <Typography
+        variant='h4'
+        align='left'
+      >
           Каталог микроорганизмов
-        </Typography>
-        <Typography align='left' variant='h5' onClick={handleReturnToGenus} sx={{marginLeft: '10px'}}>
-          {`Род${genus.current ? `: ${genus.current.name}, Вид:` : ''}`}
-        </Typography>
-        <Divider/>
-        <div style={{display: 'flex', flexDirection: 'column'}}>
-          {/*TODO: Сделать нормальный стиль компонента*/}
-          {displayData?.map((element, index) =>
-            <div
-              key={`catalogue-element-${index}`}
-              onClick={() => handleItemSelect(element)}
-              style={{width: '100px', height: '35px', textDecoration: 'underline', cursor: 'pointer'}}>
-              <Typography sx={{fontSize: '25px',}} align='left'>
-                {element.name}
-              </Typography>
-            </div>)}
-        </div>
-      </Paper>
-    );
-}
+      </Typography>
+      <Typography align='left' variant='h5' onClick={handleReturnToGenus} sx={{marginLeft: '10px'}}>
+        {`Род${genus.current ? `: ${genus.current.name}, Вид:` : ''}`}
+      </Typography>
+      <Divider/>
+      <div style={{display: 'flex', flexDirection: 'column'}}>
+        {/*TODO: Сделать нормальный стиль компонента*/}
+        {displayData?.map((element, index) =>
+          <div
+            key={`catalogue-element-${index}`}
+            onClick={() => handleItemSelect(element)}
+            style={{width: '100px', height: '35px', textDecoration: 'underline', cursor: 'pointer'}}>
+            <Typography sx={{fontSize: '25px',}} align='left'>
+              {element.name}
+            </Typography>
+          </div>)}
+      </div>
+    </Paper>
+  );
+};
 
 export default Catalogue;

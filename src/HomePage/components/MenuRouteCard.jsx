@@ -1,7 +1,7 @@
-import React from 'react'
-import { Card, CardActionArea, CardContent, Typography } from '@mui/material'
-import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import { Card, CardActionArea, CardContent, Typography } from '@mui/material';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 // TODO: Добаботать стилизацию
 const MenuRouteCard = ({ cardTitle, cardIconPath, route }) => {
@@ -38,13 +38,13 @@ const MenuRouteCard = ({ cardTitle, cardIconPath, route }) => {
         </CardActionArea>
       </Link>
     </Card>
-  )
-}
+  );
+};
 
 MenuRouteCard.propTypes = {
   cardTitle: PropTypes.string,
   cardIconPath: PropTypes.string,
   route: PropTypes.string,
-}
+};
 
-export default MenuRouteCard
+export default MenuRouteCard;

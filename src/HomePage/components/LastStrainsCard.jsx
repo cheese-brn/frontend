@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -6,34 +6,34 @@ import {
   List,
   ListItemButton,
   Divider,
-} from '@mui/material'
-import { Link } from 'react-router-dom'
-import PropTypes from 'prop-types'
+} from '@mui/material';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 const lastStrainsCard = ({ strainsArray }) => {
   // Чё это было вообще
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const lastStrains = useMemo(() => {
-    return strainsArray.map((stain, index) => (
+    return strainsArray.map((strain, index) => (
       <>
         <Link
-          to={`/strain/${stain.id}`}
+          to={`/strain/${strain.id}`}
           style={{ color: 'black', textDecoration: 'none' }}
-          key={`stain-${index}`}
+          key={`strain-${index}`}
         >
           <ListItemButton>
             <div style={{ width: 'inherit' }}>
-              <Typography variant="h6">{stain.stainName}</Typography>
+              <Typography variant="h6">{strain.strainName}</Typography>
               <Typography variant="subtitle1">
-                {`${stain.author} - ${stain.lastEdit}`}
+                {`${strain.author} - ${strain.lastEdit}`}
               </Typography>
             </div>
           </ListItemButton>
         </Link>
         <Divider />
       </>
-    ))
-  }, [strainsArray])
+    ));
+  }, [strainsArray]);
 
   return (
     <Card
@@ -61,11 +61,11 @@ const lastStrainsCard = ({ strainsArray }) => {
         <List sx={{ padding: '0', overflowY: 'auto' }}>{lastStrains}</List>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
 lastStrainsCard.propTypes = {
   strainsArray: PropTypes.array,
-}
+};
 
-export default lastStrainsCard
+export default lastStrainsCard;

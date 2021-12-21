@@ -2,8 +2,8 @@ const menuCardsContents = {
   newStain: {
     title: 'Новый паспорт штамма',
     logo: '/assets/new-stain.svg',
-    id: 'new-stain',
-    route: '',
+    id: 'new-strain',
+    route: 'strain',
   },
   dictionaries: {
     title: 'Справочники',
@@ -29,6 +29,6 @@ const menuCardsContents = {
     id: 'research',
     route: '',
   },
-}
+};
 
 export default menuCardsContents;

@@ -14,11 +14,11 @@ const StrainsList = ({query}) => {
         setData(result);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   const handleItemSelect = (strainId) => {
     navigate(`/strain/${strainId}`);
-  }
+  };
 
   return(
     <Paper sx={{margin: '0 10px 0 10px', padding: '10px'}}>
@@ -27,16 +27,16 @@ const StrainsList = ({query}) => {
       <div style={{display: 'flex', flexDirection: 'column'}}>
         {data?.map((element, index) =>
           <div
-          key={`strains-list-element-${index}`}
-          onClick={() => handleItemSelect(element.id)}
-          style={{height: '30px', textDecoration: 'underline', cursor: 'pointer'}}>
-          <Typography sx={{fontSize: '25px',}} align='left'>
-            {element.name}
-          </Typography>
-        </div>)}
+            key={`strains-list-element-${index}`}
+            onClick={() => handleItemSelect(element.id)}
+            style={{height: '30px', textDecoration: 'underline', cursor: 'pointer'}}>
+            <Typography sx={{fontSize: '25px',}} align='left'>
+              {element.name}
+            </Typography>
+          </div>)}
       </div>
     </Paper>
-    );
-}
+  );
+};
 
 export default StrainsList;

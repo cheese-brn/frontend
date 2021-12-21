@@ -9,21 +9,21 @@ export const EDIT_ITEM = 'edit-item';
 export const SET_DATA = 'set-data';
 
 export const changePage = (targetPage) => {
-  return { type: CHANGE_PAGE, payload: targetPage }
-}
+  return { type: CHANGE_PAGE, payload: targetPage };
+};
 
 export const setData = (data) => {
-	return {type: SET_DATA, payload: data};
-}
+  return {type: SET_DATA, payload: data};
+};
 
 export const deleteItem = (id) => {
-	return {type: DELETE_ITEM, payload: id};
-}
+  return {type: DELETE_ITEM, payload: id};
+};
 
 export const editItem = (id) => {
-	return {type: EDIT_ITEM, payload: id};
-}
+  return {type: EDIT_ITEM, payload: id};
+};
 
 export const closeItem = () => {
-	return {type: CLOSE_ITEM};
-}
+  return {type: CLOSE_ITEM};
+};

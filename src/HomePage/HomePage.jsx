@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import menuCardsContents from './constants'
-import MenuRouteCard from './components/MenuRouteCard'
-import LastStrainsCard from './components/LastStrainsCard'
+import React, { useEffect, useState } from 'react';
+import menuCardsContents from './constants';
+import MenuRouteCard from './components/MenuRouteCard';
+import LastStrainsCard from './components/LastStrainsCard';
 
-import { Paper, Grid } from '@mui/material'
+import { Paper, Grid } from '@mui/material';
 // TODO: Сделать layout правильно
 const HomePage = () => {
-  const [menu, setMenu] = useState(null)
+  const [menu, setMenu] = useState(null);
   // Это нужно получить с сервера
   const lastStrains = [
     {
@@ -27,10 +27,10 @@ const HomePage = () => {
       author: 'Петров Пётр Петрович',
       id: 2,
     },
-  ]
+  ];
 
   useEffect(() => {
-    let cards = []
+    const cards = [];
     Object.keys(menuCardsContents).forEach((card) => {
       cards.push(
         <MenuRouteCard
@@ -40,10 +40,10 @@ const HomePage = () => {
           cardIconPath={menuCardsContents[card].logo}
           route={menuCardsContents[card].route}
         />,
-      )
-    })
-    setMenu(cards)
-  }, [])
+      );
+    });
+    setMenu(cards);
+  }, []);
 
   return (
     <Paper sx={{ margin: '0 10px 0 10px', padding: '10px' }}>
@@ -57,7 +57,7 @@ const HomePage = () => {
         </Grid>
       </Grid>
     </Paper>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;

@@ -10,13 +10,13 @@ const PropertyEditModal = ({propertyId}) => {
       .then(response => response.json())
       .then(property => {
         setModel(property);
-      })
+      });
 
     fetch(`'/subproperties/properties'/${propertyId}`)
       .then(response => response.json())
       .then(array => {
-        setModel({...model, subProps: array})
-      })
+        setModel({...model, subProps: array});
+      });
   }, []);
 
 
@@ -38,10 +38,10 @@ const PropertyEditModal = ({propertyId}) => {
       <p key={`type-${index}`}>{`${subProp.name}`}</p>
     )}
   </>);
-}
+};
 
 PropertyEditModal.propTypes = {
   propertyId: PropTypes.number,
-}
+};
 
 export default PropertyEditModal;

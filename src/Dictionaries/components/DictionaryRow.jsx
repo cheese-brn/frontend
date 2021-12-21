@@ -8,7 +8,7 @@ const smallButtonStyle = {
   minWidth: '30px',
   minHeight: '30px',
   marginLeft: '5px'
-}
+};
 
 // TODO: рассмотреть реализацию на css, добавить иконки
 const DictionaryRow = ({data, dispatch}) => {
@@ -44,6 +44,6 @@ const DictionaryRow = ({data, dispatch}) => {
       </div>}
     </div>
   );
-}
+};
 
 export default DictionaryRow;
