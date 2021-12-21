@@ -1,7 +1,9 @@
 import React, {useEffect, useReducer, useState} from "react";
-import {Paper, Typography, Button, Modal, Divider} from '@mui/material';
+import {Paper, Typography, Button, Modal, Divider, TextField} from '@mui/material';
 import DictionaryPage from "./components/DictionaryPage";
 import DictionaryRow from "./components/DictionaryRow";
+import PropertyEditModal from "./components/PropertyEditModal";
+
 // TODO: Может, есть способ сделать это адекватно?
 import {
 	OPEN_GENUSES,
@@ -14,7 +16,6 @@ import {
 	closeItem,
 	setData
 } from "./constants";
-import {OpenInNew} from "@mui/icons-material";
 
 const reducer = (state, action) => {
 	switch (action.type) {
@@ -108,7 +109,7 @@ const Dictionaries = () => {
 					<DictionaryPage displayName='Свойства' onClick={() => setDictionaryTarget(OPEN_PROPERTIES)}/>
 				</div>
 				{dictionaryName &&
-					<>
+					<div style={{width: '70%'}}>
 						{state.rows?.map((row, index) =>
 							<div key={`dictionary-row-${index}`}>
 								<DictionaryRow data={row} dispatch={dispatch}/>
@@ -125,7 +126,7 @@ const Dictionaries = () => {
 						>
 							{`Добавить ${dictionaryName}`}
 						</Button>
-					</>
+					</div>
 				}
 			</Paper>
 			{/*Явно есть способ сделать модалку лучше, с учётом разности назначений.*/}
@@ -142,6 +143,7 @@ const Dictionaries = () => {
 						<Typography variant='h5'>
 							{`Редактирование: ${dictionaryName} - ${state.rows[state.itemId - 1].name}`}
 						</Typography>
+
 						{dictionaryTarget === OPEN_PROPERTIES &&
 						<>
 							<Typography>
@@ -152,6 +154,7 @@ const Dictionaries = () => {
 							)}
 						</>
 						}
+
 						{dictionaryTarget === OPEN_GENUSES &&
 						<>
 							<Typography>
@@ -162,6 +165,7 @@ const Dictionaries = () => {
 							)}
 						</>
 						}
+
 						{dictionaryTarget === OPEN_TYPES &&
 						<>
 							<Typography>

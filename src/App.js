@@ -18,22 +18,18 @@ const reducer = (state, action) => {
 
 const App = () => {
   const [state, dispatch] = useReducer(reducer, {query: null})
-  // dispatch({action: 'test'});
-  // const testData = useRef('test');
   return (
     <div className="App" style={{backgroundColor: '#E3E3E3', minWidth: '1024px'}}>
       <AppBar position='static' sx={{backgroundColor: '#232323'}}>
         <Toolbar variant='dense'>
+          <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', alignContent: 'center'}}>
             <Typography variant='h5'>
-              CheeseApp
+              Штаммы микроорганизмов
             </Typography>
-          <IconButton>
-            <img src='/assets/help-icon.svg'/>
-          </IconButton>
-
-          <IconButton>
-            <img src='/assets/notifications-icon.svg'/>
-          </IconButton>
+            <IconButton>
+              <img src='/assets/notifications-icon.svg'/>
+            </IconButton>
+          </div>
         </Toolbar>
       </AppBar>
       <BrowserRouter>
