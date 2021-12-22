@@ -7,6 +7,7 @@ const StrainView = () => {
   const navigate = useNavigate();
   const {strainId} = useParams();
 
+  // TODO: Реализовать сохранение модели в LocalStorage, чтобы при перезагрузке не терялись данные
   const [model, setModel] = useState({
     "id":0,
     "rod":-1,
@@ -75,18 +76,18 @@ const StrainView = () => {
     marginBottom: '14px'
   };
 
+  // TODO: перейти с хэндлов на экшны
   const handleCommonFieldChange = (event) => {
     setModel({...model, [event.target.name]: event.target.value});
   };
 
-  // TODO: Возможно, есть способ сделать это лучше
   const handleSubPropChange = (propKey, subPropKey, newValue) => {
     const newModel = JSON.parse(JSON.stringify(model));
     newModel.factParams[propKey].subProps[subPropKey].value = newValue;
     setModel(newModel);
   };
 
-  const handleAddProperty = () => {
+  const handleAddSimpleProperty = () => {
     const newModel = JSON.parse(JSON.stringify(model));
 
     fetch(`/properties/${newPropId}`).then(response => response.json()).then(propertyData => {
@@ -95,6 +96,18 @@ const StrainView = () => {
       setModel(newModel);
     });
     setAddPropModalOpened(false);
+  }
+
+  const handleRemoveSimpleProperty = (propIndex) => {
+    const newModel = JSON.parse(JSON.stringify(model));
+    newModel.factParams.splice(propIndex, 1);
+    setModel(newModel);
+  }
+
+  const handleAddSubproperty = (propKey, value) => {
+    const newModel = JSON.parse(JSON.stringify(model));
+    newModel.factParams[propKey].subProps.push(value);
+    setModel(newModel);
   }
 
   // TODO: Разобраться с цветовой палитрой
@@ -206,7 +219,17 @@ const StrainView = () => {
                   </Button>
                 }
               </div>
-              {basicProps}
+              {model?.factParams?.map((prop, key) => {
+                return(<SimplePropertyInput
+                  prop={prop}
+                  propertyIndex={key}
+                  readOnly={isReadOnly}
+                  key={`basic-prop-${key}`}
+                  valueChangeCallback={handleSubPropChange}
+                  removePropCallback={handleRemoveSimpleProperty}
+                  addSubpropCallback={handleAddSubproperty}
+                />);
+              })}
             </Stack>
           </Grid>
           <Divider orientation="vertical" flexItem/>
@@ -293,7 +316,7 @@ const StrainView = () => {
             variant='contained'
             color='success'
             sx={{padding: '3px 8px 3px 8px'}}
-            onClick={handleAddProperty}
+            onClick={handleAddSimpleProperty}
             >
             Добавить
           </Button>
