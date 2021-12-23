@@ -8,6 +8,7 @@ const StrainView = () => {
   const {strainId} = useParams();
 
   // TODO: Реализовать сохранение модели в LocalStorage, чтобы при перезагрузке не терялись данные
+  // TODO: Быстрое редактирование текста приводит к тормозам. Нужно как-то буферизировать модель локально или типо того
   const [model, setModel] = useState({
     "id": null,
     "rodId":-1,
@@ -44,14 +45,16 @@ const StrainView = () => {
     if (!strainId) {
       setIsReadOnly(false);
     } else {
-      fetch(`/strains/${strainId}`).then(response => response.json()).then(res => setModel(res));
+      fetch(`/strains/${strainId}`).then(response => response.json()).then(res => {
+        setModel(res);
+        modelCopy.current = res;
+      });
     }
   }, []);
 
   useEffect(() => {
     if(model.rodId !== -1) {
       fetch(`/vids/rods/${model.rodId}`).then(response => response.json()).then(res => {
-        debugger
         setTypesList(res);
       });
     }
@@ -104,7 +107,7 @@ const StrainView = () => {
         <Grid container spacing='5'>
           <Grid container sm='6' md='7' lg='8' sx={{paddingRight: '15px', paddingLeft:'20px', }}>
             <Stack orientation='vertical' width={'100%'}>
-              <Typography variant='h4'>
+              <Typography variant='h4' sx={{margin: '15px', textAlign: 'left'}}>
                   Паспорт штамма
               </Typography>
               <FormControl>
