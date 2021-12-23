@@ -10,8 +10,8 @@ const StrainView = () => {
   // TODO: Реализовать сохранение модели в LocalStorage, чтобы при перезагрузке не терялись данные
   const [model, setModel] = useState({
     "id": null,
-    "rod":-1,
-    "vid":-1,
+    "rodId":-1,
+    "vidId":-1,
     "annotation":"",
     "exemplar":"",
     "modification":"",
@@ -25,7 +25,7 @@ const StrainView = () => {
   const [addPropModalOpened, setAddPropModalOpened] = useState(false);
 
   const [newPropId, setNewPropId] = useState(0);
-  const [basicProps, setBasicProps] = useState([]);
+  // const [basicProps, setBasicProps] = useState([]);
   const [genusesList, setGenusesList] = useState(null);
   const [typesList, setTypesList] = useState(null);
   const [propertiesList, setPropertiesList] = useState(null);
@@ -49,27 +49,13 @@ const StrainView = () => {
   }, []);
 
   useEffect(() => {
-    if(model.rod !== -1) {
-      fetch(`/vids/rods/${model.rod}`).then(response => response.json()).then(res => {
+    if(model.rodId !== -1) {
+      fetch(`/vids/rods/${model.rodId}`).then(response => response.json()).then(res => {
+        debugger
         setTypesList(res);
       });
     }
-  }, [model.rod]);
-
-  // TODO: правильнее перенести это в рендер
-  useEffect(() => {
-    const props = model?.factParams?.map((prop, key) => {
-      return(<SimplePropertyInput
-        prop={prop}
-        propertyIndex={key}
-        readOnly={isReadOnly}
-        key={`basic-prop-${key}`}
-        valueChangeCallback={handleSubPropChange}
-      />);
-    });
-    setBasicProps(props);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [model?.factParams, isReadOnly]);
+  }, [model.rodId]);
 
   // TODO: Сделать нормально
   const costilStyle = {
@@ -111,7 +97,7 @@ const StrainView = () => {
   }
   // TODO: Разобраться с цветовой палитрой
   // TODO: Разобраться с внешним видом полей, чтобы точно было всё как надо
-
+  // TODO: Оптимизация вида readOnly
   return(
     <>
       <Paper sx={{margin: '0 10px 0 10px', padding: '10px'}}>
@@ -127,8 +113,8 @@ const StrainView = () => {
                   sx={{...costilStyle, textAlign: 'left'}}
                   labelId='stain-view__genus-select-label'
                   id='stain-view__genus-select'
-                  value={model.rod}
-                  name='rod'
+                  value={model.rodId}
+                  name='rodId'
                   onChange={handleCommonFieldChange}
                   inputProps={{readOnly: isReadOnly}}
 
@@ -145,10 +131,10 @@ const StrainView = () => {
                   sx={{...costilStyle, textAlign: 'left'}}
                   labelId='stain-view__type-select-label'
                   id='stain-view__type-select'
-                  value={model.vid}
-                  name='vid'
+                  value={model.vidId}
+                  name='vidId'
                   onChange={handleCommonFieldChange}
-                  inputProps={{readOnly: isReadOnly || model.rod === -1}}
+                  inputProps={{readOnly: isReadOnly || model.rodId === -1}}
                 >
                   {typesList?.map(type =>
                     <MenuItem value={type.id} key={type.id}>{type.name}</MenuItem>
