@@ -9,7 +9,7 @@ const StrainView = () => {
 
   // TODO: Реализовать сохранение модели в LocalStorage, чтобы при перезагрузке не терялись данные
   const [model, setModel] = useState({
-    "id":0,
+    "id": null,
     "rod":-1,
     "vid":-1,
     "annotation":"",
@@ -109,9 +109,9 @@ const StrainView = () => {
     newModel.factParams[propKey].subProps.push(value);
     setModel(newModel);
   }
-
   // TODO: Разобраться с цветовой палитрой
   // TODO: Разобраться с внешним видом полей, чтобы точно было всё как надо
+
   return(
     <>
       <Paper sx={{margin: '0 10px 0 10px', padding: '10px'}}>
@@ -124,7 +124,7 @@ const StrainView = () => {
               <FormControl>
                 <InputLabel id='stain-view__genus-select-label'>Род</InputLabel>
                 <Select
-                  sx={costilStyle}
+                  sx={{...costilStyle, textAlign: 'left'}}
                   labelId='stain-view__genus-select-label'
                   id='stain-view__genus-select'
                   value={model.rod}
@@ -142,7 +142,7 @@ const StrainView = () => {
               <FormControl>
                 <InputLabel id='stain-view__type-select-label'>Вид</InputLabel>
                 <Select
-                  sx={costilStyle}
+                  sx={{...costilStyle, textAlign: 'left'}}
                   labelId='stain-view__type-select-label'
                   id='stain-view__type-select'
                   value={model.vid}
@@ -252,41 +252,45 @@ const StrainView = () => {
                   Редактировать
                 </Button>
               }
-              {!isReadOnly && <>
+              {!isReadOnly &&
                 <Button
                   variant='contained'
                   color='success'
                   sx={{marginTop: '20px'}}
                   onClick={() => {
                     setIsReadOnly(true);
-                    // TODO: отправка модели на бэк
-
+                    fetch('/strain/send', {
+                      method: 'POST', body: JSON.stringify(model)
+                    });
                   }}>
                     Сохранить изменения
-                </Button>
-                <Button
-                  variant='contained'
-                  color='warning'
-                  sx={{marginTop: '20px'}}
-                  onClick={() => {
-                    setIsReadOnly(true);
-                    setModel({...modelCopy.current});
-                  }}>
-                    Отменить изменения
-                </Button>
-              </>}
+                </Button>}
+              {!isReadOnly && model.id &&
               <Button
-                variant='outlined'
-                color='error'
+                variant='contained'
+                color='warning'
                 sx={{marginTop: '20px'}}
                 onClick={() => {
-                  // TODO: Модалка подтверждения удаления
-                  fetch(`/strain/delete/${model.id}`, {method: 'POST', headers: {'Content-Type': 'application/json'}});
-                  navigate(-1);
-                }}
-              >
-                  Удалить штамм
+                  setIsReadOnly(true);
+                  setModel(modelCopy.current);
+                }}>
+                Отменить изменения
               </Button>
+              }
+              {isReadOnly &&
+                <Button
+                  variant='outlined'
+                  color='error'
+                  sx={{marginTop: '20px'}}
+                  onClick={() => {
+                    // TODO: Модалка подтверждения удаления
+                    fetch(`/strain/delete/${model.id}`, {method: 'POST', headers: {'Content-Type': 'application/json'}});
+                    navigate(-1);
+                  }}
+                >
+                  Удалить штамм
+                </Button>
+              }
             </Stack>
 
           </Grid>
@@ -308,7 +312,9 @@ const StrainView = () => {
             name='vid'
             onChange={event => setNewPropId(event.target.value)}
           >
-            {propertiesList?.map(property =>
+            {propertiesList
+              ?.filter(prop => !Boolean(model.factParams.find(fp => fp.id === prop.id)))
+              .map(property =>
               <MenuItem value={property.id} key={property.id}>{property.name}</MenuItem>
             )}
           </Select>

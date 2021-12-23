@@ -9,6 +9,7 @@ const SimplePropertyInput = props => {
 
   const [availableSubprops, setAvailableSubprops] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [hovered, setHovered] = useState(false)
 
   useEffect(() => {
     fetch(`/subproperties/properties/${prop.id}`)
@@ -29,48 +30,62 @@ const SimplePropertyInput = props => {
     marginLeft: '5px'
   };
   return(
-    <div style={{border: '1px solid grey', borderRadius: '5px', alignItems: 'left', marginBottom: '15px', padding: '10px'}}>
-      <div style={{ display: 'flex',}}>
+    <div style={{border: '1px solid grey', borderRadius: '5px', alignItems: 'left', marginBottom: '15px', padding: '10px'}}
+      onMouseEnter={() => setHovered(true)}
+         onMouseLeave={() => setHovered(false)}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between'}}>
         <Typography variant='p' sx={{fontSize: '18px'}}>{name}</Typography>
-        {!readOnly && availableSubprops !== null &&
+
         <div>
+          {!readOnly && availableSubprops !== null && hovered &&
+          <div>
+            <Button
+              id={`simple-property-input__${propertyIndex}-add-subprop-button`}
+              aria-controls={`simple-property-input__${propertyIndex}-add-subprop-menu`}
+              aria-haspopup='true'
+              aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
+              variant='contained'
+              color='success'
+              sx={smallButtonStyle}
+              onClick={(event) => setAnchorEl(event.currentTarget)}
+            >
+              Добавить подсвойство
+            </Button>
+            <Menu
+              id={`simple-property-input__${propertyIndex}-add-subprop-menu`}
+              aria-labelledby={`simple-property-input__${propertyIndex}-add-subprop-button`}
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={() => setAnchorEl(false)}
+              MenuListProps={{
+                'aria-labelledby': `simple-property-input__${propertyIndex}-add-subprop-button`
+              }}
+            >
+              {availableSubprops?.map((subprop, key) =>
+                <MenuItem
+                  key={`prop-${propertyIndex}-subprop-${key}`}
+                  onClick={() => {
+                    setAnchorEl(false);
+                    addSubpropCallback(propertyIndex, subprop);
+                  }}
+                >
+                  {subprop.name}
+                </MenuItem>
+              )}
+            </Menu>
+          </div>
+          }
+          {!readOnly && hovered &&
           <Button
-            id={`simple-property-input__${propertyIndex}-add-subprop-button`}
-            aria-controls={`simple-property-input__${propertyIndex}-add-subprop-menu`}
-            aria-haspopup='true'
-            aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
             variant='contained'
-            color='success'
+            color='error'
             sx={smallButtonStyle}
-            onClick={(event) => setAnchorEl(event.currentTarget)}
-          >
-            Добавить подсвойство
+            onClick={() => removePropCallback(propertyIndex)}>
+            Удалить свойство
           </Button>
-          <Menu
-            id={`simple-property-input__${propertyIndex}-add-subprop-menu`}
-            aria-labelledby={`simple-property-input__${propertyIndex}-add-subprop-button`}
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={() => setAnchorEl(false)}
-            MenuListProps={{
-              'aria-labelledby': `simple-property-input__${propertyIndex}-add-subprop-button`
-            }}
-          >
-            {availableSubprops?.map((subprop, key) =>
-              <MenuItem
-                key={`prop-${propertyIndex}-subprop-${key}`}
-                onClick={() => {
-                  setAnchorEl(false);
-                  addSubpropCallback(propertyIndex, subprop);
-                }}
-              >
-                {subprop.name}
-              </MenuItem>
-            )}
-          </Menu>
+          }
         </div>
-        }
-          {!readOnly && <Button variant='contained' color='error' sx={smallButtonStyle} onClick={() => removePropCallback(propertyIndex)}>Удалить свойство</Button>}
       </div>
       {subProps.map((subProp, subPropertyIndex)=>
         <div key={`prop-${propertyIndex}-subprop-${subPropertyIndex}`} style={{textAlign: 'left', display: 'flex', flexDirection: 'column'}}>
