@@ -15,12 +15,15 @@ const SimplePropertyInput = props => {
     fetch(`/subproperties/properties/${prop.id}`)
       .then(response => response.json())
       .then(subprops => {
+        // мб здесь нужно немного не так
         if (subprops.length !== 1) {
           setAvailableSubprops(subprops);
-        } else {
+        }
+        if (subProps.length === 0) {
           addSubpropCallback(propertyIndex, subprops[0]);
         }
-      })
+      });
+
   }, [])
 
   const smallButtonStyle = {
@@ -37,7 +40,7 @@ const SimplePropertyInput = props => {
       <div style={{ display: 'flex', justifyContent: 'space-between'}}>
         <Typography variant='p' sx={{fontSize: '18px'}}>{name}</Typography>
 
-        <div>
+        <div style={{display: 'flex'}}>
           {!readOnly && availableSubprops !== null && hovered &&
           <div>
             <Button
