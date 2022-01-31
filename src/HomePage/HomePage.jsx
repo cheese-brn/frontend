@@ -48,9 +48,9 @@ const HomePage = () => {
   return (
     <Paper sx={{ margin: '0 10px 0 10px', padding: '10px' }}>
       <Grid container spacing="2">
-        <Grid item sm="6" md="5" lg="4">
-          <LastStrainsCard strainsArray={lastStrains} />
-        </Grid>
+        {/*<Grid item sm="6" md="5" lg="4">*/}
+        {/*  <LastStrainsCard strainsArray={lastStrains} />*/}
+        {/*</Grid>*/}
 
         <Grid container justifyContent="left" spacing="1" sm="6" md="7" lg="8">
           {menu}

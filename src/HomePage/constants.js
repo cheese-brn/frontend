@@ -29,6 +29,12 @@ const menuCardsContents = {
     id: 'research',
     route: '',
   },
+  utils: {
+    title: 'Служебное',
+    logo: '/assets/utils-icon.png',
+    id: 'utils',
+    route: 'utils'
+  }
 };
 
 export default menuCardsContents;
