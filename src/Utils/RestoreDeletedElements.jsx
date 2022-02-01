@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useMemo} from "react";
-import {Paper, Typography, Grid, Stack, Divider} from "@mui/material";
+import {Paper, Typography, Stack, Divider} from "@mui/material";
 import {entityTypes} from "./constants";
 import EntityElement from "./components/EntityElement";
 import DeletedElement from "./components/DeletedElement";
@@ -7,6 +7,7 @@ import DeletedElement from "./components/DeletedElement";
 const RestoreDeletedElements = () => {
   const [deletedElems, setDeletedElems] = useState(null);
   const [selectedEntity, setSelectedEntity] = useState(null);
+  // TODO: сделать нормально
   const [costilUpdater, setCostilUpdater] = useState(0);
 
   // TODO: Выделение цветом текущего элемента
@@ -36,24 +37,40 @@ const RestoreDeletedElements = () => {
       <Typography variant='h5' align='left'>
         Восстановление удалённых элементов
       </Typography>
-      <Grid container spacing={2}>
-        <Grid item>
-          <Stack>
-            {entityElems}
-          </Stack>
-        </Grid>
-        <Divider orientation='vertical'/>
-        <Grid item>
-          {!deletedElems &&
-            <Typography style={{fontSize: '20px', color: 'grey'}}>{'Выберите тип элемента'}</Typography>
-          }
-          {deletedElems &&
-            deletedElems.length === 0 &&
-            <Typography style={{fontSize: '20px'}}>{'Нет элементов данного типа'}</Typography>
-          }
-          {deletedElems && deletedElems.length > 0}
-        </Grid>
-      </Grid>
+      <div style={{display: 'flex', flexDirection: 'row'}}>
+        <Stack style={{marginRight: '10px'}}>
+          {entityElems}
+        </Stack>
+        <Divider orientation='vertical' style={{marginRight: '10px'}} flexItem/>
+        {!deletedElems &&
+        <Typography style={{fontSize: '20px', color: 'grey'}}>{'Выберите тип элемента'}</Typography>
+        }
+        {deletedElems &&
+        deletedElems.length === 0 &&
+        <Typography style={{fontSize: '20px'}}>{'Нет элементов данного типа'}</Typography>
+        }
+        {<Stack style={{width: '500px'}}>
+          {deletedElems}
+        </Stack>}
+      </div>
+      {/*<Grid container spacing={2} xs={4}>*/}
+      {/*  <Grid item>*/}
+      {/*    <Stack>*/}
+      {/*      {entityElems}*/}
+      {/*    </Stack>*/}
+      {/*  </Grid>*/}
+      {/*  <Divider orientation='vertical'/>*/}
+      {/*  <Grid item xs={8}>*/}
+      {/*    {!deletedElems &&*/}
+      {/*      <Typography style={{fontSize: '20px', color: 'grey'}}>{'Выберите тип элемента'}</Typography>*/}
+      {/*    }*/}
+      {/*    {deletedElems &&*/}
+      {/*      deletedElems.length === 0 &&*/}
+      {/*      <Typography style={{fontSize: '20px'}}>{'Нет элементов данного типа'}</Typography>*/}
+      {/*    }*/}
+      {/*    {deletedElems}*/}
+      {/*  </Grid>*/}
+      {/*</Grid>*/}
     </Paper>
   )
 };
