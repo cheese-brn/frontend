@@ -8,8 +8,9 @@ const StrainView = () => {
   const {strainId} = useParams();
 
   // TODO: Реализовать сохранение модели в LocalStorage, чтобы при перезагрузке не терялись данные
+  // TODO: Быстрое редактирование текста приводит к тормозам. Нужно как-то буферизировать модель локально или типо того
   const [model, setModel] = useState({
-    "id":0,
+    "id": null,
     "rodId":-1,
     "vidId":-1,
     "annotation":"",
@@ -25,7 +26,7 @@ const StrainView = () => {
   const [addPropModalOpened, setAddPropModalOpened] = useState(false);
 
   const [newPropId, setNewPropId] = useState(0);
-  const [basicProps, setBasicProps] = useState([]);
+  // const [basicProps, setBasicProps] = useState([]);
   const [genusesList, setGenusesList] = useState(null);
   const [typesList, setTypesList] = useState(null);
   const [propertiesList, setPropertiesList] = useState(null);
@@ -44,7 +45,10 @@ const StrainView = () => {
     if (!strainId) {
       setIsReadOnly(false);
     } else {
-      fetch(`/strains/${strainId}`).then(response => response.json()).then(res => setModel(res));
+      fetch(`/strains/${strainId}`).then(response => response.json()).then(res => {
+        setModel(res);
+        modelCopy.current = res;
+      });
     }
   }, []);
 
@@ -55,22 +59,6 @@ const StrainView = () => {
       });
     }
   }, [model.rodId]);
-
-  // TODO: правильнее перенести это в рендер
-  useEffect(() => {
-
-    const props = model?.factParams?.map((prop, key) => {
-      return(<SimplePropertyInput
-        prop={prop}
-        propertyIndex={key}
-        readOnly={isReadOnly}
-        key={`basic-prop-${key}`}
-        valueChangeCallback={handleSubPropChange}
-      />);
-    });
-    setBasicProps(props);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [model?.factParams, isReadOnly]);
 
   // TODO: Сделать нормально
   const costilStyle = {
@@ -113,19 +101,20 @@ const StrainView = () => {
 
   // TODO: Разобраться с цветовой палитрой
   // TODO: Разобраться с внешним видом полей, чтобы точно было всё как надо
+  // TODO: Оптимизация вида readOnly
   return(
     <>
       <Paper sx={{margin: '0 10px 0 10px', padding: '10px'}}>
         <Grid container spacing='5'>
           <Grid container sm='6' md='7' lg='8' sx={{paddingRight: '15px', paddingLeft:'20px', }}>
             <Stack orientation='vertical' width={'100%'}>
-              <Typography variant='h4'>
+              <Typography variant='h4' sx={{margin: '15px', textAlign: 'left'}}>
                   Паспорт штамма
               </Typography>
               <FormControl>
                 <InputLabel id='stain-view__genus-select-label'>Род</InputLabel>
                 <Select
-                  sx={costilStyle}
+                  sx={{...costilStyle, textAlign: 'left'}}
                   labelId='stain-view__genus-select-label'
                   id='stain-view__genus-select'
                   value={model.rodId}
@@ -143,7 +132,7 @@ const StrainView = () => {
               <FormControl>
                 <InputLabel id='stain-view__type-select-label'>Вид</InputLabel>
                 <Select
-                  sx={costilStyle}
+                  sx={{...costilStyle, textAlign: 'left'}}
                   labelId='stain-view__type-select-label'
                   id='stain-view__type-select'
                   value={model.vidId}
@@ -253,41 +242,45 @@ const StrainView = () => {
                   Редактировать
                 </Button>
               }
-              {!isReadOnly && <>
+              {!isReadOnly &&
                 <Button
                   variant='contained'
                   color='success'
                   sx={{marginTop: '20px'}}
                   onClick={() => {
                     setIsReadOnly(true);
-                    // TODO: отправка модели на бэк
-
+                    fetch('/strain/send', {
+                      method: 'POST', body: JSON.stringify(model)
+                    });
                   }}>
                     Сохранить изменения
-                </Button>
-                <Button
-                  variant='contained'
-                  color='warning'
-                  sx={{marginTop: '20px'}}
-                  onClick={() => {
-                    setIsReadOnly(true);
-                    setModel({...modelCopy.current});
-                  }}>
-                    Отменить изменения
-                </Button>
-              </>}
+                </Button>}
+              {!isReadOnly && model.id &&
               <Button
-                variant='outlined'
-                color='error'
+                variant='contained'
+                color='warning'
                 sx={{marginTop: '20px'}}
                 onClick={() => {
-                  // TODO: Модалка подтверждения удаления
-                  fetch(`/strain/delete/${model.id}`, {method: 'POST', headers: {'Content-Type': 'application/json'}})
-                  navigate('/');
-                }}
-              >
-                  Удалить штамм
+                  setIsReadOnly(true);
+                  setModel(modelCopy.current);
+                }}>
+                Отменить изменения
               </Button>
+              }
+              {isReadOnly &&
+                <Button
+                  variant='outlined'
+                  color='error'
+                  sx={{marginTop: '20px'}}
+                  onClick={() => {
+                    // TODO: Модалка подтверждения удаления
+                    fetch(`/strain/delete/${model.id}`, {method: 'POST', headers: {'Content-Type': 'application/json'}})
+                    navigate('/');
+                  }}
+                >
+                  Удалить штамм
+                </Button>
+              }
             </Stack>
 
           </Grid>
@@ -309,7 +302,9 @@ const StrainView = () => {
             name='vid'
             onChange={event => setNewPropId(event.target.value)}
           >
-            {propertiesList?.map(property =>
+            {propertiesList
+              ?.filter(prop => !Boolean(model.factParams.find(fp => fp.id === prop.id)))
+              .map(property =>
               <MenuItem value={property.id} key={property.id}>{property.name}</MenuItem>
             )}
           </Select>
