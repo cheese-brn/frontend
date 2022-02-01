@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef, useMemo} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import {useParams, useNavigate} from "react-router-dom";
 import {Paper, Typography, Grid, TextField, Divider, Stack, Button, Select, MenuItem, FormControl, InputLabel, Modal} from "@mui/material";
 import SimplePropertyInput from "./components/SimplePropertyInput";
@@ -10,8 +10,8 @@ const StrainView = () => {
   // TODO: Реализовать сохранение модели в LocalStorage, чтобы при перезагрузке не терялись данные
   const [model, setModel] = useState({
     "id":0,
-    "rod":-1,
-    "vid":-1,
+    "rodId":-1,
+    "vidId":-1,
     "annotation":"",
     "exemplar":"",
     "modification":"",
@@ -49,15 +49,16 @@ const StrainView = () => {
   }, []);
 
   useEffect(() => {
-    if(model.rod !== -1) {
-      fetch(`/vids/rods/${model.rod}`).then(response => response.json()).then(res => {
+    if(model.rodId !== -1) {
+      fetch(`/vids/rods/${model.rodId}`).then(response => response.json()).then(res => {
         setTypesList(res);
       });
     }
-  }, [model.rod]);
+  }, [model.rodId]);
 
   // TODO: правильнее перенести это в рендер
   useEffect(() => {
+
     const props = model?.factParams?.map((prop, key) => {
       return(<SimplePropertyInput
         prop={prop}
@@ -127,8 +128,8 @@ const StrainView = () => {
                   sx={costilStyle}
                   labelId='stain-view__genus-select-label'
                   id='stain-view__genus-select'
-                  value={model.rod}
-                  name='rod'
+                  value={model.rodId}
+                  name='rodId'
                   onChange={handleCommonFieldChange}
                   inputProps={{readOnly: isReadOnly}}
 
@@ -145,10 +146,10 @@ const StrainView = () => {
                   sx={costilStyle}
                   labelId='stain-view__type-select-label'
                   id='stain-view__type-select'
-                  value={model.vid}
-                  name='vid'
+                  value={model.vidId}
+                  name='vidId'
                   onChange={handleCommonFieldChange}
-                  inputProps={{readOnly: isReadOnly || model.rod === -1}}
+                  inputProps={{readOnly: isReadOnly || model.rodId === -1}}
                 >
                   {typesList?.map(type =>
                     <MenuItem value={type.id} key={type.id}>{type.name}</MenuItem>
@@ -281,8 +282,8 @@ const StrainView = () => {
                 sx={{marginTop: '20px'}}
                 onClick={() => {
                   // TODO: Модалка подтверждения удаления
-                  fetch(`/strain/delete/${model.id}`, {method: 'POST', headers: {'Content-Type': 'application/json'}});
-                  navigate(-1);
+                  fetch(`/strain/delete/${model.id}`, {method: 'POST', headers: {'Content-Type': 'application/json'}})
+                  navigate('/');
                 }}
               >
                   Удалить штамм
