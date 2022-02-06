@@ -30,7 +30,7 @@ const menuCardsContents = {
     route: '',
   },
   utils: {
-    title: 'Служебное',
+    title: 'Сервисы',
     logo: '/assets/utils-icon.png',
     id: 'utils',
     route: 'utils'
