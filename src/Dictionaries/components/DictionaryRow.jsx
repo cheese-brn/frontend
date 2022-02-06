@@ -1,47 +1,35 @@
 /* eslint react/prop-types: 0 */
-import React, {useState} from 'react';
-import {Typography, Button} from "@mui/material";
-import {deleteItem, editItem} from "../constants";
+import React from 'react';
+import { Typography, IconButton } from "@mui/material";
+import { deleteItem, editItem } from "../constants";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
-const smallButtonStyle = {
-  padding: '0 4px 0 4px',
-  minWidth: '30px',
-  minHeight: '30px',
-  marginLeft: '5px'
-};
+import styles from '../styles.css'
 
 // TODO: рассмотреть реализацию на css, добавить иконки
 const DictionaryRow = ({data, dispatch}) => {
-  const [hovered, setHovered] = useState(false);
-
   return(
     <div
-      style={{display: 'flex', justifyContent: 'space-between'}}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      className='dictionary-row'
     >
       <Typography sx={{fontSize: '22px'}}>
         {data.name}
       </Typography>
-      {hovered &&
       <div className='dictionary-row-buttons' >
-        <Button
-          variant='contained'
-          color='success'
-          sx={smallButtonStyle}
+        <IconButton
+          className='dictionary-button-edit'
           onClick={() => dispatch(editItem(data.id))}
         >
-          изменить
-        </Button>
-        <Button
-          variant='contained'
-          color='error'
-          sx={smallButtonStyle}
-          onClick={() => dispatch(deleteItem(data.id))}
+          <EditIcon/>
+        </IconButton>
+        <IconButton
+          className='dictionary-button-delete'
+          // onClick={() => dispatch(deleteItem(data.id))}
         >
-          удалить
-        </Button>
-      </div>}
+          <DeleteOutlineIcon/>
+        </IconButton>
+      </div>
     </div>
   );
 };

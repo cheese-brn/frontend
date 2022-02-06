@@ -23,7 +23,3 @@ export const deleteItem = (id) => {
 export const editItem = (id) => {
   return {type: EDIT_ITEM, payload: id};
 };
-
-export const closeItem = () => {
-  return {type: CLOSE_ITEM};
-};
