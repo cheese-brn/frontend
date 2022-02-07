@@ -42,7 +42,7 @@ const Catalogue = ({appDispatch}) => {
   };
   
   return(
-    <Paper sx={{margin: '0 10px 0 10px', padding: '20px'}}>
+    <Paper sx={{margin: '0 10px 0 10px', padding: '20px', height: '85%'}}>
       <Typography
         variant='h4'
         align='left'
@@ -53,7 +53,7 @@ const Catalogue = ({appDispatch}) => {
         {`Род${genus.current ? `: ${genus.current.name}, Вид:` : ''}`}
       </Typography>
       <Divider/>
-      <div style={{display: 'flex', flexDirection: 'column'}}>
+      <div style={{height: '80%' ,display: 'flex', flexDirection: 'column', overflowY: 'auto'}}>
         {/*TODO: Сделать нормальный стиль компонента*/}
         {displayData?.map((element, index) =>
           <div
