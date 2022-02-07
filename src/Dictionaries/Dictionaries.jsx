@@ -155,7 +155,6 @@ const Dictionaries = () => {
       });
 
   const handleChangeSubmit = () => {
-    debugger
     switch (dictionaryTarget) {
     case OPEN_GENUSES:
       fetch('/rod/send', {
