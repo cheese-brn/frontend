@@ -1,5 +1,17 @@
 import React, {useEffect, useReducer, useState} from "react";
-import {Paper, Typography, Button, Modal, Divider, TextField, ToggleButtonGroup, ToggleButton} from '@mui/material';
+import {
+  Paper,
+  Typography,
+  Button, Modal,
+  Divider,
+  TextField,
+  ToggleButtonGroup,
+  ToggleButton,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel
+} from '@mui/material';
 import DictionaryRow from "./components/DictionaryRow";
 import {Link} from 'react-router-dom'
 
@@ -135,7 +147,6 @@ const Dictionaries = () => {
         fetch(`/strains/vids/${typeId}`)
           .then(response => response.json())
           .then(strainsArray => {
-
             type['children'] = strainsArray;
             type['elementType'] = OPEN_TYPES;
             type['newName'] = type.name;
@@ -162,38 +173,96 @@ const Dictionaries = () => {
           </>);
       });
 
-  const handleSubmit = () => {
+  const handleChangeSubmit = () => {
     switch (dictionaryTarget) {
     case OPEN_GENUSES:
       fetch('/rod/send', {
         method: 'POST',
-        body: {rodId: state.itemId, name: model.elementNewName}
+        body: JSON.stringify({rodId: state.itemId, name: model.elementNewName})
       })
       break;
     case OPEN_TYPES:
       fetch('/vid/send', {
         method: 'POST',
-        body: {vidId: state.itemId, name: model.elementNewName, rodId: model.rodId}
+        body: JSON.stringify({vidId: state.itemId, name: model.elementNewName, rodId: model.rodId})
       })
       break;
     case OPEN_PROPERTIES:
       fetch('/property/send', {
         method: 'POST',
-        body: {
+        body: JSON.stringify({
           id: model.itemId,
           name: model.newName,
           description: model.description,
           isFunc: model.isFunc,
           subProps: model.children
-        }
+        })
       })
       break;
     }
     setModel(null)
   }
 
+  const prepareNewElemModal = () => {
+    switch (dictionaryTarget) {
+    case OPEN_GENUSES:
+      setModel({rodId: 0, name: ''});
+      setOpenNewElemModal(true);
+      break;
+    case OPEN_TYPES:
+      fetch('/rods')
+        .then(response => response.json())
+        .then(genusList => {
+          setModel({rodId: genusList[0].id, vidId: null, name: '', genusList});
+          setOpenNewElemModal(true);
+        })
+      break;
+    case OPEN_PROPERTIES:
+      setModel({
+        id: 0,
+        name: '',
+        description: '',
+        isFunc: false,
+        subProps: [],
+      })
+      setOpenNewElemModal(true);
+      break;
+    }
+  }
+
+  const handleNewElemSubmit = () => {
+    model;
+    debugger
+    switch (dictionaryTarget) {
+    case OPEN_GENUSES:
+      fetch('/rod/send', {
+        method: 'POST',
+        body: JSON.stringify(model),
+      })
+      break;
+    case OPEN_TYPES:
+      fetch('/vid/send',{
+        method: 'POST',
+        body: JSON.stringify({
+          vidId: model.vidId,
+          rodId: model.rodId,
+          name: model.name,
+        })
+      })
+      break;
+    case OPEN_PROPERTIES:
+      fetch('/property/send',{
+        method: 'POST',
+        body: JSON.stringify(model),
+      });
+      break;
+    }
+    setModel(null);
+    setNewElementModel(false);
+  }
   // TODO: Протестировать работу с большим количеством строк, если плохо - виртуализировать
   // TODO: bug - нельзя открыть один и тот же элемент 2 раза подряд
+  // TODO: Разбить модалки по компонентам
   return(
     <>
       <Paper sx={{margin: '0 0 0 10px', padding: '20px'}}>
@@ -239,9 +308,7 @@ const Dictionaries = () => {
 					    variant='contained'
 					    color='success'
               sx={{marginTop: '10px'}}
-					    onClick={() => {
-					      setOpenNewElemModal(true)
-					    }}
+					    onClick={prepareNewElemModal}
 					  >
 					    {`Добавить ${getDictionaryByType(dictionaryTarget)}`}
 					  </Button>
@@ -334,7 +401,7 @@ const Dictionaries = () => {
               style={{marginTop: '10px', marginRight: '10px'}}
               variant='outlined'
               color='success'
-              onClick={handleSubmit}
+              onClick={handleChangeSubmit}
             >
               Сохранить изменения
             </Button>
@@ -363,26 +430,37 @@ const Dictionaries = () => {
         onClose={() => setOpenNewElemModal(false)}
         sx={{paddingTop: '200px'}}
       >
-        <Paper sx={{width: '600px', maxHeight: '450px', margin: 'auto', padding: '20px'}}>
+        {openNewElemModal &&
+          <Paper sx={{width: '600px', maxHeight: '450px', margin: 'auto', padding: '20px'}}>
           <Typography variant='h5'>
             {`Создать элемент: ${getDictionaryByType(dictionaryTarget)}`}
           </Typography>
           <TextField
             label='Название элемента'
-            style={{marginTop: '10px', marginBottom: '10px'}}
+            style={{marginTop: '10px', width: '100%'}}
+            value={model.name}
+            onChange={(event) => setModel({...model, name: event.target.value})}
           />
-          {dictionaryTarget === OPEN_PROPERTIES &&
-          <p>a</p>
-          }
-          {dictionaryTarget === OPEN_GENUSES &&
-          <p>б</p>
-          }
           {dictionaryTarget === OPEN_TYPES &&
-          <p>в</p>
+          <FormControl sx={{marginTop: '10px', marginBottom: '10px', width: '100%'}}>
+            <InputLabel id='dictionaries__new-element-genus-field-label'>Относится к роду</InputLabel>
+            <Select
+              label='Осносится к роду:'
+              id='dictionaries__new-element-genus-field'
+              labelId='dictionaries__new-element-genus-field-label'
+              value={model?.rodId}
+              onChange={event => setModel({...model, rodId: event.target.value})}
+            >
+              {model?.genusList?.map((genus, key) =>
+                <MenuItem value={genus} key={key}>{genus.name}</MenuItem>
+              )}
+            </Select>
+          </FormControl>
           }
           <Button
             variant='outlined'
             color='success'
+            onClick={handleNewElemSubmit}
           >
             Создать
           </Button>
@@ -392,7 +470,7 @@ const Dictionaries = () => {
           >
             Отменить
           </Button>
-        </Paper>
+        </Paper>}
       </Modal>
     </>
   );
