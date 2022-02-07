@@ -21,7 +21,7 @@ const menuCardsContents = {
     title: 'Поиск паспорта',
     logo: '/assets/search-icon.svg',
     id: 'search',
-    route: '',
+    route: 'search',
   },
   research: {
     title: 'Исследование',
@@ -34,7 +34,7 @@ const menuCardsContents = {
     logo: '/assets/utils-icon.png',
     id: 'utils',
     route: 'utils'
-  }
+  },
 };
 
 export default menuCardsContents;
