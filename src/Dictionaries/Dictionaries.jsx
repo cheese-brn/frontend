@@ -27,8 +27,6 @@ import {
   DELETE_ITEM,
   setData
 } from "./constants";
-import {elementType} from "prop-types";
-
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -64,10 +62,10 @@ const getDictionaryByType = (type) => {
   }
 };
 
-
 const Dictionaries = () => {
   // TODO: Сделать нормальное состояние компонента
   const [dictionaryTarget, setDictionaryTarget] = useState(null);
+  const [dictionaryElements, setDictionaryElements] = useState(null);
 
   const [openNewElemModal, setOpenNewElemModal] = useState(false);
   const [model, setModel] = useState(null);
@@ -82,7 +80,7 @@ const Dictionaries = () => {
     fetch(`/${dictionaryTarget}`)
       .then(response => response.json())
       .then(dataArray => {
-        dispatch(setData(dataArray));
+        setDictionaryElements(dataArray);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dictionaryTarget]);
@@ -113,13 +111,22 @@ const Dictionaries = () => {
           fetch(`${childrenPath}/${state.itemId}`)
             .then(response => response.json())
             .then(array => {
-
               elementModel['children'] = array;
               setModel(elementModel);
             })
         })
     }
   }, [state.itemId]);
+
+  const updateItemsList = () => {
+    setTimeout(() => {
+      fetch(`/${dictionaryTarget}`)
+      .then(response => response.json())
+      .then(dataArray => {
+        setDictionaryElements(dataArray);
+      });
+    }, 1000);
+  }
 
   const replaceGenusWithType = (typeId, index) => {
     fetch(`/vids/${typeId}`)
@@ -238,6 +245,7 @@ const Dictionaries = () => {
     }
     setModel(null);
     setOpenNewElemModal(false);
+    updateItemsList();
   }
   // TODO: bug - нельзя открыть один и тот же элемент 2 раза подряд
   // TODO: Разбить модалки по компонентам
@@ -277,7 +285,7 @@ const Dictionaries = () => {
         </div>
         {dictionaryTarget &&
 					<div style={{width: '70%', marginTop: '15px'}}>
-					  {state.items?.map((row, index) =>
+					  {dictionaryElements?.map((row, index) =>
 					    <div key={`dictionary-row-${index}`}>
 					      <DictionaryRow data={row} dispatch={dispatch}/>
 					      <Divider/>
