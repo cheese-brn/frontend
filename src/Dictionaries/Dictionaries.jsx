@@ -172,7 +172,7 @@ const Dictionaries = () => {
       fetch('/property/send', {
         method: 'POST',
         body: JSON.stringify({
-          id: model.itemId,
+          id: model.id,
           name: model.newName,
           description: model.description,
           isFunc: model.isFunc,
