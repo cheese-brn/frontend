@@ -213,8 +213,6 @@ const Dictionaries = () => {
   }
 
   const handleNewElemSubmit = () => {
-    model;
-    debugger
     switch (dictionaryTarget) {
     case OPEN_GENUSES:
       fetch('/rod/send', {
@@ -242,9 +240,9 @@ const Dictionaries = () => {
     setModel(null);
     setOpenNewElemModal(false);
   }
-  // TODO: Протестировать работу с большим количеством строк, если плохо - виртуализировать
   // TODO: bug - нельзя открыть один и тот же элемент 2 раза подряд
   // TODO: Разбить модалки по компонентам
+  // TODO: Переход по первым символам названия
   return(
     <>
       <Paper sx={{margin: '0 0 0 10px', padding: '20px'}}>
@@ -370,7 +368,7 @@ const Dictionaries = () => {
                 <Link
                   to={`/strain/${strain.id}`}
                   key={`strain-${index}`}
-                  style={{display: 'block', marginTop: '10px', textDecoration: 'underline'}}
+                  style={{display: 'block', marginTop: '10px', textDecoration: 'underline', color: 'black'}}
                   target="_blank"
                 >
                   {`${strain.name}`}
@@ -437,7 +435,7 @@ const Dictionaries = () => {
               onChange={event => setModel({...model, rodId: event.target.value})}
             >
               {model?.genusList?.map((genus, key) =>
-                <MenuItem value={genus} key={key}>{genus.name}</MenuItem>
+                <MenuItem value={genus.id} key={key}>{genus.name}</MenuItem>
               )}
             </Select>
           </FormControl>
