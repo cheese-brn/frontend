@@ -1,6 +1,5 @@
 import React, {useEffect, useReducer, useState} from "react";
-import {Paper, Typography, Button, Modal, Divider, TextField} from '@mui/material';
-import DictionaryPage from "./components/DictionaryPage";
+import {Paper, Typography, Button, Modal, Divider, TextField, ToggleButtonGroup, ToggleButton} from '@mui/material';
 import DictionaryRow from "./components/DictionaryRow";
 import {Link} from 'react-router-dom'
 
@@ -16,6 +15,7 @@ import {
   DELETE_ITEM,
   setData
 } from "./constants";
+import {elementType} from "prop-types";
 
 
 const reducer = (state, action) => {
@@ -56,14 +56,34 @@ const getDictionaryByType = (type) => {
 const Dictionaries = () => {
   // TODO: Сделать нормальное состояние компонента
   const [dictionaryTarget, setDictionaryTarget] = useState(null);
-  const [elementData, setElementData] = useState(null);
-  const [openNewElemModal, setOpenNewElemModal] = useState(false)
+
+  const [openNewElemModal, setOpenNewElemModal] = useState(false);
+  const [newElementModel, setNewElementModel] = useState(null);
+  const [model, setModel] = useState(null);
 
   const [state, dispatch] = useReducer(reducer, null, stateInitializer);
 
   useEffect(() => {
     if (!dictionaryTarget) {
       return;
+    }
+
+    switch (dictionaryTarget) {
+    case OPEN_GENUSES:
+      setNewElementModel({rodId: 0, name: ''})
+      break;
+    case OPEN_TYPES:
+      setNewElementModel({rodId: 1, vidId: 0, name: ''})
+      break;
+    case OPEN_PROPERTIES:
+      setNewElementModel({
+        id: 0,
+        name: '',
+        description: '',
+        isFunc: false,
+        subProps: [],
+      })
+      break;
     }
 
     fetch(`/${dictionaryTarget}`)
@@ -76,58 +96,51 @@ const Dictionaries = () => {
 
   useEffect(() => {
     if (state.itemId) {
-      let path;
+      let childrenPath, elemPath;
       switch(dictionaryTarget) {
       case OPEN_GENUSES:
-        path = '/vids/rods';
+        childrenPath = '/vids/rods';
+        elemPath = '/rods'
         break;
       case OPEN_TYPES:
-        path = '/strains/vids';
+        childrenPath = '/strains/vids';
+        elemPath = '/vids'
         break;
       case OPEN_PROPERTIES:
-        path = '/subproperties/properties';
+        childrenPath = '/subproperties/properties';
+        elemPath = '/properties'
       }
-
-      fetch(`${path}/${state.itemId}`)
+      let elementModel = {};
+      fetch(`${elemPath}/${state.itemId}`)
         .then(response => response.json())
-        .then(array => {
-          const name = state.items.find(elem => elem.id === state.itemId).name;
+        .then(elemData => {
+          elementModel = elemData;
+          elementModel['newName'] = elemData.name;
+          elementModel['elementType'] = dictionaryTarget;
+          fetch(`${childrenPath}/${state.itemId}`)
+            .then(response => response.json())
+            .then(array => {
 
-          if (dictionaryTarget !== OPEN_PROPERTIES) {
-            setElementData({
-              elementName: name,
-              elementType: dictionaryTarget,
-              children: array,
-              elementNewName: name,
+              elementModel['children'] = array;
+              setModel(elementModel);
             })
-          } else {
-            fetch(`/properties/${state.itemId}`)
-              .then(response => response.json())
-              .then(property => {
-                debugger
-                setElementData({
-                  elementName: name,
-                  elementType: dictionaryTarget,
-                  children: array,
-                  elementNewName: name,
-                  element: property,
-                })
-              })
-          }
-        });
+        })
     }
   }, [state.itemId]);
 
   const replaceGenusWithType = (typeId, index) => {
-    fetch(`/strains/vids/${typeId}`)
+    fetch(`/vids/${typeId}`)
       .then(response => response.json())
-      .then(array => {
-        setElementData({
-          elementName: elementData.children[index].name,
-          elementType: OPEN_TYPES,
-          children: array,
-          elementNewName: elementData.children[index].name,
-        })
+      .then(type => {
+        fetch(`/strains/vids/${typeId}`)
+          .then(response => response.json())
+          .then(strainsArray => {
+
+            type['children'] = strainsArray;
+            type['elementType'] = OPEN_TYPES;
+            type['newName'] = type.name;
+            setModel(type)
+          });
       });
   }
 
@@ -139,9 +152,9 @@ const Dictionaries = () => {
               label='Название подсвойства'
               value={subProp.name}
               onChange={event => {
-                let dataCopy = JSON.parse(JSON.stringify(elementData))
+                let dataCopy = JSON.parse(JSON.stringify(model))
                 dataCopy.children[index].name = event.target.value;
-                setElementData(dataCopy);
+                setModel(dataCopy);
               }}
               style={{marginTop: '15px', marginBottom: '5px', width: '100%'}}
             />
@@ -150,52 +163,72 @@ const Dictionaries = () => {
       });
 
   const handleSubmit = () => {
-    // fetch('/strain/send', {
-    //   method: 'POST', body: JSON.stringify(model)
-    // });
-    debugger
     switch (dictionaryTarget) {
     case OPEN_GENUSES:
       fetch('/rod/send', {
         method: 'POST',
-        body: {rodId: state.itemId, name: elementData.elementNewName}
+        body: {rodId: state.itemId, name: model.elementNewName}
       })
       break;
     case OPEN_TYPES:
       fetch('/vid/send', {
         method: 'POST',
-        body: {vidId: state.itemId, name: elementData.elementNewName, rodId}
+        body: {vidId: state.itemId, name: model.elementNewName, rodId: model.rodId}
       })
       break;
     case OPEN_PROPERTIES:
       fetch('/property/send', {
         method: 'POST',
         body: {
-          id: state.itemId,
-          name: elementData.elementNewName,
-          description: elementData.element.description,
-          isFunc: false,
-          subProps: elementData.children
+          id: model.itemId,
+          name: model.newName,
+          description: model.description,
+          isFunc: model.isFunc,
+          subProps: model.children
         }
       })
       break;
     }
-    setElementData(null)
+    setModel(null)
   }
 
   // TODO: Протестировать работу с большим количеством строк, если плохо - виртуализировать
-  // TODO: Придумать, как нормально менять строку "связанные элементы" под конкретный тип
+  // TODO: bug - нельзя открыть один и тот же элемент 2 раза подряд
   return(
     <>
-      <Paper sx={{margin: '0 10px 0 10px', padding: '10px'}}>
+      <Paper sx={{margin: '0 0 0 10px', padding: '20px'}}>
         <Typography variant='h4' component='div' align='left'>Справочники приложения</Typography>
-        <div style={{display: 'flex'}}>
-          <DictionaryPage displayName='Роды' onClick={() => setDictionaryTarget(OPEN_GENUSES)}/>
-          <DictionaryPage displayName='Виды' onClick={() => setDictionaryTarget(OPEN_TYPES)}/>
-          <DictionaryPage displayName='Свойства' onClick={() => setDictionaryTarget(OPEN_PROPERTIES)}/>
+        <div style={{display: 'flex', marginTop: '5px'}}>
+          <ToggleButtonGroup
+            value={dictionaryTarget}
+            onChange={(event, newTarget) => setDictionaryTarget(newTarget)}
+            exclusive
+          >
+            <ToggleButton
+              value={OPEN_GENUSES}
+              color='primary'
+              style={{width: '120px'}}
+            >
+              <Typography sx={{fontWeight: 'bold'}}>Роды</Typography>
+            </ToggleButton>
+            <ToggleButton
+              value={OPEN_TYPES}
+              color='primary'
+              style={{width: '120px'}}
+            >
+              <Typography sx={{fontWeight: 'bold'}}>Виды</Typography>
+            </ToggleButton>
+            <ToggleButton
+              value={OPEN_PROPERTIES}
+              color='primary'
+              style={{width: '120px'}}
+            >
+              <Typography sx={{fontWeight: 'bold'}}>Свойства</Typography>
+            </ToggleButton>
+          </ToggleButtonGroup>
         </div>
         {dictionaryTarget &&
-					<div style={{width: '70%', paddingLeft: '20px'}}>
+					<div style={{width: '70%', marginTop: '15px'}}>
 					  {state.items?.map((row, index) =>
 					    <div key={`dictionary-row-${index}`}>
 					      <DictionaryRow data={row} dispatch={dispatch}/>
@@ -205,6 +238,7 @@ const Dictionaries = () => {
 					  <Button
 					    variant='contained'
 					    color='success'
+              sx={{marginTop: '10px'}}
 					    onClick={() => {
 					      setOpenNewElemModal(true)
 					    }}
@@ -215,18 +249,17 @@ const Dictionaries = () => {
         }
       </Paper>
 
-      {/*Явно есть способ сделать модалку лучше, с учётом разности назначений.*/}
       {/*Скорее всего - вынести в компоненты*/}
       <Modal
-        open={Boolean(elementData)}
-        onClose={() => setElementData(null)}
+        open={Boolean(model)}
+        onClose={() => setModel(null)}
         // TODO: разобраться с центрированием
         sx={{paddingTop: '200px'}}
       >
-        {elementData !== null ?
-					<Paper sx={{width: '600px', maxHeight: '450px', margin: 'auto', padding: '20px'}}>
+        {model !== null ?
+					<Paper sx={{width: '600px', maxHeight: '650px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
 					  <Typography variant='h5'>
-					    {`Редактирование: ${getDictionaryByType(elementData.elementType)} - ${elementData.elementName}`}
+					    {`Редактирование: ${getDictionaryByType(model.elementType)} - ${model.name}`}
 					  </Typography>
             {/*Костыльно с выделением, но иначе это выносить в state, но не зачем*/}
             <TextField
@@ -236,21 +269,21 @@ const Dictionaries = () => {
                 width: '100%',
               }}
               label='Название элемента'
-              value={elementData.elementNewName}
-              onChange={event => {setElementData({...elementData, elementNewName: event.target.value})}}
+              value={model.newName}
+              onChange={event => {setModel({...model, newName: event.target.value})}}
 
-              color={elementData.elementName !== elementData.elementNewName ? 'warning' : ''}
-              focused={elementData.elementName !== elementData.elementNewName}
+              color={model.name !== model.newName ? 'warning' : ''}
+              focused={model.name !== model.newName}
             />
 
-					  {elementData.elementType === OPEN_PROPERTIES &&
+					  {model.elementType === OPEN_PROPERTIES &&
 						<div>
               <Button
                 variant='outlined'
                 onClick={() => {
-                  let dataCopy = JSON.parse(JSON.stringify(elementData))
+                  let dataCopy = JSON.parse(JSON.stringify(model))
                   dataCopy.children.push({id: 0, name: '', dataType: 1});
-                  setElementData(dataCopy);
+                  setModel(dataCopy);
                 }}
               >
                 Добавить подсвойство
@@ -258,16 +291,16 @@ const Dictionaries = () => {
 						  <Typography style={{marginTop: '10px'}}>
 								Подсвойства:
 						  </Typography>
-						  {makeSubpropComponents(elementData.children)}
+						  {makeSubpropComponents(model.children)}
 						</div>
 					  }
 
-					  {elementData.elementType === OPEN_GENUSES &&
-						<>
+					  {model.elementType === OPEN_GENUSES &&
+						<div style={{marginBottom: '10px'}}>
 						  <Typography>
 								Связанные виды:
 						  </Typography>
-						  {elementData.children.map((type, index) =>
+						  {model.children.map((type, index) =>
 						    <p
                   key={`type-${index}`}
                   style={{textDecoration: 'underline', cursor: 'pointer'}}
@@ -276,15 +309,15 @@ const Dictionaries = () => {
                   {`${type.name}`}
 						    </p>
 						  )}
-						</>
+						</div>
 					  }
 
-					  {elementData.elementType === OPEN_TYPES &&
+					  {model.elementType === OPEN_TYPES &&
 						<div style={{marginBottom: '10px'}}>
 						  <Typography>
 								Связанные штаммы:
 						  </Typography>
-						  {elementData.children.map((strain, index) =>
+						  {model.children.map((strain, index) =>
                 <Link
                   to={`/strain/${strain.id}`}
                   key={`strain-${index}`}
@@ -309,7 +342,7 @@ const Dictionaries = () => {
               style={{marginTop: '10px', marginRight: '10px'}}
               variant='outlined'
               color='warning'
-              onClick={() => setElementData(null)}
+              onClick={() => setModel(null)}
             >
               Отменить изменения
             </Button>
@@ -336,6 +369,7 @@ const Dictionaries = () => {
           </Typography>
           <TextField
             label='Название элемента'
+            style={{marginTop: '10px', marginBottom: '10px'}}
           />
           {dictionaryTarget === OPEN_PROPERTIES &&
           <p>a</p>
@@ -346,6 +380,18 @@ const Dictionaries = () => {
           {dictionaryTarget === OPEN_TYPES &&
           <p>в</p>
           }
+          <Button
+            variant='outlined'
+            color='success'
+          >
+            Создать
+          </Button>
+          <Button
+            variant='outlined'
+            color='warning'
+          >
+            Отменить
+          </Button>
         </Paper>
       </Modal>
     </>
