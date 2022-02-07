@@ -70,7 +70,6 @@ const Dictionaries = () => {
   const [dictionaryTarget, setDictionaryTarget] = useState(null);
 
   const [openNewElemModal, setOpenNewElemModal] = useState(false);
-  const [newElementModel, setNewElementModel] = useState(null);
   const [model, setModel] = useState(null);
 
   const [state, dispatch] = useReducer(reducer, null, stateInitializer);
@@ -78,24 +77,6 @@ const Dictionaries = () => {
   useEffect(() => {
     if (!dictionaryTarget) {
       return;
-    }
-
-    switch (dictionaryTarget) {
-    case OPEN_GENUSES:
-      setNewElementModel({rodId: 0, name: ''})
-      break;
-    case OPEN_TYPES:
-      setNewElementModel({rodId: 1, vidId: 0, name: ''})
-      break;
-    case OPEN_PROPERTIES:
-      setNewElementModel({
-        id: 0,
-        name: '',
-        description: '',
-        isFunc: false,
-        subProps: [],
-      })
-      break;
     }
 
     fetch(`/${dictionaryTarget}`)
@@ -258,7 +239,7 @@ const Dictionaries = () => {
       break;
     }
     setModel(null);
-    setNewElementModel(false);
+    setOpenNewElemModal(false);
   }
   // TODO: Протестировать работу с большим количеством строк, если плохо - виртуализировать
   // TODO: bug - нельзя открыть один и тот же элемент 2 раза подряд
@@ -318,12 +299,12 @@ const Dictionaries = () => {
 
       {/*Скорее всего - вынести в компоненты*/}
       <Modal
-        open={Boolean(model)}
+        open={Boolean(model) && !openNewElemModal}
         onClose={() => setModel(null)}
         // TODO: разобраться с центрированием
         sx={{paddingTop: '200px'}}
       >
-        {model !== null ?
+        {model !== null && !openNewElemModal ?
 					<Paper sx={{width: '600px', maxHeight: '650px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
 					  <Typography variant='h5'>
 					    {`Редактирование: ${getDictionaryByType(model.elementType)} - ${model.name}`}
@@ -426,8 +407,11 @@ const Dictionaries = () => {
       </Modal>
 
       <Modal
-        open={openNewElemModal}
-        onClose={() => setOpenNewElemModal(false)}
+        open={openNewElemModal }
+        onClose={() => {
+          setOpenNewElemModal(false);
+          setModel(null)
+        }}
         sx={{paddingTop: '200px'}}
       >
         {openNewElemModal &&
@@ -437,7 +421,7 @@ const Dictionaries = () => {
           </Typography>
           <TextField
             label='Название элемента'
-            style={{marginTop: '10px', width: '100%'}}
+            style={{marginTop: '10px', width: '100%', marginBottom: '10px'}}
             value={model.name}
             onChange={(event) => setModel({...model, name: event.target.value})}
           />
@@ -467,6 +451,10 @@ const Dictionaries = () => {
           <Button
             variant='outlined'
             color='warning'
+            onClick={() => {
+              setModel(false);
+              setOpenNewElemModal(false);
+            }}
           >
             Отменить
           </Button>
