@@ -247,6 +247,7 @@ const Dictionaries = () => {
     setOpenNewElemModal(false);
     updateItemsList();
   }
+
   // TODO: bug - нельзя открыть один и тот же элемент 2 раза подряд
   // TODO: Разбить модалки по компонентам
   // TODO: Переход по первым символам названия
@@ -294,7 +295,7 @@ const Dictionaries = () => {
 					  <Button
 					    variant='contained'
 					    color='success'
-              sx={{marginTop: '10px'}}
+              sx={{marginTop: '10px', display: 'flex'}}
 					    onClick={prepareNewElemModal}
 					  >
 					    {`Добавить ${getDictionaryByType(dictionaryTarget)}`}
