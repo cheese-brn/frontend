@@ -155,17 +155,18 @@ const Dictionaries = () => {
       });
 
   const handleChangeSubmit = () => {
+    debugger
     switch (dictionaryTarget) {
     case OPEN_GENUSES:
       fetch('/rod/send', {
         method: 'POST',
-        body: JSON.stringify({rodId: state.itemId, name: model.elementNewName})
+        body: JSON.stringify({rodId: state.itemId, name: model.newName})
       })
       break;
     case OPEN_TYPES:
       fetch('/vid/send', {
         method: 'POST',
-        body: JSON.stringify({vidId: state.itemId, name: model.elementNewName, rodId: model.rodId})
+        body: JSON.stringify({vidId: state.itemId, name: model.newName, rodId: model.rodId})
       })
       break;
     case OPEN_PROPERTIES:
