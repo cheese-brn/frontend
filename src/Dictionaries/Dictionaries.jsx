@@ -154,7 +154,7 @@ const Dictionaries = () => {
           </>);
       });
 
-  const handleChangeSubmit = () => {
+  const handleSubmitChange = () => {
     switch (dictionaryTarget) {
     case OPEN_GENUSES:
       fetch('/rod/send', {
@@ -303,7 +303,7 @@ const Dictionaries = () => {
         sx={{paddingTop: '200px'}}
       >
         {model !== null && !openNewElemModal ?
-					<Paper sx={{width: '600px', maxHeight: '650px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
+					<Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
 					  <Typography variant='h5'>
 					    {`Редактирование: ${getDictionaryByType(model.elementType)} - ${model.name}`}
 					  </Typography>
@@ -328,7 +328,7 @@ const Dictionaries = () => {
                 variant='outlined'
                 onClick={() => {
                   let dataCopy = JSON.parse(JSON.stringify(model))
-                  dataCopy.children.push({id: 0, name: '', dataType: 1});
+                  dataCopy.children.push({id: 0, name: '', dataType: 'string'});
                   setModel(dataCopy);
                 }}
               >
@@ -380,7 +380,7 @@ const Dictionaries = () => {
               style={{marginTop: '10px', marginRight: '10px'}}
               variant='outlined'
               color='success'
-              onClick={handleChangeSubmit}
+              onClick={handleSubmitChange}
             >
               Сохранить изменения
             </Button>
@@ -413,7 +413,7 @@ const Dictionaries = () => {
         sx={{paddingTop: '200px'}}
       >
         {openNewElemModal &&
-          <Paper sx={{width: '600px', maxHeight: '450px', margin: 'auto', padding: '20px'}}>
+          <Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
           <Typography variant='h5'>
             {`Создать элемент: ${getDictionaryByType(dictionaryTarget)}`}
           </Typography>
