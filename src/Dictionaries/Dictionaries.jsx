@@ -124,6 +124,7 @@ const Dictionaries = () => {
       .then(response => response.json())
       .then(dataArray => {
         setDictionaryElements(dataArray);
+        state.itemId = null;
       });
     }, 1000);
   }
@@ -188,7 +189,9 @@ const Dictionaries = () => {
       })
       break;
     }
-    setModel(null)
+    setModel(null);
+    state.itemId = null;
+    updateItemsList();
   }
 
   const prepareNewElemModal = () => {
@@ -307,7 +310,10 @@ const Dictionaries = () => {
       {/*Скорее всего - вынести в компоненты*/}
       <Modal
         open={Boolean(model) && !openNewElemModal}
-        onClose={() => setModel(null)}
+        onClose={() => {
+          setModel(null);
+          state.itemId = null;
+        }}
         // TODO: разобраться с центрированием
         sx={{paddingTop: '200px'}}
       >
@@ -397,7 +403,10 @@ const Dictionaries = () => {
               style={{marginTop: '10px', marginRight: '10px'}}
               variant='outlined'
               color='warning'
-              onClick={() => setModel(null)}
+              onClick={() => {
+                setModel(null);
+                state.itemId = null;
+              }}
             >
               Отменить изменения
             </Button>

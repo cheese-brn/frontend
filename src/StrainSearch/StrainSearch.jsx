@@ -83,9 +83,9 @@ const StrainSearch = () => {
         <SearchIcon/>Найти
       </Button>
       <Divider/>
-      <div style={{display: 'flex', overflowY: 'scroll'}}>
+      <div style={{display: 'flex', flexDirection: 'column', overflowY: 'scroll', alignItems: 'baseline'}}>
         {searchResult?.map(strain =>
-          <Link to={`/strains/${strain.id}`} style={{color: 'black', fontSize: '20px'}}>{strain.name}</Link>
+          <Link to={`/strain/${strain.id}`} style={{color: 'black', fontSize: '20px',}}>{strain.name}</Link>
         )}
       </div>
     </Paper>
