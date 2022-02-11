@@ -38,10 +38,11 @@ const StrainSearch = () => {
         .then(strains => setSearchResult(strains))
     }
     else if (searchParams.genus !== -1) {
-      // TODO: Ожидаем реализацию бэка
-      // fetch(`/strains/rods/${searchParams.type}`)
-      //   .then(response => response.json())
-      //   .then(strains => setSearchResult(strains))
+      fetch(`/strains/rods/${searchParams.genus}`)
+        .then(response => response.json())
+        .then(strains => setSearchResult(strains));
+    } else {
+
     }
   }
 
