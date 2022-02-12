@@ -1,14 +1,29 @@
 import React, {useEffect, useState, useRef} from "react";
 import {useParams, useNavigate} from "react-router-dom";
-import {Paper, Typography, Grid, TextField, Divider, Stack, Button, Select, MenuItem, FormControl, InputLabel, Modal} from "@mui/material";
+import {Paper,
+  Typography,
+  Grid,
+  TextField,
+  Divider,
+  Stack,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Modal,
+  IconButton,
+} from "@mui/material";
 import SimplePropertyInput from "./components/SimplePropertyInput";
+
+import AddBoxIcon from '@mui/icons-material/AddBox';
 
 const StrainView = () => {
   const navigate = useNavigate();
   const {strainId} = useParams();
 
   // TODO: Реализовать сохранение модели в LocalStorage, чтобы при перезагрузке не терялись данные
-  // TODO: Быстрое редактирование текста приводит к тормозам. Нужно как-то буферизировать модель локально или типо того
+  // TODO: Быстрое редактирование текста приводит к тормозам. Нужно как-то буферизировать части локально или типо того
   const [model, setModel] = useState({
     "id": null,
     "rodId":-1,
@@ -30,9 +45,6 @@ const StrainView = () => {
   const [genusesList, setGenusesList] = useState(null);
   const [typesList, setTypesList] = useState(null);
   const [propertiesList, setPropertiesList] = useState(null);
-
-  // TODO: Возможно, стоит инициализировать списки через useMemo.
-  //  Проблема в том, что не вызывается ре-рендер, в отличии от useState
 
   useEffect(() => {
     fetch('/rods').then(response => response.json()).then(res => {
@@ -99,6 +111,12 @@ const StrainView = () => {
     setModel(newModel);
   }
 
+  const handleRemoveSubproperty = (propIndex, subpropIndex) => {
+    const newModel = JSON.parse(JSON.stringify(model));
+    newModel.factParams[propIndex].subProps.splice(subpropIndex, 1);
+    setModel(newModel);
+  }
+
   // TODO: Разобраться с цветовой палитрой
   // TODO: Разобраться с внешним видом полей, чтобы точно было всё как надо
   // TODO: Оптимизация вида readOnly
@@ -121,8 +139,9 @@ const StrainView = () => {
                   name='rodId'
                   onChange={handleCommonFieldChange}
                   inputProps={{readOnly: isReadOnly}}
-
+                  size='small'
                 >
+                  <MenuItem value={-1}>Не выбрано</MenuItem>
                   {genusesList?.map(genus =>
                     <MenuItem value={genus.id} key={genus.id}>{genus.name}</MenuItem>
                   )}
@@ -139,7 +158,9 @@ const StrainView = () => {
                   name='vidId'
                   onChange={handleCommonFieldChange}
                   inputProps={{readOnly: isReadOnly || model.rodId === -1}}
+                  size='small'
                 >
+                  <MenuItem value={-1}>Не выбрано</MenuItem>
                   {typesList?.map(type =>
                     <MenuItem value={type.id} key={type.id}>{type.name}</MenuItem>
                   )}
@@ -154,6 +175,7 @@ const StrainView = () => {
                 inputProps={{readOnly: isReadOnly}}
                 value={model?.exemplar}
                 onChange={ handleCommonFieldChange }
+                size='small'
               />
               <TextField
                 sx={costilStyle}
@@ -163,6 +185,7 @@ const StrainView = () => {
                 inputProps={{readOnly: isReadOnly}}
                 value={model?.modification}
                 onChange={ handleCommonFieldChange }
+                size='small'
               />
               <TextField
                 sx={costilStyle}
@@ -172,6 +195,7 @@ const StrainView = () => {
                 inputProps={{readOnly: isReadOnly}}
                 value={model?.obtainingMethod}
                 onChange={ handleCommonFieldChange }
+                size='small'
                 multiline
               />
               <TextField
@@ -182,6 +206,7 @@ const StrainView = () => {
                 inputProps={{readOnly: isReadOnly}}
                 value={model?.origin}
                 onChange={ handleCommonFieldChange }
+                size='small'
                 multiline
               />
               <TextField
@@ -192,21 +217,18 @@ const StrainView = () => {
                 inputProps={{readOnly: isReadOnly}}
                 value={model?.annotation}
                 onChange={ handleCommonFieldChange }
+                size='small'
                 multiline
               />
-              <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '10px'}}>
+
+              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px'}}>
                 <Typography variant='h5' align='left'>
                     Свойства штамма
                 </Typography>
                 {!isReadOnly &&
-                  <Button
-                    variant='contained'
-                    color='success'
-                    sx={{padding: '3px 8px 3px 8px'}}
-                    onClick={() => setAddPropModalOpened(true)}
-                  >
-                    Добавить свойство
-                  </Button>
+                  <IconButton color='success' onClick={() => setAddPropModalOpened(true)}>
+                    <AddBoxIcon sx={{height: '30px', width: '30px'}}/>
+                  </IconButton>
                 }
               </div>
               {model?.factParams?.map((prop, key) => {
@@ -218,6 +240,7 @@ const StrainView = () => {
                   valueChangeCallback={handleSubPropChange}
                   removePropCallback={handleRemoveSimpleProperty}
                   addSubpropCallback={handleAddSubproperty}
+                  removeSubpropCallback={handleRemoveSubproperty}
                 />);
               })}
             </Stack>
@@ -282,7 +305,6 @@ const StrainView = () => {
                 </Button>
               }
             </Stack>
-
           </Grid>
         </Grid>
       </Paper>

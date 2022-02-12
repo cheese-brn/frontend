@@ -27,7 +27,6 @@ import {
   SET_DATA,
   EDIT_ITEM,
   DELETE_ITEM,
-  setData
 } from "./constants";
 
 const reducer = (state, action) => {
@@ -130,7 +129,7 @@ const Dictionaries = () => {
     }, 1000);
   }
 
-  const replaceGenusWithType = (typeId, index) => {
+  const replaceGenusWithType = (typeId) => {
     fetch(`/vids/${typeId}`)
       .then(response => response.json())
       .then(type => {
@@ -348,7 +347,7 @@ const Dictionaries = () => {
               value={model.newName}
               onChange={event => {setModel({...model, newName: event.target.value})}}
               color={model.name !== model.newName ? 'warning' : ''}
-              focused={model.name !== model.newName}
+              focused={toString(model.name !== model.newName)}
             />
 
 					  {model.elementType === OPEN_PROPERTIES &&
@@ -379,7 +378,7 @@ const Dictionaries = () => {
 						    <p
                   key={`type-${index}`}
                   style={{textDecoration: 'underline', cursor: 'pointer'}}
-                  onClick={() => replaceGenusWithType(type.id, index)}
+                  onClick={() => replaceGenusWithType(type.id)}
                 >
                   {`${type.name}`}
 						    </p>
