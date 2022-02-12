@@ -10,10 +10,12 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel
+  InputLabel,
+  IconButton,
 } from '@mui/material';
 import DictionaryRow from "./components/DictionaryRow";
 import {Link} from 'react-router-dom'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 import styles from './styles.css';
 
@@ -76,7 +78,6 @@ const Dictionaries = () => {
     if (!dictionaryTarget) {
       return;
     }
-
     fetch(`/${dictionaryTarget}`)
       .then(response => response.json())
       .then(dataArray => {
@@ -144,20 +145,35 @@ const Dictionaries = () => {
       });
   }
 
+  const removeSubproperty = (elementIndex) => {
+    let modelCpy = JSON.parse(JSON.stringify(model));
+    modelCpy.children.splice(elementIndex, 1);
+    setModel(modelCpy);
+  };
+
   const makeSubpropComponents = (subprops) =>
       subprops.map((subProp, index) => {
         return (
           <>
-            <TextField
-              label='Название подсвойства'
-              value={subProp.name}
-              onChange={event => {
-                let dataCopy = JSON.parse(JSON.stringify(model))
-                dataCopy.children[index].name = event.target.value;
-                setModel(dataCopy);
-              }}
-              style={{marginTop: '15px', marginBottom: '5px', width: '100%'}}
-            />
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <TextField
+                label='Название подсвойства'
+                value={subProp.name}
+                size='small'
+                onChange={event => {
+                  let dataCopy = JSON.parse(JSON.stringify(model))
+                  dataCopy.children[index].name = event.target.value;
+                  setModel(dataCopy);
+                }}
+                style={{marginTop: '15px', marginBottom: '5px', width: '100%'}}
+              />
+              <IconButton
+                className='dictionary-button-delete'
+                onClick={() => removeSubproperty(index)}
+              >
+                <DeleteOutlineIcon/>
+              </IconButton>
+            </div>
             <Divider/>
           </>);
       });
@@ -251,7 +267,6 @@ const Dictionaries = () => {
     updateItemsList();
   }
 
-  // TODO: bug - нельзя открыть один и тот же элемент 2 раза подряд
   // TODO: Разбить модалки по компонентам
   // TODO: Переход по первым символам названия
   return(
@@ -332,7 +347,6 @@ const Dictionaries = () => {
               label='Название элемента'
               value={model.newName}
               onChange={event => {setModel({...model, newName: event.target.value})}}
-
               color={model.name !== model.newName ? 'warning' : ''}
               focused={model.name !== model.newName}
             />

@@ -41,8 +41,6 @@ const StrainSearch = () => {
       fetch(`/strains/rods/${searchParams.genus}`)
         .then(response => response.json())
         .then(strains => setSearchResult(strains));
-    } else {
-
     }
   }
 

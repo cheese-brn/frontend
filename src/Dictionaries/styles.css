@@ -9,9 +9,9 @@
     color: #4caf50;
 }
 .dictionary-button-delete {
-    padding: 0 4px 0 4px;
-    min-width: 30px;
-    min-height: 30px;
+    /*padding: 0 4px 0 4px;*/
+    width: 30px;
+    height: 30px;
     margin-left: 5px;
     color: #9e9e9e;
 }
