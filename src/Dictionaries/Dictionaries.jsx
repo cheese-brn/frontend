@@ -17,6 +17,8 @@ import DictionaryRow from "./components/DictionaryRow";
 import {Link} from 'react-router-dom'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
+import CenteredElement from "../commons/CenteredElement";
+
 import styles from './styles.css';
 
 // TODO: Может, есть способ сделать это адекватно?
@@ -331,108 +333,110 @@ const Dictionaries = () => {
         // TODO: разобраться с центрированием
         sx={{paddingTop: '200px'}}
       >
-        {model !== null && !openNewElemModal ?
-					<Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
-					  <Typography variant='h5'>
-					    {`Редактирование: ${getDictionaryByType(model.elementType)} - ${model.name}`}
-					  </Typography>
-            {/*Костыльно с выделением, но иначе это выносить в state, но не зачем*/}
-            <TextField
-              sx={{
-                marginTop: '10px',
-                marginBottom: '10px',
-                width: '100%',
-              }}
-              label='Название элемента'
-              value={model.newName}
-              onChange={event => {setModel({...model, newName: event.target.value})}}
-              color={model.name !== model.newName ? 'warning' : ''}
-              focused={toString(model.name !== model.newName)}
-            />
+        <CenteredElement>
+          {model !== null && !openNewElemModal ?
+            <Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
+              <Typography variant='h5'>
+                {`Редактирование: ${getDictionaryByType(model.elementType)} - ${model.name}`}
+              </Typography>
+              {/*Костыльно с выделением, но иначе это выносить в state, но не зачем*/}
+              <TextField
+                sx={{
+                  marginTop: '10px',
+                  marginBottom: '10px',
+                  width: '100%',
+                }}
+                label='Название элемента'
+                value={model.newName}
+                onChange={event => {setModel({...model, newName: event.target.value})}}
+                color={model.name !== model.newName ? 'warning' : ''}
+                focused={toString(model.name !== model.newName)}
+              />
 
-					  {model.elementType === OPEN_PROPERTIES &&
-						<div>
+              {model.elementType === OPEN_PROPERTIES &&
+              <div>
+                <Button
+                  variant='outlined'
+                  onClick={() => {
+                    let dataCopy = JSON.parse(JSON.stringify(model))
+                    dataCopy.children.push({id: 0, name: '', dataType: 'string'});
+                    setModel(dataCopy);
+                  }}
+                >
+                  Добавить подсвойство
+                </Button>
+                <Typography style={{marginTop: '10px'}}>
+                  Подсвойства:
+                </Typography>
+                {makeSubpropComponents(model.children)}
+              </div>
+              }
+
+              {model.elementType === OPEN_GENUSES &&
+              <div style={{marginBottom: '10px'}}>
+                <Typography>
+                  Связанные виды:
+                </Typography>
+                {model.children.map((type, index) =>
+                  <p
+                    key={`type-${index}`}
+                    style={{textDecoration: 'underline', cursor: 'pointer'}}
+                    onClick={() => replaceGenusWithType(type.id)}
+                  >
+                    {`${type.name}`}
+                  </p>
+                )}
+              </div>
+              }
+
+              {model.elementType === OPEN_TYPES &&
+              <div style={{marginBottom: '10px'}}>
+                <Typography>
+                  Связанные штаммы:
+                </Typography>
+                {model.children.map((strain, index) =>
+                  <Link
+                    to={`/strain/${strain.id}`}
+                    key={`strain-${index}`}
+                    style={{display: 'block', marginTop: '10px', textDecoration: 'underline', color: 'black'}}
+                    target="_blank"
+                  >
+                    {`${strain.name}`}
+                  </Link>
+                )}
+              </div>
+              }
+
               <Button
+                style={{marginTop: '10px', marginRight: '10px'}}
                 variant='outlined'
+                color='success'
+                onClick={handleSubmitChange}
+              >
+                Сохранить изменения
+              </Button>
+              <Button
+                style={{marginTop: '10px', marginRight: '10px'}}
+                variant='outlined'
+                color='warning'
                 onClick={() => {
-                  let dataCopy = JSON.parse(JSON.stringify(model))
-                  dataCopy.children.push({id: 0, name: '', dataType: 'string'});
-                  setModel(dataCopy);
+                  setModel(null);
+                  state.itemId = null;
                 }}
               >
-                Добавить подсвойство
+                Отменить изменения
               </Button>
-						  <Typography style={{marginTop: '10px'}}>
-								Подсвойства:
-						  </Typography>
-						  {makeSubpropComponents(model.children)}
-						</div>
-					  }
-
-					  {model.elementType === OPEN_GENUSES &&
-						<div style={{marginBottom: '10px'}}>
-						  <Typography>
-								Связанные виды:
-						  </Typography>
-						  {model.children.map((type, index) =>
-						    <p
-                  key={`type-${index}`}
-                  style={{textDecoration: 'underline', cursor: 'pointer'}}
-                  onClick={() => replaceGenusWithType(type.id)}
-                >
-                  {`${type.name}`}
-						    </p>
-						  )}
-						</div>
-					  }
-
-					  {model.elementType === OPEN_TYPES &&
-						<div style={{marginBottom: '10px'}}>
-						  <Typography>
-								Связанные штаммы:
-						  </Typography>
-						  {model.children.map((strain, index) =>
-                <Link
-                  to={`/strain/${strain.id}`}
-                  key={`strain-${index}`}
-                  style={{display: 'block', marginTop: '10px', textDecoration: 'underline', color: 'black'}}
-                  target="_blank"
-                >
-                  {`${strain.name}`}
-                </Link>
-						  )}
-						</div>
-					  }
-
-					  <Button
-              style={{marginTop: '10px', marginRight: '10px'}}
-              variant='outlined'
-              color='success'
-              onClick={handleSubmitChange}
-            >
-              Сохранить изменения
-            </Button>
-            <Button
-              style={{marginTop: '10px', marginRight: '10px'}}
-              variant='outlined'
-              color='warning'
-              onClick={() => {
-                setModel(null);
-                state.itemId = null;
-              }}
-            >
-              Отменить изменения
-            </Button>
-            {/*TODO: Удаление элемента*/}
-            <Button
-              style={{marginTop: '10px', marginRight: '10px'}}
-              variant='outlined'
-              color='error'
-            >
-              Удалить элемент
-            </Button>
-					</Paper> : <p>Груземса</p>
-        }
+              {/*TODO: Удаление элемента*/}
+              <Button
+                style={{marginTop: '10px', marginRight: '10px'}}
+                variant='outlined'
+                color='error'
+              >
+                Удалить элемент
+              </Button>
+            </Paper> : <p>Груземса</p>
+          }
+        </CenteredElement>
       </Modal>
 
       <Modal

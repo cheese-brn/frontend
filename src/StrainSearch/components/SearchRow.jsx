@@ -4,7 +4,7 @@ import { IconButton } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import styles from '../styles.css'
 import { Link } from 'react-router-dom';
-import downloadStrainDocument from "../../utils";
+import downloadStrainDocument from "../../commons/utils";
 
 const SearchRow = ({strainName, strainId}) => {
   const [hovered, setHovered] = useState(false);

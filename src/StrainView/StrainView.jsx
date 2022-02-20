@@ -16,6 +16,8 @@ import {Paper,
 } from "@mui/material";
 import SimplePropertyInput from "./components/SimplePropertyInput";
 
+import CenteredElement from "../commons/CenteredElement";
+
 import AddBoxIcon from '@mui/icons-material/AddBox';
 
 const StrainView = () => {
@@ -312,33 +314,35 @@ const StrainView = () => {
         open={addPropModalOpened}
         onClose={() => setAddPropModalOpened(false)}
       >
-        <Paper sx={{width: '600px', maxHeight: '450px', margin: 'auto', padding: '20px'}}>
-          <Typography variant='h5'>
-            Добавление нового свойства
-          </Typography>
-          <Typography>Выберите свойство:</Typography>
-          <Select
-            sx={{width: '100%'}}
-            id='stain-view__new-property-type-select'
-            value={newPropId}
-            name='vid'
-            onChange={event => setNewPropId(event.target.value)}
-          >
-            {propertiesList
-              ?.filter(prop => !Boolean(model.factParams.find(fp => fp.id === prop.id)))
-              .map(property =>
-              <MenuItem value={property.id} key={property.id}>{property.name}</MenuItem>
-            )}
-          </Select>
-          <Button
-            variant='contained'
-            color='success'
-            sx={{padding: '3px 8px 3px 8px'}}
-            onClick={handleAddSimpleProperty}
+        <CenteredElement>
+          <Paper sx={{width: '600px', maxHeight: '450px', margin: 'auto', padding: '20px'}}>
+            <Typography variant='h5'>
+              Добавление нового свойства
+            </Typography>
+            <Typography>Выберите свойство:</Typography>
+            <Select
+              sx={{width: '100%'}}
+              id='stain-view__new-property-type-select'
+              value={newPropId}
+              name='vid'
+              onChange={event => setNewPropId(event.target.value)}
             >
-            Добавить
-          </Button>
-        </Paper>
+              {propertiesList
+                ?.filter(prop => !Boolean(model.factParams.find(fp => fp.id === prop.id)))
+                .map(property =>
+                  <MenuItem value={property.id} key={property.id}>{property.name}</MenuItem>
+                )}
+            </Select>
+            <Button
+              variant='contained'
+              color='success'
+              sx={{padding: '3px 8px 3px 8px'}}
+              onClick={handleAddSimpleProperty}
+            >
+              Добавить
+            </Button>
+          </Paper>
+        </CenteredElement>
       </Modal>
     </>
   );
