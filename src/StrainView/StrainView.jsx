@@ -22,6 +22,8 @@ import CenteredElement from "../commons/CenteredElement";
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import DownloadIcon from '@mui/icons-material/Download';
 
+import downloadStrainDocument from "../commons/utils";
+
 const StrainView = () => {
   const navigate = useNavigate();
   const {strainId} = useParams();
@@ -126,6 +128,16 @@ const StrainView = () => {
   const handleDeleteStrain = () => {
     fetch(`/strain/delete/${model.id}`, {method: 'POST', headers: {'Content-Type': 'application/json'}})
     navigate('/');
+  }
+
+  const handleDownloadDocument = () => {
+    fetch('/strains')
+      .then(response => response.json())
+      .then(strainsList => {
+        let strain = strainsList.find(elem => elem.id === model.id);
+        downloadStrainDocument(strain.name, model.id)
+      })
+
   }
 
   // TODO: Разобраться с цветовой палитрой
@@ -259,18 +271,21 @@ const StrainView = () => {
           <Divider orientation="vertical" flexItem/>
           <Grid item sx={{textAlign: 'left', marginLeft: '15px'}}>
             <Stack>
-              <Typography variant='h6'>
-                {`Последнее редактирование:`}
-              </Typography>
               {/*TODO: доделать, связано с CB-8*/}
+              {/*<Typography variant='h6'>*/}
+              {/*  {`Последнее редактирование:`}*/}
+              {/*</Typography>*/}
               {/*<Typography>*/}
               {/*	{`${model.author}, ${model.lastEdit}`}*/}
               {/*</Typography>*/}
-              <Button
-                variant='contained'
-              >
-                <DownloadIcon/> Скачать паспорт
-              </Button>
+              {model.id && isReadOnly &&
+                <Button
+                  variant='contained'
+                  onClick={handleDownloadDocument}
+                >
+                  <DownloadIcon/> Скачать паспорт
+                </Button>
+              }
               {isReadOnly &&
                 <Button
                   variant='contained'
