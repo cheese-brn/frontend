@@ -19,6 +19,7 @@ import SimplePropertyInput from "./components/SimplePropertyInput";
 import CenteredElement from "../commons/CenteredElement";
 
 import AddBoxIcon from '@mui/icons-material/AddBox';
+import DownloadIcon from '@mui/icons-material/Download';
 
 const StrainView = () => {
   const navigate = useNavigate();
@@ -257,12 +258,18 @@ const StrainView = () => {
               {/*<Typography>*/}
               {/*	{`${model.author}, ${model.lastEdit}`}*/}
               {/*</Typography>*/}
+              <Button
+                variant='contained'
+              >
+                <DownloadIcon/> Скачать паспорт
+              </Button>
               {isReadOnly &&
                 <Button
                   variant='contained'
                   onClick={() => {
                     setIsReadOnly(false);
                   }}
+                  sx={{marginTop: '20px'}}
                 >
                   Редактировать
                 </Button>
