@@ -1,7 +1,7 @@
 import React, {useState, useEffect, } from "react";
 import {Paper, Typography, Select, MenuItem, Button, Divider} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
-import { Link } from 'react-router-dom';
+import SearchRow from "./components/SearchRow";
 
 const StrainSearch = ({query}) => {
   const [genusList, setGenusList] = useState(null);
@@ -89,7 +89,7 @@ const StrainSearch = ({query}) => {
       <Divider/>
       <div style={{display: 'flex', flexDirection: 'column', overflowY: 'scroll', alignItems: 'baseline'}}>
         {searchResult?.map(strain =>
-          <Link to={`/strain/${strain.id}`} style={{color: 'black', fontSize: '20px',}}>{strain.name}</Link>
+          <SearchRow strainName={strain.name} strainId={strain.id} key={`strain-search__row-${strain.id}`}/>
         )}
       </div>
     </Paper>
