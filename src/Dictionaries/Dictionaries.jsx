@@ -20,6 +20,7 @@ import DictionaryRow from "./components/DictionaryRow";
 import {Link} from 'react-router-dom'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
+import {debounce} from "debounce";
 import CenteredElement from "../commons/CenteredElement";
 
 import styles from './styles.css';
@@ -79,6 +80,7 @@ const Dictionaries = () => {
   const [state, dispatch] = useReducer(reducer, null, stateInitializer);
 
   const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
+  const [searchString, setSearchString] = useState('');
 
   useEffect(() => {
     if (!dictionaryTarget) {
@@ -292,6 +294,40 @@ const Dictionaries = () => {
     updateItemsList();
   }
 
+  const handleSearch = debounce((query) => {
+      switch (dictionaryTarget) {
+      case OPEN_GENUSES:
+        fetch(`/rods/searchByName`, {
+          method: 'POST',
+          body: query,
+        }).then(response => response.json())
+          .then(genusesList => {
+            setDictionaryElements(genusesList);
+          })
+        break;
+      case OPEN_TYPES:
+        fetch(`/vids/searchByName`, {
+          method: 'POST',
+          body: query,
+        }).then(response => response.json())
+          .then(typesList => {
+            setDictionaryElements(typesList);
+          })
+        break;
+      case OPEN_PROPERTIES:
+        // TODO: ожидаем реализацию бэка
+        // fetch(`/properties/searchByName`, {
+        //   method: 'POST',
+        //   body: query,
+        // }).then(response => response.json())
+        //   .then(propsList => {
+        //     setDictionaryElements(propsList);
+        //   })
+        break;
+      }
+
+  }, 700);
+
   // TODO: Разбить модалки по компонентам
   // TODO: Переход по первым символам названия
   return(
@@ -329,6 +365,16 @@ const Dictionaries = () => {
         </div>
         {dictionaryTarget &&
 					<div style={{width: '70%', marginTop: '15px'}}>
+            <TextField
+              value={searchString}
+              onChange={event => {
+                setSearchString(event.target.value);
+                handleSearch.clear();
+                handleSearch(event.target.value);
+              }}
+            >
+
+            </TextField>
 					  {dictionaryElements?.map((row, index) =>
 					    <div key={`dictionary-row-${index}`}>
 					      <DictionaryRow data={row} dispatch={dispatch}/>
