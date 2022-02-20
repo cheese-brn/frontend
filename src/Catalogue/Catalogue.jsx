@@ -16,7 +16,7 @@ const Catalogue = ({appDispatch}) => {
   const handleItemSelect = (item) => {
     if (genus.current) {
       appDispatch(APP_ACTIONS.SET_QUERY_ACTION({rod: genus.current.id, vid: item.id}));
-      navigate('/strains-list');
+      navigate('/search');
     } else {
       genus.current = item;
       fetch(`/vids/rods/${item.id}`)

@@ -6,7 +6,6 @@ import {AppBar, Toolbar, Typography, IconButton} from "@mui/material";
 import {BrowserRouter, Routes, Route, Outlet, Link,} from "react-router-dom";
 import Dictionaries from "./Dictionaries";
 import Catalogue from "./Catalogue";
-import StrainsList from "./StrainsList";
 import Utils from "./Utils";
 import RestoreDeletedElements from "./Utils/RestoreDeletedElements";
 import APP_ACTIONS from "./constants";
@@ -46,10 +45,9 @@ const App = () => {
           </Route>
           <Route path='dictionaries' element={<Dictionaries/>}/>
           <Route path='catalogue' element={<Catalogue appDispatch={dispatch}/>}/>
-          <Route path='strains-list' element={<StrainsList query={state.query}/>}/>
           <Route path='utils' element={<Utils/>}/>
           <Route path='utils/restoreDeletedElements' element={<RestoreDeletedElements/>}/>
-          <Route path='search' element={<StrainSearch/>}/>
+          <Route path='search' element={<StrainSearch query={state.query}/>}/>
           <Route path='*' element={
             <div>
               404

@@ -3,13 +3,12 @@ import {Paper, Typography, Select, MenuItem, Button, Divider} from "@mui/materia
 import SearchIcon from '@mui/icons-material/Search';
 import { Link } from 'react-router-dom';
 
-const StrainSearch = () => {
+const StrainSearch = ({query}) => {
   const [genusList, setGenusList] = useState(null);
   const [typeList, setTypeList] = useState(null);
   const [searchParams, setSearchParams] = useState({genus: -1, type: -1});
 
   const [searchResult, setSearchResult] = useState(null)
-
 
   useEffect(() => {
     fetch('/rods')
@@ -17,6 +16,12 @@ const StrainSearch = () => {
       .then(genuses => {
         setGenusList(genuses);
       })
+    if (query) {
+      setSearchParams({genus: query.rod, type: query.vid});
+      fetch(`/strains/vids/${query.vid}`)
+        .then(response => response.json())
+        .then(strains => setSearchResult(strains));
+    }
   }, []);
 
   useEffect(() => {
@@ -31,11 +36,11 @@ const StrainSearch = () => {
     }
   }, [searchParams.genus]);
 
-  const search = () => {
+  const findStrains = () => {
     if (searchParams.type !== -1) {
       fetch(`/strains/vids/${searchParams.type}`)
         .then(response => response.json())
-        .then(strains => setSearchResult(strains))
+        .then(strains => setSearchResult(strains));
     }
     else if (searchParams.genus !== -1) {
       fetch(`/strains/rods/${searchParams.genus}`)
@@ -77,7 +82,7 @@ const StrainSearch = () => {
       <Button
         variant='outlined'
         style={{align: 'left', marginBottom: '10px', display: 'flex'}}
-        onClick={search}
+        onClick={findStrains}
       >
         <SearchIcon/>Найти
       </Button>
