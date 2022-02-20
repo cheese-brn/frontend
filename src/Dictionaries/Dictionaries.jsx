@@ -12,6 +12,9 @@ import {
   FormControl,
   InputLabel,
   IconButton,
+  Dialog,
+  DialogActions,
+  DialogTitle,
 } from '@mui/material';
 import DictionaryRow from "./components/DictionaryRow";
 import {Link} from 'react-router-dom'
@@ -74,6 +77,8 @@ const Dictionaries = () => {
   const [model, setModel] = useState(null);
 
   const [state, dispatch] = useReducer(reducer, null, stateInitializer);
+
+  const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
 
   useEffect(() => {
     if (!dictionaryTarget) {
@@ -268,6 +273,25 @@ const Dictionaries = () => {
     updateItemsList();
   }
 
+  const handleDeleteElement = () => {
+    setOpenConfirmDeleteDialog(false);
+    switch (dictionaryTarget) {
+    case OPEN_GENUSES:
+      alert('Удаление рода')
+      break;
+    case OPEN_TYPES:
+      alert('Удаление вида')
+      break;
+    case OPEN_PROPERTIES:
+      alert('Удаление свойства')
+      // fetch(`/property/delete/${state.itemId}`)
+      break;
+    }
+    setModel(null);
+    state.itemId = null;
+    updateItemsList();
+  }
+
   // TODO: Разбить модалки по компонентам
   // TODO: Переход по первым символам названия
   return(
@@ -431,6 +455,7 @@ const Dictionaries = () => {
                 style={{marginTop: '10px', marginRight: '10px'}}
                 variant='outlined'
                 color='error'
+                onClick={() => setOpenConfirmDeleteDialog(true)}
               >
                 Удалить элемент
               </Button>
@@ -493,6 +518,27 @@ const Dictionaries = () => {
           </Button>
         </Paper>}
       </Modal>
+
+      <Dialog
+        open={openConfirmDeleteDialog}
+        onClose={() => setOpenConfirmDeleteDialog(false)}
+      >
+        <DialogTitle>
+          Вы уверены, что хотите удалить этот элемент?
+        </DialogTitle>
+        <DialogActions>
+          <Button
+            onClick={() => setOpenConfirmDeleteDialog(false)}
+          >
+            Отменить
+          </Button>
+          <Button
+            onClick={handleDeleteElement}
+          >
+            Удалить
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

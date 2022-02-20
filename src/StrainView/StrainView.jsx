@@ -1,6 +1,7 @@
 import React, {useEffect, useState, useRef} from "react";
 import {useParams, useNavigate} from "react-router-dom";
-import {Paper,
+import {
+  Paper,
   Typography,
   Grid,
   TextField,
@@ -12,7 +13,7 @@ import {Paper,
   FormControl,
   InputLabel,
   Modal,
-  IconButton,
+  IconButton, DialogTitle, DialogActions, Dialog,
 } from "@mui/material";
 import SimplePropertyInput from "./components/SimplePropertyInput";
 
@@ -39,6 +40,8 @@ const StrainView = () => {
     "factParams":[],
   });
   const modelCopy = useRef(null);
+
+  const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
 
   const [isReadOnly, setIsReadOnly] = useState(true);
   const [addPropModalOpened, setAddPropModalOpened] = useState(false);
@@ -118,6 +121,11 @@ const StrainView = () => {
     const newModel = JSON.parse(JSON.stringify(model));
     newModel.factParams[propIndex].subProps.splice(subpropIndex, 1);
     setModel(newModel);
+  }
+
+  const handleDeleteStrain = () => {
+    fetch(`/strain/delete/${model.id}`, {method: 'POST', headers: {'Content-Type': 'application/json'}})
+    navigate('/');
   }
 
   // TODO: Разобраться с цветовой палитрой
@@ -304,11 +312,7 @@ const StrainView = () => {
                   variant='outlined'
                   color='error'
                   sx={{marginTop: '20px'}}
-                  onClick={() => {
-                    // TODO: Модалка подтверждения удаления
-                    fetch(`/strain/delete/${model.id}`, {method: 'POST', headers: {'Content-Type': 'application/json'}})
-                    navigate('/');
-                  }}
+                  onClick={() => setOpenConfirmDeleteDialog(true)}
                 >
                   Удалить штамм
                 </Button>
@@ -317,6 +321,7 @@ const StrainView = () => {
           </Grid>
         </Grid>
       </Paper>
+
       <Modal
         open={addPropModalOpened}
         onClose={() => setAddPropModalOpened(false)}
@@ -351,6 +356,23 @@ const StrainView = () => {
           </Paper>
         </CenteredElement>
       </Modal>
+
+      <Dialog
+        open={openConfirmDeleteDialog}
+        onClose={() => setOpenConfirmDeleteDialog(false)}
+      >
+        <DialogTitle>
+          Вы уверены, что хотите удалить этот элемент?
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={() => setOpenConfirmDeleteDialog(false)}>
+            Отменить
+          </Button>
+          <Button onClick={handleDeleteStrain}>
+            Удалить
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
