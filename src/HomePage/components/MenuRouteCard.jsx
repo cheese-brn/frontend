@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 // TODO: Добаботать стилизацию
+// BUG: CardActionArea не заполняет всё пространство, при клике внизу карты может быть "подбородок"
 const MenuRouteCard = ({ cardTitle, cardIconPath, route }) => {
   return (
     <Card

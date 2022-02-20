@@ -15,14 +15,13 @@ const Catalogue = ({appDispatch}) => {
 
   const handleItemSelect = (item) => {
     if (genus.current) {
-      appDispatch(APP_ACTIONS.SET_QUERY_ACTION({rod: genus.current.id, vid: item.id}));
+      appDispatch(APP_ACTIONS.SET_QUERY_ACTION({genus: genus.current.id, type: item.id}));
       navigate('/search');
     } else {
       genus.current = item;
       fetch(`/vids/rods/${item.id}`)
         .then(response => response.json())
         .then(json => {
-
           setDisplayData(json);
         });
     }
@@ -59,7 +58,7 @@ const Catalogue = ({appDispatch}) => {
           <div
             key={`catalogue-element-${index}`}
             onClick={() => handleItemSelect(element)}
-            style={{width: '100px', height: '35px', textDecoration: 'underline', cursor: 'pointer'}}>
+            style={{height: '35px', textDecoration: 'underline', cursor: 'pointer'}}>
             <Typography sx={{fontSize: '25px',}} align='left'>
               {element.name}
             </Typography>

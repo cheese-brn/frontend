@@ -17,20 +17,22 @@ const StrainSearch = ({query}) => {
         setGenusList(genuses);
       })
     if (query) {
-      setSearchParams({genus: query.rod, type: query.vid});
-      fetch(`/strains/vids/${query.vid}`)
+      fetch(`/strains/vids/${query.type}`)
         .then(response => response.json())
-        .then(strains => setSearchResult(strains));
+        .then(strains => {
+          setSearchResult(strains);
+          setSearchParams(query);
+        });
     }
   }, []);
 
   useEffect(() => {
-    if (searchParams.genus === -1) {
-      fetch('/vids')
+    if (query){
+      fetch(`/vids/rods/${query.genus}`)
         .then(response => response.json())
         .then(types => setTypeList(types));
-    } else {
-      fetch(`/vids/rods/${searchParams.genus}`)
+    }else if (searchParams.genus === -1) {
+      fetch('/vids')
         .then(response => response.json())
         .then(types => setTypeList(types));
     }

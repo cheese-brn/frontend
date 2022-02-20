@@ -26,7 +26,7 @@ const App = () => {
         <AppBar position='static' sx={{backgroundColor: '#232323'}}>
           <Toolbar variant='dense'>
             <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', alignContent: 'center'}}>
-              <Link to={`/`} style={{ color: 'white', textDecoration: 'none' }}>
+              <Link to={`/`} style={{ color: 'white', textDecoration: 'none', padding: '5px'}}>
                 <Typography variant='h5'>
                   Штаммы микроорганизмов
                 </Typography>
