@@ -37,7 +37,7 @@ const SimplePropertyInput = props => {
         <Typography variant='p' sx={{fontSize: '18px'}}>{name}</Typography>
 
         <div style={{display: 'flex', }}>
-          {!readOnly && availableSubprops !== null &&
+          {!readOnly &&
           <div>
             <IconButton
               className='add-subproperty-button'
@@ -60,7 +60,9 @@ const SimplePropertyInput = props => {
                 'aria-labelledby': `simple-property-input__${propertyIndex}-add-subprop-button`
               }}
             >
-              {availableSubprops?.map((subprop, key) =>
+              {availableSubprops
+                ?.filter(availSubprop => !Boolean(subProps.find(subProp => subProp.id === availSubprop.id)))
+                .map((subprop, key) =>
                 <MenuItem
                   key={`prop-${propertyIndex}-subprop-${key}`}
                   onClick={() => {
