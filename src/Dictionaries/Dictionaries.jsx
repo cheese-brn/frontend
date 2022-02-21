@@ -402,8 +402,6 @@ const Dictionaries = () => {
           setModel(null);
           state.itemId = null;
         }}
-        // TODO: разобраться с центрированием
-        sx={{paddingTop: '200px'}}
       >
         <CenteredElement>
           {model !== null && !openNewElemModal ?
@@ -518,53 +516,54 @@ const Dictionaries = () => {
           setOpenNewElemModal(false);
           setModel(null)
         }}
-        sx={{paddingTop: '200px'}}
       >
-        {openNewElemModal &&
+        <CenteredElement>
+          {openNewElemModal &&
           <Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
-          <Typography variant='h5'>
-            {`Создать элемент: ${getDictionaryByType(dictionaryTarget)}`}
-          </Typography>
-          <TextField
-            label='Название элемента'
-            style={{marginTop: '10px', width: '100%', marginBottom: '10px'}}
-            value={model.name}
-            onChange={(event) => setModel({...model, name: event.target.value})}
-          />
-          {dictionaryTarget === OPEN_TYPES &&
-          <FormControl sx={{marginTop: '10px', marginBottom: '10px', width: '100%'}}>
-            <InputLabel id='dictionaries__new-element-genus-field-label'>Относится к роду</InputLabel>
-            <Select
-              label='Осносится к роду:'
-              id='dictionaries__new-element-genus-field'
-              labelId='dictionaries__new-element-genus-field-label'
-              value={model?.rodId}
-              onChange={event => setModel({...model, rodId: event.target.value})}
+            <Typography variant='h5'>
+              {`Создать элемент: ${getDictionaryByType(dictionaryTarget)}`}
+            </Typography>
+            <TextField
+              label='Название элемента'
+              style={{marginTop: '10px', width: '100%', marginBottom: '10px'}}
+              value={model.name}
+              onChange={(event) => setModel({...model, name: event.target.value})}
+            />
+            {dictionaryTarget === OPEN_TYPES &&
+            <FormControl sx={{marginTop: '10px', marginBottom: '10px', width: '100%'}}>
+              <InputLabel id='dictionaries__new-element-genus-field-label'>Относится к роду</InputLabel>
+              <Select
+                label='Осносится к роду:'
+                id='dictionaries__new-element-genus-field'
+                labelId='dictionaries__new-element-genus-field-label'
+                value={model?.rodId}
+                onChange={event => setModel({...model, rodId: event.target.value})}
+              >
+                {model?.genusList?.map((genus, key) =>
+                  <MenuItem value={genus.id} key={key}>{genus.name}</MenuItem>
+                )}
+              </Select>
+            </FormControl>
+            }
+            <Button
+              variant='outlined'
+              color='success'
+              onClick={handleNewElemSubmit}
             >
-              {model?.genusList?.map((genus, key) =>
-                <MenuItem value={genus.id} key={key}>{genus.name}</MenuItem>
-              )}
-            </Select>
-          </FormControl>
-          }
-          <Button
-            variant='outlined'
-            color='success'
-            onClick={handleNewElemSubmit}
-          >
-            Создать
-          </Button>
-          <Button
-            variant='outlined'
-            color='warning'
-            onClick={() => {
-              setModel(false);
-              setOpenNewElemModal(false);
-            }}
-          >
-            Отменить
-          </Button>
-        </Paper>}
+              Создать
+            </Button>
+            <Button
+              variant='outlined'
+              color='warning'
+              onClick={() => {
+                setModel(false);
+                setOpenNewElemModal(false);
+              }}
+            >
+              Отменить
+            </Button>
+          </Paper>}
+        </CenteredElement>
       </Modal>
 
       <Dialog

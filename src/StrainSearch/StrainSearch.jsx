@@ -35,6 +35,10 @@ const StrainSearch = ({query}) => {
       fetch('/vids')
         .then(response => response.json())
         .then(types => setTypeList(types));
+    } else if (searchParams.genus !== -1) {
+      fetch(`/vids/rods/${searchParams.genus}`)
+        .then(response => response.json())
+        .then(types => setTypeList(types));
     }
   }, [searchParams.genus]);
 
