@@ -364,9 +364,11 @@ const Dictionaries = () => {
           </ToggleButtonGroup>
         </div>
         {dictionaryTarget &&
-					<div style={{width: '70%', marginTop: '15px'}}>
+					<div style={{width: '70%', marginTop: '15px', display: 'flex', flexDirection: 'column', justifyContent: 'left'}}>
             <TextField
               value={searchString}
+              placeholder="Отфильтровать"
+              style={{width: '500px', marginBottom: '5px',}}
               onChange={event => {
                 setSearchString(event.target.value);
                 handleSearch.clear();
