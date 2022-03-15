@@ -1,11 +1,12 @@
 import React from 'react';
 import { Card, CardActionArea, CardContent, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 // TODO: Добаботать стилизацию
 // BUG: CardActionArea не заполняет всё пространство, при клике внизу карты может быть "подбородок"
 const MenuRouteCard = ({ cardTitle, cardIconPath, route }) => {
+  const navigate = useNavigate();
   return (
     <Card
       sx={{
@@ -14,6 +15,8 @@ const MenuRouteCard = ({ cardTitle, cardIconPath, route }) => {
         margin: '20px',
         borderRadius: '5px',
       }}
+      onClick={() => navigate(`/${route}`)}
+      elevation={3}
     >
       <Link to={`/${route}`} style={{ color: 'black', textDecoration: 'none' }}>
         <CardActionArea>
