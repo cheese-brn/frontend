@@ -34,12 +34,20 @@ const StrainSearch = () => {
     if (searchParams.type !== -1) {
       fetch(`/strains/vids/${searchParams.type}`)
         .then(response => response.json())
-        .then(strains => setSearchResult(strains));
+        .then(strains => {
+          setSearchResult(strains);
+        });
     }
     else if (searchParams.genus !== -1) {
       fetch(`/strains/rods/${searchParams.genus}`)
         .then(response => response.json())
-        .then(strains => setSearchResult(strains));
+        .then(strains => {
+          if (strains === []) {}
+
+          setSearchResult(strains);
+        });
+    } else {
+      alert('Не заданы параметры поиска!')
     }
   }
 
