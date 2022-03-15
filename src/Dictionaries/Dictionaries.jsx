@@ -25,7 +25,6 @@ import CenteredElement from "../commons/CenteredElement";
 
 import styles from './styles.css';
 
-// TODO: Может, есть способ сделать это адекватно?
 import {
   OPEN_GENUSES,
   OPEN_PROPERTIES,
@@ -121,9 +120,20 @@ const Dictionaries = () => {
             .then(response => response.json())
             .then(array => {
               elementModel['children'] = array;
-              setModel(elementModel);
+
+              // Дополнительно вносим список родов в модель, если цель - вид
+              if (dictionaryTarget === OPEN_TYPES) {
+                fetch(`/rods`)
+                  .then(response => response.json())
+                  .then(array => {
+                    elementModel['availableGenuses'] = array;
+                    setModel(elementModel);
+                  })
+              } else {
+                setModel(elementModel);
+              }
             })
-        })
+        });
     }
   }, [state.itemId]);
 
@@ -279,14 +289,13 @@ const Dictionaries = () => {
     setOpenConfirmDeleteDialog(false);
     switch (dictionaryTarget) {
     case OPEN_GENUSES:
-      alert('Удаление рода')
+      fetch(`/rod/delete/${state.itemId}`)
       break;
     case OPEN_TYPES:
-      alert('Удаление вида')
+      fetch(`/vid/delete/${state.itemId}`)
       break;
     case OPEN_PROPERTIES:
-      alert('Удаление свойства')
-      // fetch(`/property/delete/${state.itemId}`)
+      fetch(`/property/delete/${state.itemId}`)
       break;
     }
     setModel(null);
@@ -328,8 +337,8 @@ const Dictionaries = () => {
 
   }, 700);
 
-  // TODO: Разбить модалки по компонентам
   // TODO: Переход по первым символам названия
+  // TODO: Объединить модалку создания и редактирования, мб вынести в компонент
   return(
     <>
       <Paper sx={{margin: '0 0 0 10px', padding: '20px'}}>
@@ -409,7 +418,6 @@ const Dictionaries = () => {
               <Typography variant='h5'>
                 {`Редактирование: ${getDictionaryByType(model.elementType)} - ${model.name}`}
               </Typography>
-              {/*Костыльно с выделением, но иначе это выносить в state, но не зачем*/}
               <TextField
                 sx={{
                   marginTop: '10px',
@@ -419,8 +427,6 @@ const Dictionaries = () => {
                 label='Название элемента'
                 value={model.newName}
                 onChange={event => {setModel({...model, newName: event.target.value})}}
-                color={model.name !== model.newName ? 'warning' : ''}
-                focused={toString(model.name !== model.newName)}
               />
 
               {model.elementType === OPEN_PROPERTIES &&
@@ -461,6 +467,26 @@ const Dictionaries = () => {
 
               {model.elementType === OPEN_TYPES &&
               <div style={{marginBottom: '10px'}}>
+                <FormControl
+                  sx={{
+                    marginTop: '10px',
+                    marginBottom: '10px',
+                    width: '100%',
+                  }}>
+                  <InputLabel id='dictionaries__edit-type__genus-select-label'>Относится к роду</InputLabel>
+                  <Select
+                    labelId='dictionaries__edit-type__genus-select-label'
+                    id='dictionaries__edit-type__genus-select'
+                    value={model.rodId || 0}
+                    name='rodId'
+
+                    onChange={(event => {setModel({...model, rodId: event.target.value})})}
+                  >
+                    {model.availableGenuses?.map(genus =>
+                      <MenuItem value={genus.id} key={genus.id}>{genus.name}</MenuItem>
+                    )}
+                  </Select>
+                </FormControl>
                 <Typography>
                   Связанные штаммы:
                 </Typography>
@@ -511,7 +537,7 @@ const Dictionaries = () => {
       </Modal>
 
       <Modal
-        open={openNewElemModal }
+        open={openNewElemModal}
         onClose={() => {
           setOpenNewElemModal(false);
           setModel(null)
