@@ -341,7 +341,7 @@ const Dictionaries = () => {
   // TODO: Объединить модалку создания и редактирования, мб вынести в компонент
   return(
     <>
-      <Paper sx={{margin: '0 0 0 10px', padding: '20px'}}>
+      <div >
         <Typography variant='h4' component='div' align='left'>Справочники приложения</Typography>
         <div style={{display: 'flex', marginTop: '5px'}}>
           <ToggleButtonGroup
@@ -402,7 +402,7 @@ const Dictionaries = () => {
 					  </Button>
 					</div>
         }
-      </Paper>
+      </div>
 
       {/*Скорее всего - вынести в компоненты*/}
       <Modal

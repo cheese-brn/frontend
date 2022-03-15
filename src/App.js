@@ -2,26 +2,18 @@ import './App.css';
 import React, { useReducer } from 'react';
 import HomePage from "./HomePage/HomePage";
 import StrainView from "./StrainView";
-import {AppBar, Toolbar, Typography, IconButton} from "@mui/material";
+import {AppBar, Toolbar, Typography, IconButton, Paper} from "@mui/material";
 import {BrowserRouter, Routes, Route, Outlet, Link,} from "react-router-dom";
 import Dictionaries from "./Dictionaries";
 import Catalogue from "./Catalogue";
 import Utils from "./Utils";
 import RestoreDeletedElements from "./Utils/RestoreDeletedElements";
-import APP_ACTIONS from "./constants";
 import StrainSearch from "./StrainSearch";
 
-const reducer = (state, action) => {
-  switch (action.type) {
-  case APP_ACTIONS.SET_QUERY:
-    return {...state, query: action.payload};
-  }
-};
 
 const App = () => {
-  const [state, dispatch] = useReducer(reducer, {query: null});
   return (
-    <div className="App" style={{backgroundColor: '#E3E3E3', minWidth: '1024px', height: '100vh'}}>
+    <div className="App" style={{backgroundColor: '#E3E3E3', minWidth: '1024px', minHeight: '100vh'}}>
       <BrowserRouter>
         <AppBar position='static' sx={{backgroundColor: '#232323'}}>
           <Toolbar variant='dense'>
@@ -38,22 +30,24 @@ const App = () => {
           </Toolbar>
         </AppBar>
 
-        <Routes>
-          <Route path='/' element={<HomePage/>}/>
-          <Route path='strain' element={<StrainView/>}>
-            <Route path=':strainId' element={<StrainView/>}/>
-          </Route>
-          <Route path='dictionaries' element={<Dictionaries/>}/>
-          <Route path='catalogue' element={<Catalogue appDispatch={dispatch}/>}/>
-          <Route path='utils' element={<Utils/>}/>
-          <Route path='utils/restoreDeletedElements' element={<RestoreDeletedElements/>}/>
-          <Route path='search' element={<StrainSearch query={state.query}/>}/>
-          <Route path='*' element={
-            <div>
-              404
-            </div>
-          }/>
-        </Routes>
+        <Paper elevation={3} sx={{margin: '0 10px 0 10px', padding: '20px', minHeight: '85vh'}}>
+          <Routes>
+            <Route path='/' element={<HomePage/>}/>
+            <Route path='strain' element={<StrainView/>}>
+              <Route path=':strainId' element={<StrainView/>}/>
+            </Route>
+            <Route path='dictionaries' element={<Dictionaries/>}/>
+            <Route path='catalogue' element={<Catalogue/>}/>
+            <Route path='utils' element={<Utils/>}/>
+            <Route path='utils/restoreDeletedElements' element={<RestoreDeletedElements/>}/>
+            <Route path='search' element={<StrainSearch/>}/>
+            <Route path='*' element={
+              <div>
+                404
+              </div>
+            }/>
+          </Routes>
+        </Paper>
       </BrowserRouter>
       <p
         style={{

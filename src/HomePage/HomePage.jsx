@@ -3,8 +3,8 @@ import menuCardsContents from './constants';
 import MenuRouteCard from './components/MenuRouteCard';
 import LastStrainsCard from './components/LastStrainsCard';
 
-import { Paper, Grid } from '@mui/material';
-// TODO: Сделать layout правильно
+import { Grid } from '@mui/material';
+
 const HomePage = () => {
   const [menu, setMenu] = useState(null);
   // Это нужно получить с сервера
@@ -46,7 +46,7 @@ const HomePage = () => {
   }, []);
 
   return (
-    <Paper sx={{ margin: '0 10px 0 10px', padding: '10px' }}>
+    <div >
       <Grid container spacing="2">
         {/*<Grid item sm="6" md="5" lg="4">*/}
         {/*  <LastStrainsCard strainsArray={lastStrains} />*/}
@@ -56,7 +56,7 @@ const HomePage = () => {
           {menu}
         </Grid>
       </Grid>
-    </Paper>
+    </div>
   );
 };
 

@@ -145,7 +145,7 @@ const StrainView = () => {
   // TODO: Оптимизация вида readOnly
   return(
     <>
-      <Paper sx={{margin: '0 10px 0 10px', padding: '10px'}}>
+      <div>
         <Grid container spacing='5'>
           <Grid container sm='6' md='7' lg='8' sx={{paddingRight: '15px', paddingLeft:'20px', }}>
             <Stack orientation='vertical' width={'100%'}>
@@ -335,7 +335,7 @@ const StrainView = () => {
             </Stack>
           </Grid>
         </Grid>
-      </Paper>
+      </div>
 
       <Modal
         open={addPropModalOpened}

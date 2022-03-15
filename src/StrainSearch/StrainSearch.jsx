@@ -1,9 +1,9 @@
 import React, {useState, useEffect, } from "react";
-import {Paper, Typography, Select, MenuItem, Button, Divider} from "@mui/material";
+import {Typography, Select, MenuItem, Button, Divider} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import SearchRow from "./components/SearchRow";
 
-const StrainSearch = ({query}) => {
+const StrainSearch = () => {
   const [genusList, setGenusList] = useState(null);
   const [typeList, setTypeList] = useState(null);
   const [searchParams, setSearchParams] = useState({genus: -1, type: -1});
@@ -16,22 +16,10 @@ const StrainSearch = ({query}) => {
       .then(genuses => {
         setGenusList(genuses);
       })
-    if (query) {
-      fetch(`/strains/vids/${query.type}`)
-        .then(response => response.json())
-        .then(strains => {
-          setSearchResult(strains);
-          setSearchParams(query);
-        });
-    }
   }, []);
 
   useEffect(() => {
-    if (query){
-      fetch(`/vids/rods/${query.genus}`)
-        .then(response => response.json())
-        .then(types => setTypeList(types));
-    }else if (searchParams.genus === -1) {
+    if (searchParams.genus === -1) {
       fetch('/vids')
         .then(response => response.json())
         .then(types => setTypeList(types));
@@ -57,7 +45,7 @@ const StrainSearch = ({query}) => {
 
   // TODO: Высота выборки работает некорректно. Нужно найти способ здесь и в других местах прописать высоту на всё оставшееся место
   return(
-    <Paper sx={{margin: '0 10px 0 10px', padding: '20px', height: '85%'}}>
+    <div>
       <Typography variant='h4' component='div' align='left' style={{marginBottom: '10px'}}>Поиск паспорта штамма</Typography>
       <div style={{display: 'flex', flexDirection: 'row', marginBottom: '10px'}}>
         <Typography variant='h5' style={{marginRight: '20px'}}>Относится к роду</Typography>
@@ -98,7 +86,7 @@ const StrainSearch = ({query}) => {
           <SearchRow strainName={strain.name} strainId={strain.id} key={`strain-search__row-${strain.id}`}/>
         )}
       </div>
-    </Paper>
+    </div>
   );
 }
 
