@@ -183,7 +183,8 @@ const Dictionaries = () => {
                   dataCopy.children[index].name = event.target.value;
                   setModel(dataCopy);
                 }}
-                style={{marginTop: '15px', marginBottom: '5px', width: '100%'}}
+                style={{marginTop: '15px', marginBottom: '5px'}}
+                fullWidth
               />
               <IconButton
                 className='dictionary-button-delete'

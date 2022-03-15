@@ -24,6 +24,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 
 import downloadStrainDocument from "../commons/utils";
 
+// TODO: Сделать предупреждение при перезагрузке/закрытии страницыв режиме редактирования
 const StrainView = () => {
   const navigate = useNavigate();
   const {strainId} = useParams();

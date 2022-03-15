@@ -11,33 +11,41 @@ import styles from './styles.css';
 // TODO: разобраться с PropTypes
 const SimplePropertyInput = props => {
   const { prop, readOnly, propertyIndex, valueChangeCallback, removePropCallback, addSubpropCallback, removeSubpropCallback } = props;
-  const { name, subProps, } = prop;
+  const { name, subProps: currentSubProps} = prop;
 
-  const [availableSubprops, setAvailableSubprops] = useState(null);
+  const [allSubprops, setAllSubprops] = useState(null);
+  const [availableSubprops, setAvailableSubprops] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
 
   useEffect(() => {
     fetch(`/subproperties/properties/${prop.id}`)
       .then(response => response.json())
-      .then(availSubprops => {
-        if (availSubprops.length !== 1) {
-          setAvailableSubprops(availSubprops);
-        }
+      .then(allSubprops => {
+        setAllSubprops(allSubprops);
 
-        if (availSubprops.length === 1 && subProps.length === 0) {
-          addSubpropCallback(propertyIndex, availSubprops[0]);
+        if (allSubprops.length === 1 && currentSubProps.length === 0) {
+          addSubpropCallback(propertyIndex, allSubprops[0]);
         }
       });
-
   }, [])
+
+  const updateAvailableSubprops = () => {
+    setAvailableSubprops(allSubprops?.filter(
+      subProp => !Boolean(currentSubProps.find(currSubProp => currSubProp.id === subProp.id))
+    ) || [])
+  }
+
+  useEffect(() => {
+    updateAvailableSubprops()
+  }, [currentSubProps, allSubprops])
 
   return(
     <div style={{border: '1px solid grey', borderRadius: '5px', alignItems: 'left', marginBottom: '15px', padding: '10px'}}>
       <div style={{ display: 'flex', justifyContent: 'space-between'}}>
         <Typography variant='p' sx={{fontSize: '18px'}}>{name}</Typography>
 
-        <div style={{display: 'flex', }}>
-          {!readOnly &&
+        <div style={{display: 'flex'}}>
+          {!readOnly && availableSubprops.length > 0 &&
           <div>
             <IconButton
               className='add-subproperty-button'
@@ -60,8 +68,8 @@ const SimplePropertyInput = props => {
                 'aria-labelledby': `simple-property-input__${propertyIndex}-add-subprop-button`
               }}
             >
-              {availableSubprops
-                ?.filter(availSubprop => !Boolean(subProps.find(subProp => subProp.id === availSubprop.id)))
+              {allSubprops
+                ?.filter(availSubprop => !Boolean(currentSubProps.find(subProp => subProp.id === availSubprop.id)))
                 .map((subprop, key) =>
                 <MenuItem
                   key={`prop-${propertyIndex}-subprop-${key}`}
@@ -70,7 +78,7 @@ const SimplePropertyInput = props => {
                     addSubpropCallback(propertyIndex, subprop);
                   }}
                 >
-                  {subprop.name}
+                  {subprop.name ? subprop.name : prop.name}
                 </MenuItem>
               )}
             </Menu>
@@ -87,7 +95,7 @@ const SimplePropertyInput = props => {
           }
         </div>
       </div>
-      {subProps.map((subProp, subPropertyIndex)=>
+      {currentSubProps.map((subProp, subPropertyIndex)=>
         <div key={`prop-${propertyIndex}-subprop-${subPropertyIndex}`} style={{textAlign: 'left', display: 'flex', flexDirection: 'column'}}>
           {readOnly && <Typography variant={'p'}><i>{subProp.name ? `${subProp.name}: ` : ''}</i>{subProp.value}</Typography>}
           {!readOnly &&
