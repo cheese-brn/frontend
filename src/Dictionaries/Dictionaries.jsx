@@ -327,13 +327,13 @@ const Dictionaries = () => {
         break;
       case OPEN_PROPERTIES:
         // TODO: ожидаем реализацию бэка
-        // fetch(`/properties/searchByName`, {
-        //   method: 'POST',
-        //   body: query,
-        // }).then(response => response.json())
-        //   .then(propsList => {
-        //     setDictionaryElements(propsList);
-        //   })
+        fetch(`/property/searchByName`, {
+          method: 'POST',
+          body: query,
+        }).then(response => response.json())
+          .then(propsList => {
+            setDictionaryElements(propsList);
+          })
         break;
       }
 
@@ -403,6 +403,9 @@ const Dictionaries = () => {
 					    {`Добавить ${getDictionaryByType(dictionaryTarget)}`}
 					  </Button>
 					</div>
+        }
+        {!dictionaryTarget &&
+          <Typography variant='h5' align='left' color='#9e9e9e'>Выберите справочник для отображения</Typography>
         }
       </div>
 
