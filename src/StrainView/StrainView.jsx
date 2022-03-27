@@ -16,8 +16,9 @@ import {
   IconButton, DialogTitle, DialogActions, Dialog,
 } from "@mui/material";
 import SimplePropertyInput from "./components/SimplePropertyInput";
+import CloseIcon from '@mui/icons-material/Close';
 
-import CenteredElement from "../commons/CenteredElement";
+import CENTERED_MODAL from "../constants"
 
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -341,12 +342,17 @@ const StrainView = () => {
       <Modal
         open={addPropModalOpened}
         onClose={() => setAddPropModalOpened(false)}
+        style={CENTERED_MODAL}
       >
-        <CenteredElement>
           <Paper sx={{width: '600px', maxHeight: '450px', margin: 'auto', padding: '20px'}}>
-            <Typography variant='h5'>
-              Добавление нового свойства
-            </Typography>
+            <div style={{display: 'flex', justifyContent: 'space-between'}}>
+              <Typography variant='h5'>
+                Добавление нового свойства
+              </Typography>
+              <IconButton onClick={() => setAddPropModalOpened(false)}>
+                <CloseIcon/>
+              </IconButton>
+            </div>
             <Typography>Выберите свойство:</Typography>
             <Select
               sx={{width: '100%'}}
@@ -370,7 +376,6 @@ const StrainView = () => {
               Добавить
             </Button>
           </Paper>
-        </CenteredElement>
       </Modal>
 
       <Dialog

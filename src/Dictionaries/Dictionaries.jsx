@@ -21,7 +21,6 @@ import {Link} from 'react-router-dom'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 import {debounce} from "debounce";
-import CenteredElement from "../commons/CenteredElement";
 
 import styles from './styles.css';
 
@@ -33,6 +32,8 @@ import {
   EDIT_ITEM,
   DELETE_ITEM,
 } from "./constants";
+import CENTERED_MODAL from "../constants";
+import CloseIcon from "@mui/icons-material/Close";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -412,13 +413,21 @@ const Dictionaries = () => {
           setModel(null);
           state.itemId = null;
         }}
+        style={CENTERED_MODAL}
       >
-        <CenteredElement>
           {model !== null && !openNewElemModal ?
             <Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
-              <Typography variant='h5'>
-                {`Редактирование: ${getDictionaryByType(model.elementType)} - ${model.name}`}
-              </Typography>
+              <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <Typography variant='h5'>
+                  {`Редактирование: ${getDictionaryByType(model.elementType)} - ${model.name}`}
+                </Typography>
+                <IconButton onClick={() => {
+                  setModel(null);
+                  state.itemId = null;
+                }}>
+                  <CloseIcon/>
+                </IconButton>
+              </div>
               <TextField
                 sx={{
                   marginTop: '10px',
@@ -523,7 +532,6 @@ const Dictionaries = () => {
               >
                 Отменить изменения
               </Button>
-              {/*TODO: Удаление элемента*/}
               <Button
                 style={{marginTop: '10px', marginRight: '10px'}}
                 variant='outlined'
@@ -534,7 +542,6 @@ const Dictionaries = () => {
               </Button>
             </Paper> : <p>Груземса</p>
           }
-        </CenteredElement>
       </Modal>
 
       <Modal
@@ -543,13 +550,21 @@ const Dictionaries = () => {
           setOpenNewElemModal(false);
           setModel(null)
         }}
+        style={CENTERED_MODAL}
       >
-        <CenteredElement>
           {openNewElemModal &&
           <Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
-            <Typography variant='h5'>
-              {`Создать элемент: ${getDictionaryByType(dictionaryTarget)}`}
-            </Typography>
+            <div style={{display: 'flex', justifyContent: 'space-between'}}>
+              <Typography variant='h5'>
+                {`Создать элемент: ${getDictionaryByType(dictionaryTarget)}`}
+              </Typography>
+              <IconButton onClick={() => {
+                setOpenNewElemModal(false);
+                setModel(null)
+              }}>
+                <CloseIcon/>
+              </IconButton>
+            </div>
             <TextField
               label='Название элемента'
               style={{marginTop: '10px', width: '100%', marginBottom: '10px'}}
@@ -590,7 +605,6 @@ const Dictionaries = () => {
               Отменить
             </Button>
           </Paper>}
-        </CenteredElement>
       </Modal>
 
       <Dialog
