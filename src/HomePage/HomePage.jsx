@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import menuCardsContents from './constants';
-import MenuRouteCard from './components/MenuRouteCard';
-import LastStrainsCard from './components/LastStrainsCard';
+import MenuRouteCard from './components/MenuRouteCard.jsx';
+import LastStrainsCard from './components/LastStrainsCard.jsx';
 
 import { Grid } from '@mui/material';
 

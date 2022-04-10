@@ -1,7 +1,7 @@
 import React, {useState, useEffect, } from "react";
 import {Typography, Select, MenuItem, Button, Divider} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
-import SearchRow from "./components/SearchRow";
+import SearchRow from "./components/SearchRow.jsx";
 
 const StrainSearch = () => {
   const [genusList, setGenusList] = useState(null);

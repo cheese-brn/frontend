@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useMemo} from "react";
 import {Paper, Typography, Stack, Divider} from "@mui/material";
 import {entityTypes} from "./constants";
-import EntityElement from "./components/EntityElement";
-import DeletedElement from "./components/DeletedElement";
+import EntityElement from "./components/EntityElement.jsx";
+import DeletedElement from "./components/DeletedElement.jsx";
 
 const RestoreDeletedElements = () => {
   const [deletedElems, setDeletedElems] = useState(null);

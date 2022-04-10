@@ -15,7 +15,7 @@ import {
   Modal,
   IconButton, DialogTitle, DialogActions, Dialog,
 } from "@mui/material";
-import SimplePropertyInput from "./components/SimplePropertyInput";
+import SimplePropertyInput from "./components/SimplePropertyInput.jsx";
 import CloseIcon from '@mui/icons-material/Close';
 
 import CENTERED_MODAL from "../constants"

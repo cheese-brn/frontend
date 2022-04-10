@@ -16,7 +16,7 @@ import {
   DialogActions,
   DialogTitle,
 } from '@mui/material';
-import DictionaryRow from "./components/DictionaryRow";
+import DictionaryRow from "./components/DictionaryRow.jsx";
 import {Link} from 'react-router-dom'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 

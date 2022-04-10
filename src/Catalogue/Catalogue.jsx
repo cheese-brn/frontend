@@ -1,7 +1,7 @@
 import React, { useState, useEffect} from 'react';
 import {Typography, Paper} from "@mui/material";
 import {TreeView, TreeItem} from "@mui/lab"
-import SearchRow from "../StrainSearch/components/SearchRow";
+import SearchRow from "../StrainSearch/components/SearchRow.jsx";
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';

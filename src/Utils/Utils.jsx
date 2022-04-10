@@ -1,7 +1,7 @@
 import React from "react";
 import {Typography} from "@mui/material";
 import {utilsList} from "./constants";
-import UtilListElement from "./components/UtilListelement";
+import UtilListElement from "./components/UtilListelement.jsx";
 
 const Utils = () => {
   return(

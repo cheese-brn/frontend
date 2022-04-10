@@ -1,3 +1,3 @@
-import StrainSearch from "./StrainSearch";
+import StrainSearch from "./StrainSearch.jsx";
 
 export default StrainSearch;

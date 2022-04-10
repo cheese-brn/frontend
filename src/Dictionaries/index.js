@@ -1,3 +1,3 @@
-import Dictionaries from './Dictionaries';
+import Dictionaries from './Dictionaries.jsx';
 
 export default Dictionaries;
