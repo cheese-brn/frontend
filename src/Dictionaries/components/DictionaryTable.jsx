@@ -13,7 +13,7 @@ const DictionaryTable = ({dictionaryTarget, dispatch, updateTrigger}) => {
   const [searchString, setSearchString] = useState('');
   const [dictionaryElements, setDictionaryElements] = useState([]);
 
-  const updateItemsList = useCallback(() => {
+  const updateItemsList = () => {
     setTimeout(() => {
       fetch(`/${dictionaryTarget}`)
         .then(response => response.json())
@@ -21,9 +21,9 @@ const DictionaryTable = ({dictionaryTarget, dispatch, updateTrigger}) => {
           setDictionaryElements(dataArray);
         });
     }, 1000);
-  }, [dictionaryTarget]);
+  }
 
-  useEffect(() => updateItemsList(), [updateTrigger]);
+  useEffect(() => updateItemsList(), [updateTrigger, dictionaryTarget]);
 
   const handleSearch = debounce((query) => {
     if (query.length === 0) {
