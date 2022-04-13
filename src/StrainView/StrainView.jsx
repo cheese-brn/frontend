@@ -13,7 +13,7 @@ import {
   FormControl,
   InputLabel,
   Modal,
-  IconButton, DialogTitle, DialogActions, Dialog,
+  IconButton, DialogTitle, DialogActions, Dialog, Checkbox, FormControlLabel
 } from "@mui/material";
 import SimplePropertyInput from "./components/SimplePropertyInput.jsx";
 import CloseIcon from '@mui/icons-material/Close';
@@ -33,10 +33,11 @@ const StrainView = () => {
   // TODO: Реализовать сохранение модели в LocalStorage, чтобы при перезагрузке не терялись данные
   // TODO: Быстрое редактирование текста приводит к тормозам. Нужно как-то буферизировать части локально или типо того
   const [model, setModel] = useState({
-    "id": null,
-    "rodId":-1,
-    "vidId":-1,
-    "annotation":"",
+    id: null,
+    rodId: -1,
+    vidId: -1,
+    isLost: false,
+    annotation: "",
     "exemplar":"",
     "modification":"",
     "obtainingMethod":"",
@@ -149,7 +150,7 @@ const StrainView = () => {
     <>
       <div>
         <Grid container spacing='5'>
-          <Grid container sm='6' md='7' lg='8' sx={{paddingRight: '15px', paddingLeft:'20px', }}>
+          <Grid container sm={6} md={7} lg={8} sx={{paddingRight: '15px', paddingLeft:'20px', }}>
             <Stack orientation='vertical' width={'100%'}>
               <Typography variant='h4' sx={{margin: '15px', textAlign: 'left'}}>
                   Паспорт штамма
@@ -202,6 +203,7 @@ const StrainView = () => {
                 onChange={ handleCommonFieldChange }
                 size='small'
               />
+
               <TextField
                 sx={costilStyle}
                 id='stain-view__modification-field'
@@ -212,6 +214,16 @@ const StrainView = () => {
                 onChange={ handleCommonFieldChange }
                 size='small'
               />
+
+              <FormControlLabel
+                control={<Checkbox name='isLost'/>}
+                disabled={isReadOnly}
+                sx={costilStyle}
+                onChange={ (event) => setModel({...model, isLost: event.target.value === 'off'})}
+                value={model?.isLost ? 'on' : 'off'}
+                label="Штамм утерян"
+              />
+
               <TextField
                 sx={costilStyle}
                 id='stain-view__obtaining-method-field'

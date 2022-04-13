@@ -16,11 +16,9 @@ import {
   DialogActions,
   DialogTitle,
 } from '@mui/material';
-import DictionaryRow from "./components/DictionaryRow.jsx";
+
 import {Link} from 'react-router-dom'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-
-import {debounce} from "debounce";
 
 import styles from './styles.css';
 
@@ -31,9 +29,12 @@ import {
   SET_DATA,
   EDIT_ITEM,
   DELETE_ITEM,
+  ADD_ITEM, OPEN_NEW_ELEM_MODAL,
 } from "./constants";
 import CENTERED_MODAL from "../constants";
 import CloseIcon from "@mui/icons-material/Close";
+import DictionaryTable from "./components/DictionaryTable";
+import NewElemModal from "./components/NewElemModal";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -44,6 +45,8 @@ const reducer = (state, action) => {
   case DELETE_ITEM:
     alert('удаление');
     return state;
+  case OPEN_NEW_ELEM_MODAL:
+    return {...state, newElemType: action.payload};
   default:
     return state;
   }
@@ -53,6 +56,7 @@ const stateInitializer = (initialState) => {
   return {
     itemId: initialState,
     items: initialState,
+    newElemType: null,
   };
 };
 
@@ -72,45 +76,40 @@ const getDictionaryByType = (type) => {
 const Dictionaries = () => {
   // TODO: Сделать нормальное состояние компонента
   const [dictionaryTarget, setDictionaryTarget] = useState(null);
-  const [dictionaryElements, setDictionaryElements] = useState(null);
 
   const [openNewElemModal, setOpenNewElemModal] = useState(false);
   const [model, setModel] = useState(null);
 
+  const [tableUpdateTrigger, setTableUpdateTrigger] = useState(0);
+
   const [state, dispatch] = useReducer(reducer, null, stateInitializer);
 
   const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
-  const [searchString, setSearchString] = useState('');
 
+  // TODO: протестировать баг с не обновляющимся списком
   useEffect(() => {
-    if (!dictionaryTarget) {
-      return;
-    }
-    fetch(`/${dictionaryTarget}`)
-      .then(response => response.json())
-      .then(dataArray => {
-        setDictionaryElements(dataArray);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dictionaryTarget]);
+    setTableUpdateTrigger(tableUpdateTrigger + 1);
+  }, [state.newElemType]);
 
   useEffect(() => {
     if (state.itemId) {
       let childrenPath, elemPath;
-      switch(dictionaryTarget) {
-      case OPEN_GENUSES:
-        childrenPath = '/vids/rods';
-        elemPath = '/rods'
-        break;
-      case OPEN_TYPES:
-        childrenPath = '/strains/vids';
-        elemPath = '/vids'
-        break;
-      case OPEN_PROPERTIES:
-        childrenPath = '/subproperties/properties';
-        elemPath = '/properties'
-      }
       let elementModel = {};
+
+      switch(dictionaryTarget) {
+        case OPEN_GENUSES:
+          childrenPath = '/vids/rods';
+          elemPath = '/rods';
+          break;
+        case OPEN_TYPES:
+          childrenPath = '/strains/vids';
+          elemPath = '/vids';
+          break;
+        case OPEN_PROPERTIES:
+          childrenPath = '/subproperties/properties';
+          elemPath = '/properties';
+      }
+
       fetch(`${elemPath}/${state.itemId}`)
         .then(response => response.json())
         .then(elemData => {
@@ -137,17 +136,6 @@ const Dictionaries = () => {
         });
     }
   }, [state.itemId]);
-
-  const updateItemsList = () => {
-    setTimeout(() => {
-      fetch(`/${dictionaryTarget}`)
-      .then(response => response.json())
-      .then(dataArray => {
-        setDictionaryElements(dataArray);
-        state.itemId = null;
-      });
-    }, 1000);
-  }
 
   const replaceGenusWithType = (typeId) => {
     fetch(`/vids/${typeId}`)
@@ -227,64 +215,6 @@ const Dictionaries = () => {
     }
     setModel(null);
     state.itemId = null;
-    updateItemsList();
-  }
-
-  const prepareNewElemModal = () => {
-    switch (dictionaryTarget) {
-    case OPEN_GENUSES:
-      setModel({rodId: 0, name: ''});
-      setOpenNewElemModal(true);
-      break;
-    case OPEN_TYPES:
-      fetch('/rods')
-        .then(response => response.json())
-        .then(genusList => {
-          setModel({rodId: genusList[0].id, vidId: null, name: '', genusList});
-          setOpenNewElemModal(true);
-        })
-      break;
-    case OPEN_PROPERTIES:
-      setModel({
-        id: 0,
-        name: '',
-        description: '',
-        isFunc: false,
-        subProps: [],
-      })
-      setOpenNewElemModal(true);
-      break;
-    }
-  }
-
-  const handleNewElemSubmit = () => {
-    switch (dictionaryTarget) {
-    case OPEN_GENUSES:
-      fetch('/rod/send', {
-        method: 'POST',
-        body: JSON.stringify(model),
-      })
-      break;
-    case OPEN_TYPES:
-      fetch('/vid/send',{
-        method: 'POST',
-        body: JSON.stringify({
-          vidId: model.vidId,
-          rodId: model.rodId,
-          name: model.name,
-        })
-      })
-      break;
-    case OPEN_PROPERTIES:
-      fetch('/property/send',{
-        method: 'POST',
-        body: JSON.stringify(model),
-      });
-      break;
-    }
-    setModel(null);
-    setOpenNewElemModal(false);
-    updateItemsList();
   }
 
   const handleDeleteElement = () => {
@@ -302,42 +232,7 @@ const Dictionaries = () => {
     }
     setModel(null);
     state.itemId = null;
-    updateItemsList();
   }
-
-  const handleSearch = debounce((query) => {
-      switch (dictionaryTarget) {
-      case OPEN_GENUSES:
-        fetch(`/rods/searchByName`, {
-          method: 'POST',
-          body: query,
-        }).then(response => response.json())
-          .then(genusesList => {
-            setDictionaryElements(genusesList);
-          })
-        break;
-      case OPEN_TYPES:
-        fetch(`/vids/searchByName`, {
-          method: 'POST',
-          body: query,
-        }).then(response => response.json())
-          .then(typesList => {
-            setDictionaryElements(typesList);
-          })
-        break;
-      case OPEN_PROPERTIES:
-        // TODO: ожидаем реализацию бэка
-        fetch(`/property/searchByName`, {
-          method: 'POST',
-          body: query,
-        }).then(response => response.json())
-          .then(propsList => {
-            setDictionaryElements(propsList);
-          })
-        break;
-      }
-
-  }, 700);
 
   // TODO: Переход по первым символам названия
   // TODO: Объединить модалку создания и редактирования, мб вынести в компонент
@@ -345,9 +240,9 @@ const Dictionaries = () => {
     <>
       <div >
         <Typography variant='h4' component='div' align='left'>Справочники приложения</Typography>
-        <div style={{display: 'flex', marginTop: '5px'}}>
           <ToggleButtonGroup
             value={dictionaryTarget}
+            style={{display: 'flex', marginTop: '5px'}}
             onChange={(event, newTarget) => setDictionaryTarget(newTarget)}
             exclusive
           >
@@ -373,43 +268,10 @@ const Dictionaries = () => {
               <Typography sx={{fontWeight: 'bold'}}>Свойства</Typography>
             </ToggleButton>
           </ToggleButtonGroup>
-        </div>
-        {dictionaryTarget &&
-					<div style={{width: '70%', marginTop: '15px', display: 'flex', flexDirection: 'column', justifyContent: 'left'}}>
-            <TextField
-              value={searchString}
-              placeholder="Отфильтровать"
-              style={{width: '500px', marginBottom: '5px',}}
-              onChange={event => {
-                setSearchString(event.target.value);
-                handleSearch.clear();
-                handleSearch(event.target.value);
-              }}
-            >
-
-            </TextField>
-					  {dictionaryElements?.map((row, index) =>
-					    <div key={`dictionary-row-${index}`}>
-					      <DictionaryRow data={row} dispatch={dispatch}/>
-					      <Divider/>
-					    </div>
-					  )}
-					  <Button
-					    variant='contained'
-					    color='success'
-              sx={{marginTop: '10px', display: 'flex'}}
-					    onClick={prepareNewElemModal}
-					  >
-					    {`Добавить ${getDictionaryByType(dictionaryTarget)}`}
-					  </Button>
-					</div>
-        }
-        {!dictionaryTarget &&
-          <Typography variant='h5' align='left' color='#9e9e9e'>Выберите справочник для отображения</Typography>
-        }
+        <DictionaryTable dictionaryTarget={dictionaryTarget} dispatch={dispatch} updateTrigger={tableUpdateTrigger}/>
       </div>
 
-      {/*Скорее всего - вынести в компоненты*/}
+      {/*Редактирование элемента*/}
       <Modal
         open={Boolean(model) && !openNewElemModal}
         onClose={() => {
@@ -547,69 +409,9 @@ const Dictionaries = () => {
           }
       </Modal>
 
-      <Modal
-        open={openNewElemModal}
-        onClose={() => {
-          setOpenNewElemModal(false);
-          setModel(null)
-        }}
-        style={CENTERED_MODAL}
-      >
-          {openNewElemModal &&
-          <Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
-            <div style={{display: 'flex', justifyContent: 'space-between'}}>
-              <Typography variant='h5'>
-                {`Создать элемент: ${getDictionaryByType(dictionaryTarget)}`}
-              </Typography>
-              <IconButton onClick={() => {
-                setOpenNewElemModal(false);
-                setModel(null)
-              }}>
-                <CloseIcon/>
-              </IconButton>
-            </div>
-            <TextField
-              label='Название элемента'
-              style={{marginTop: '10px', width: '100%', marginBottom: '10px'}}
-              value={model.name}
-              onChange={(event) => setModel({...model, name: event.target.value})}
-            />
-            {dictionaryTarget === OPEN_TYPES &&
-            <FormControl sx={{marginTop: '10px', marginBottom: '10px', width: '100%'}}>
-              <InputLabel id='dictionaries__new-element-genus-field-label'>Относится к роду</InputLabel>
-              <Select
-                label='Осносится к роду:'
-                id='dictionaries__new-element-genus-field'
-                labelId='dictionaries__new-element-genus-field-label'
-                value={model?.rodId}
-                onChange={event => setModel({...model, rodId: event.target.value})}
-              >
-                {model?.genusList?.map((genus, key) =>
-                  <MenuItem value={genus.id} key={key}>{genus.name}</MenuItem>
-                )}
-              </Select>
-            </FormControl>
-            }
-            <Button
-              variant='outlined'
-              color='success'
-              onClick={handleNewElemSubmit}
-            >
-              Создать
-            </Button>
-            <Button
-              variant='outlined'
-              color='warning'
-              onClick={() => {
-                setModel(false);
-                setOpenNewElemModal(false);
-              }}
-            >
-              Отменить
-            </Button>
-          </Paper>}
-      </Modal>
+      <NewElemModal elemType={state.newElemType} dispatch={dispatch}/>
 
+      {/*Подтверждение удаления элемента словаря*/}
       <Dialog
         open={openConfirmDeleteDialog}
         onClose={() => setOpenConfirmDeleteDialog(false)}

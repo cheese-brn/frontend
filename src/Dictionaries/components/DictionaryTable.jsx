@@ -1,37 +1,87 @@
-/* eslint-disable react/prop-types */
-import React from 'react';
-import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody} from '@mui/material';
-import {OPEN_ITEM} from '../constants';
+import {Button, Divider, TextField, Typography} from "@mui/material";
+import DictionaryRow from "./DictionaryRow";
+import React, {useCallback, useEffect, useState,} from "react";
+import {debounce} from "debounce";
+import {OPEN_GENUSES, OPEN_PROPERTIES, OPEN_TYPES, openNewElem} from "../constants";
+import {getDictionaryByTarget} from "../commons";
 
-const DictionaryTable = props => {
-  const {columns, rows, dispatch} = props;
+const DictionaryTable = ({dictionaryTarget, dispatch, updateTrigger}) => {
+  if (!dictionaryTarget) {
+    return (<Typography variant='h5' align='left' color='#9e9e9e'>Выберите справочник для отображения</Typography>)
+  }
+
+  const [searchString, setSearchString] = useState('');
+  const [dictionaryElements, setDictionaryElements] = useState([]);
+
+  const updateItemsList = useCallback(() => {
+    setTimeout(() => {
+      fetch(`/${dictionaryTarget}`)
+        .then(response => response.json())
+        .then(dataArray => {
+          setDictionaryElements(dataArray);
+        });
+    }, 1000);
+  }, [dictionaryTarget]);
+
+  useEffect(() => updateItemsList(), [updateTrigger]);
+
+  const handleSearch = debounce((query) => {
+    if (query.length === 0) {
+      updateItemsList();
+      return;
+    }
+
+    let target;
+    switch (dictionaryTarget) {
+      case OPEN_GENUSES:
+        target = 'rods';
+        break;
+      case OPEN_TYPES:
+        target = 'vids'
+        break;
+      case OPEN_PROPERTIES:
+        target = 'property';
+        break;
+    }
+
+    fetch(`/${target}/searchByName`, {
+      method: 'POST',
+      body: query,
+    }).then(response => response.json())
+      .then(propsList => {
+        setDictionaryElements(propsList);
+      })
+  }, 700);
+
   return(
-    <TableContainer>
-      <Table stickyHeader>
-        <TableHead>
-          <TableRow>
-            {columns.map(column =>
-              <TableCell key={column.id} style={{minWidth: column.minWidth}}>
-                {column.label}
-              </TableCell>
-            )}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map(row =>
-            <TableRow hover role='button' key={row.id} onClick={() => dispatch({type: OPEN_ITEM, payload: row.id})}>
-              <TableCell>
-                {row.name}
-              </TableCell>
-              <TableCell>
-                {row.childrenCount}
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-};
+    <div style={{width: '70%', marginTop: '15px', display: 'flex', flexDirection: 'column', justifyContent: 'left'}}>
+      <TextField
+        value={searchString}
+        placeholder="Отфильтровать"
+        style={{width: '500px', marginBottom: '5px',}}
+        onChange={event => {
+          setSearchString(event.target.value);
+          handleSearch.clear();
+          handleSearch(event.target.value);
+        }}
+      />
+      {dictionaryElements?.map((row, index) =>
+          <div key={`dictionary-row-${index}`}>
+            <DictionaryRow data={row} dispatch={dispatch}/>
+            <Divider/>
+          </div>
+      )}
+
+      <Button
+        variant='contained'
+        color='success'
+        sx={{marginTop: '10px', display: 'flex'}}
+        onClick={() => dispatch(openNewElem(dictionaryTarget))}
+      >
+        {`Добавить ${getDictionaryByTarget(dictionaryTarget)}`}
+      </Button>
+    </div>
+  )
+}
 
 export default DictionaryTable;
