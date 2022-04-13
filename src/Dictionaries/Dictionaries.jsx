@@ -408,27 +408,6 @@ const Dictionaries = () => {
 
       <NewElemModal elemType={state.newElemType} dispatch={dispatch}/>
 
-      {/*Подтверждение удаления элемента словаря*/}
-      <Dialog
-        open={openConfirmDeleteDialog}
-        onClose={() => setOpenConfirmDeleteDialog(false)}
-      >
-        <DialogTitle>
-          Вы уверены, что хотите удалить этот элемент?
-        </DialogTitle>
-        <DialogActions>
-          <Button
-            onClick={() => setOpenConfirmDeleteDialog(false)}
-          >
-            Отменить
-          </Button>
-          <Button
-            onClick={handleDeleteElement}
-          >
-            Удалить
-          </Button>
-        </DialogActions>
-      </Dialog>
     </>
   );
 };

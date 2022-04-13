@@ -74,7 +74,7 @@ const NewElemModal = ({elemType, dispatch}) => {
 
   return(
     <Modal
-      open={elemType}
+      open={Boolean(elemType)}
       onClose={() => {
         dispatch(openNewElem(null));
       }}
