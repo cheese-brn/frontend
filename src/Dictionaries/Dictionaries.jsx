@@ -26,25 +26,19 @@ import {
   OPEN_GENUSES,
   OPEN_PROPERTIES,
   OPEN_TYPES,
-  SET_DATA,
   EDIT_ITEM,
-  DELETE_ITEM,
-  ADD_ITEM, OPEN_NEW_ELEM_MODAL,
+  OPEN_NEW_ELEM_MODAL,
 } from "./constants";
 import CENTERED_MODAL from "../constants";
 import CloseIcon from "@mui/icons-material/Close";
 import DictionaryTable from "./components/DictionaryTable";
 import NewElemModal from "./components/NewElemModal";
+import EditGenusModal from "./components/EditGenusModal";
 
 const reducer = (state, action) => {
   switch (action.type) {
   case EDIT_ITEM:
     return({...state, itemId: action.payload});
-  case SET_DATA:
-    return {...state, items: action.payload};
-  case DELETE_ITEM:
-    alert('удаление');
-    return state;
   case OPEN_NEW_ELEM_MODAL:
     return {...state, newElemType: action.payload};
   default:
@@ -77,7 +71,6 @@ const Dictionaries = () => {
   // TODO: Сделать нормальное состояние компонента
   const [dictionaryTarget, setDictionaryTarget] = useState(null);
 
-  const [openNewElemModal, setOpenNewElemModal] = useState(false);
   const [model, setModel] = useState(null);
 
   const [tableUpdateTrigger, setTableUpdateTrigger] = useState(0);
@@ -137,20 +130,7 @@ const Dictionaries = () => {
     }
   }, [state.itemId]);
 
-  const replaceGenusWithType = (typeId) => {
-    fetch(`/vids/${typeId}`)
-      .then(response => response.json())
-      .then(type => {
-        fetch(`/strains/vids/${typeId}`)
-          .then(response => response.json())
-          .then(strainsArray => {
-            type['children'] = strainsArray;
-            type['elementType'] = OPEN_TYPES;
-            type['newName'] = type.name;
-            setModel(type)
-          });
-      });
-  }
+
 
   const removeSubproperty = (elementIndex) => {
     let modelCpy = JSON.parse(JSON.stringify(model));
@@ -185,6 +165,21 @@ const Dictionaries = () => {
             <Divider/>
           </>);
       });
+
+  const replaceGenusWithType = () => {
+    setDictionaryTarget(OPEN_TYPES);
+  }
+
+  const getEditModal = () => {
+    switch (dictionaryTarget) {
+      case OPEN_GENUSES:
+        return <EditGenusModal genusId={state.itemId} openTypeCallback={replaceGenusWithType} dispatch={dispatch}/>
+      case OPEN_TYPES:
+        return <>редакт вида</>
+      case OPEN_PROPERTIES:
+        return <></>
+    }
+  }
 
   const handleSubmitChange = () => {
     switch (dictionaryTarget) {
@@ -272,15 +267,17 @@ const Dictionaries = () => {
       </div>
 
       {/*Редактирование элемента*/}
+      {getEditModal()}
+
       <Modal
-        open={Boolean(model) && !openNewElemModal}
+        open={false}
         onClose={() => {
           setModel(null);
           state.itemId = null;
         }}
         style={CENTERED_MODAL}
       >
-          {model !== null && !openNewElemModal ?
+          {model !== null ?
             <Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
               <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <Typography variant='h5'>
