@@ -33,14 +33,12 @@ const EditPropertyModal = ({propId, dispatch}) => {
       .then(response => response.json())
       .then(prop => {
         setModel(prop)
-        debugger
       });
     fetch(`/subproperties/properties/${propId}`)
       .then(response => response.json())
       .then(subprops => {
         setSubprops(subprops.properties);
         setFuncs(subprops.functions);
-        debugger
       })
   }, [propId]);
 
@@ -76,9 +74,80 @@ const EditPropertyModal = ({propId, dispatch}) => {
     );
 
   const makeFunctionalComponents = () =>
-    funcs.map((func, index) => {
-      return <p>ф</p>
-    })
+    funcs.map((func, index) =>
+      <div style={{display: 'flex', alignItems: 'center'}}>
+        <TextField
+          label='Название функции'
+          value={func.name}
+          size='small'
+          onChange={event => {
+            let dataCopy = JSON.parse(JSON.stringify(funcs))
+            dataCopy[index].name = event.target.value;
+            setFuncs(dataCopy);
+          }}
+          style={{marginTop: '15px', marginBottom: '5px'}}
+          fullWidth
+        />
+        <Divider/>
+
+        <Typography variant='p'>Вертикальная ось</Typography>
+        <div style={{display: 'flex'}}>
+          <TextField
+            label='Подпись'
+            value={func.firstParam.name}
+            size='small'
+            onChange={event => {
+              let dataCopy = JSON.parse(JSON.stringify(funcs))
+              dataCopy[index].firstParam.name = event.target.value;
+              setFuncs(dataCopy);
+            }}
+            style={{marginTop: '15px', marginBottom: '5px'}}
+            fullWidth
+          />
+          <TextField
+            label='Единицы измерения'
+            value={func.firstParam.unit}
+            size='small'
+            onChange={event => {
+              let dataCopy = JSON.parse(JSON.stringify(funcs))
+              dataCopy[index].firstParam.unit = event.target.value;
+              setFuncs(dataCopy);
+            }}
+            style={{marginTop: '15px', marginBottom: '5px'}}
+            fullWidth
+          />
+        </div>
+        <Divider/>
+
+        <Typography variant='p'>Горизонтальная ось</Typography>
+        <div style={{func: 'flex'}}>
+          <TextField
+            label='Подпись'
+            value={func.secondParam.name}
+            size='small'
+            onChange={event => {
+              let dataCopy = JSON.parse(JSON.stringify(funcs))
+              dataCopy[index].secondParam.name = event.target.value;
+              setFuncs(dataCopy);
+            }}
+            style={{marginTop: '15px', marginBottom: '5px'}}
+            fullWidth
+          />
+          <TextField
+            label='Единицы измерения'
+            value={func.secondParam.unit}
+            size='small'
+            onChange={event => {
+              let dataCopy = JSON.parse(JSON.stringify(funcs))
+              dataCopy[index].secondParam.unit = event.target.value;
+              setFuncs(dataCopy);
+            }}
+            style={{marginTop: '15px', marginBottom: '5px'}}
+            fullWidth
+          />
+        </div>
+      </div>
+    )
 
   return (
     <>
@@ -89,7 +158,7 @@ const EditPropertyModal = ({propId, dispatch}) => {
         }}
         style={CENTERED_MODAL}
       >
-        <Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
+        <Paper sx={{width: '600px', maxHeight: '450px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
           <div style={{display: 'flex', justifyContent: 'space-between'}}>
             <Typography variant='h5'>
               {`Редактирование свойства "${model.name || '...'}":`}
@@ -120,14 +189,14 @@ const EditPropertyModal = ({propId, dispatch}) => {
               marginBottom: '10px',
               width: '100%',
             }}
-            label='Название свойства'
-            value={model.name}
+            label='Описание'
+            value={model.description}
             onChange={event => {
-              setModel({...model, name: event.target.value})
+              setModel({...model, description: event.target.value})
             }}
           />
           <Divider/>
-
+          
           <div style={{marginBottom: '10px'}}>
             <div style={{display: 'flex', justifyContent: 'space-between'}}>
               <Typography>
@@ -149,12 +218,14 @@ const EditPropertyModal = ({propId, dispatch}) => {
                 Функциональные подсвойства:
               </Typography>
               <IconButton onClick={() => {
-                setFuncs([...funcs, {name: '', firstParam: {name: '', unit: ''}, secondParam: {name: '', unit: ''}}])
+                setFuncs([...funcs, {
+                  name: '',
+                  firstParam: {id: null, name: '', unit: ''},
+                  secondParam: {id: null, name: '', unit: ''}}])
               }}>
                 <AddBoxIcon/>
               </IconButton>
             </div>
-
             {makeFunctionalComponents()}
           </div>
           <Divider/>
@@ -164,7 +235,7 @@ const EditPropertyModal = ({propId, dispatch}) => {
             variant='outlined'
             color='success'
             onClick={() => {
-              handleSubmitChange(OPEN_PROPERTIES, {...model, properties: subprops, functions: funcs})
+              handleSubmitChange(OPEN_PROPERTIES, {...model, subProps: subprops, functions: funcs})
                 .then(response => {
                   debugger
                 })
