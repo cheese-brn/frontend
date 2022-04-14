@@ -12,10 +12,10 @@ import {
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
 
-import {editItem, OPEN_TYPES} from "../constants";
+import {openNewElem} from "../constants";
 import CloseIcon from "@mui/icons-material/Close";
-import {handleSubmitChange, handleDeleteElement} from "./commons";
 import {Link} from "react-router-dom";
+import {useRequest} from "../../commons/hooks";
 
 const EditTypeModal = ({typeId, dispatch}) => {
   if (!typeId) {
@@ -26,6 +26,8 @@ const EditTypeModal = ({typeId, dispatch}) => {
   const [genuses, setGenuses] = useState([]);
   const [strains, setStrains] = useState([]);
   const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
+
+  const makeRequest = useRequest();
 
   useEffect(() => {
     fetch(`/vids/${typeId}`)
@@ -39,24 +41,28 @@ const EditTypeModal = ({typeId, dispatch}) => {
       .then(rods => setGenuses(rods));
   }, [typeId]);
 
+  const closeModal = () => {
+    setModel(null);
+    dispatch(openNewElem(null));
+  }
+
+  const checkOpen = () => Boolean(model) && Boolean(typeId);
+
+
   return (
     <>
       <Modal
-        open={Boolean(typeId)}
-        onClose={() => {
-          dispatch(editItem(null));
-        }}
+        open={Boolean(checkOpen)}
+        onClose={closeModal}
         style={CENTERED_MODAL}
       >
+        { checkOpen() &&
         <Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
           <div style={{display: 'flex', justifyContent: 'space-between'}}>
             <Typography variant='h5'>
               {`Редактирование вида "${model.name || '...'}":`}
             </Typography>
-            <IconButton onClick={() => {
-              setModel(null);
-              dispatch(editItem(null));
-            }}>
+            <IconButton onClick={closeModal}>
               <CloseIcon/>
             </IconButton>
           </div>
@@ -115,7 +121,8 @@ const EditTypeModal = ({typeId, dispatch}) => {
             style={{marginTop: '10px', marginRight: '10px'}}
             variant='outlined'
             color='success'
-            onClick={() => handleSubmitChange(OPEN_TYPES, {...model, vidId: model.id})}
+            onClick={() => makeRequest('/rod/send',
+              {method: 'POST', body:JSON.stringify({...model, vidId: model.id})})}
           >
             Сохранить изменения
           </Button>
@@ -123,9 +130,7 @@ const EditTypeModal = ({typeId, dispatch}) => {
             style={{marginTop: '10px', marginRight: '10px'}}
             variant='outlined'
             color='warning'
-            onClick={() => {
-              dispatch(editItem(null));
-            }}
+            onClick={closeModal}
           >
             Отменить изменения
           </Button>
@@ -140,6 +145,8 @@ const EditTypeModal = ({typeId, dispatch}) => {
             Удалить элемент
           </Button>
         </Paper>
+        }
+
       </Modal>
 
       <Dialog
@@ -157,9 +164,13 @@ const EditTypeModal = ({typeId, dispatch}) => {
           </Button>
           <Button
             onClick={() => {
-              handleDeleteElement(OPEN_TYPES, typeId);
-              // TODO: получить ответ обработки, только затем закрыть
-              dispatch(editItem(null));
+              makeRequest(`/vid/delete/${typeId}`, {})
+                .then(res => {
+                  if (res) {
+                    setOpenConfirmDeleteDialog(false)
+                    closeModal()
+                  }
+                })
             }}
           >
             Удалить

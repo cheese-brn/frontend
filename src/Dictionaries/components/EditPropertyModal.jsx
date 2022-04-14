@@ -12,11 +12,11 @@ import {
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
 
-import {editItem, OPEN_PROPERTIES} from "../constants";
+import {openNewElem} from "../constants";
 import CloseIcon from "@mui/icons-material/Close";
-import {handleSubmitChange, handleDeleteElement} from "./commons";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AddBoxIcon from '@mui/icons-material/AddBox';
+import {useRequest} from "../../commons/hooks";
 
 const EditPropertyModal = ({propId, dispatch}) => {
   if (!propId) {
@@ -27,6 +27,8 @@ const EditPropertyModal = ({propId, dispatch}) => {
   const [subprops, setSubprops] = useState([]);
   const [funcs, setFuncs] = useState([]);
   const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
+
+  const makeRequest = useRequest();
 
   useEffect(() => {
     fetch(`/properties/${propId}`)
@@ -48,7 +50,7 @@ const EditPropertyModal = ({propId, dispatch}) => {
           <div style={{display: 'flex', alignItems: 'center'}}>
             <TextField
               label='Название подсвойства'
-              value={subProp.name}
+              value={subProp.name || ''}
               size='small'
               onChange={event => {
                 let dataCopy = JSON.parse(JSON.stringify(subprops))
@@ -147,24 +149,27 @@ const EditPropertyModal = ({propId, dispatch}) => {
       </div>
     )
 
+  const closeModal = () => {
+    dispatch(openNewElem(null));
+    setModel(null);
+  }
+
+  const checkOpen = () => Boolean(model) && Boolean(propId);
+
   return (
     <>
       <Modal
-        open={Boolean(propId)}
-        onClose={() => {
-          dispatch(editItem(null));
-        }}
+        open={checkOpen()}
+        onClose={closeModal}
         style={CENTERED_MODAL}
       >
+        {checkOpen() &&
         <Paper sx={{width: '600px', maxHeight: '450px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
           <div style={{display: 'flex', justifyContent: 'space-between'}}>
             <Typography variant='h5'>
               {`Редактирование свойства "${model.name || '...'}":`}
             </Typography>
-            <IconButton onClick={() => {
-              setModel(null);
-              dispatch(editItem(null));
-            }}>
+            <IconButton onClick={closeModal}>
               <CloseIcon/>
             </IconButton>
           </div>
@@ -194,7 +199,7 @@ const EditPropertyModal = ({propId, dispatch}) => {
             }}
           />
           <Divider/>
-          
+
           <div style={{marginBottom: '10px'}}>
             <div style={{display: 'flex', justifyContent: 'space-between'}}>
               <Typography>
@@ -232,13 +237,10 @@ const EditPropertyModal = ({propId, dispatch}) => {
             variant='outlined'
             color='success'
             onClick={() => {
-              handleSubmitChange(OPEN_PROPERTIES, {...model, subProps: subprops, functions: funcs})
-                .then(response => {
-                  debugger
-                })
-            }
-
-            }
+              makeRequest(
+                '/property/send',
+                {method: 'POST', body: JSON.stringify({...model, subProps: subprops, functions: funcs})})
+            }}
           >
             Сохранить изменения
           </Button>
@@ -246,9 +248,7 @@ const EditPropertyModal = ({propId, dispatch}) => {
             style={{marginTop: '10px', marginRight: '10px'}}
             variant='outlined'
             color='warning'
-            onClick={() => {
-              dispatch(editItem(null));
-            }}
+            onClick={closeModal}
           >
             Отменить изменения
           </Button>
@@ -263,6 +263,8 @@ const EditPropertyModal = ({propId, dispatch}) => {
             Удалить элемент
           </Button>
         </Paper>
+        }
+
       </Modal>
 
       <Dialog
@@ -280,9 +282,13 @@ const EditPropertyModal = ({propId, dispatch}) => {
           </Button>
           <Button
             onClick={() => {
-              handleDeleteElement(OPEN_PROPERTIES, propId);
-              // TODO: получить ответ обработки, только затем закрыть
-              dispatch(editItem(null));
+              makeRequest(`/property/delete/${propId}`, null)
+                .then(res => {
+                  if (res) {
+                    setOpenConfirmDeleteDialog(false);
+                    closeModal();
+                  }
+                })
             }}
           >
             Удалить

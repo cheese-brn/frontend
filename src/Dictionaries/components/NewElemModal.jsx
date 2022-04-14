@@ -16,14 +16,15 @@ import React, {useState, useEffect} from "react";
 import {openNewElem} from "../constants";
 
 import {getDictionaryByTarget} from "../commons";
-import {useSnackbar} from "notistack";
+
+import {useRequest} from "../../commons/hooks";
 
 
 const NewElemModal = ({elemType, dispatch}) => {
   const [model, setModel] = useState({name: ''})
   const [genusList, setGenusList] = useState([]);
 
-  const { enqueueSnackbar } = useSnackbar();
+  const makeRequest = useRequest();
 
   useEffect(() => {
     if (elemType !== OPEN_TYPES) {
@@ -31,18 +32,17 @@ const NewElemModal = ({elemType, dispatch}) => {
     }
 
     fetch('/rods')
-      .then(response => {
-        if (!response.ok) {
-          enqueueSnackbar('Не удалось получить список родов', {variant: 'error'});
-          return
-        }
-        return response.json();
-      })
+      .then(response => response.json())
       .then(genusList => setGenusList(genusList));
   }, [elemType])
 
   if (!elemType) {
     return <></>;
+  }
+
+  const closeModal = () => {
+    // setModel(null);
+    dispatch(openNewElem(null));
   }
 
   const handleNewElemSubmit = () => {
@@ -58,26 +58,21 @@ const NewElemModal = ({elemType, dispatch}) => {
         targetString = '/property/send';
         break;
     }
-    fetch(targetString, {
+
+    makeRequest(targetString, {
       method: 'POST',
       body: JSON.stringify(model),
+    }).then((res) => {
+      if (res){
+        closeModal()
+      }
     })
-      .then(response => {
-        if (!response.ok) {
-          enqueueSnackbar('Не удалось добавить новый элемент!', {variant: 'error'});
-          return
-        }
-        enqueueSnackbar(`Новый элемент (${getDictionaryByTarget(elemType)}) добавлен.`, {variant: 'success'});
-        dispatch(openNewElem(null))
-      });
   }
 
   return(
     <Modal
       open={Boolean(elemType)}
-      onClose={() => {
-        dispatch(openNewElem(null));
-      }}
+      onClose={closeModal}
       style={CENTERED_MODAL}
     >
       <Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
@@ -86,9 +81,7 @@ const NewElemModal = ({elemType, dispatch}) => {
             {`Создать элемент: ${getDictionaryByTarget(elemType)}`}
           </Typography>
 
-          <IconButton onClick={() => {
-            dispatch(openNewElem(null));
-          }}>
+          <IconButton onClick={closeModal}>
             <CloseIcon/>
           </IconButton>
         </div>

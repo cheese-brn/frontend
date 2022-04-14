@@ -19,7 +19,7 @@ export const handleSubmitChange = (dictionaryTarget, model) => {
       target = 'property';
       break;
   }
-  debugger
+
   return fetch(`/${target}/send`, {
     method: 'POST',
     body: JSON.stringify(model)

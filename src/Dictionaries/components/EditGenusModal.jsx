@@ -12,9 +12,9 @@ import {
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
 
-import {editItem, OPEN_GENUSES} from "../constants";
+import {editItem, openNewElem} from "../constants";
 import CloseIcon from "@mui/icons-material/Close";
-import {handleSubmitChange, handleDeleteElement} from "./commons";
+import {useRequest} from "../../commons/hooks";
 
 const EditGenusModal = ({genusId, openTypeCallback, dispatch}) => {
   if (!genusId) {
@@ -25,6 +25,8 @@ const EditGenusModal = ({genusId, openTypeCallback, dispatch}) => {
   const [types, setTypes] = useState([]);
   const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
 
+  const makeRequest = useRequest();
+
   useEffect(() => {
     fetch(`/rods/${genusId}`)
       .then(response => response.json())
@@ -34,24 +36,27 @@ const EditGenusModal = ({genusId, openTypeCallback, dispatch}) => {
       .then(typesList => setTypes(typesList));
   }, [genusId]);
 
+  const closeModal = () => {
+    setModel(null);
+    dispatch(openNewElem(null));
+  }
+
+  const checkOpen = () => Boolean(model) && Boolean(genusId);
+
   return (
     <>
       <Modal
-        open={Boolean(genusId)}
-        onClose={() => {
-          dispatch(editItem(null));
-        }}
+        open={checkOpen()}
+        onClose={closeModal}
         style={CENTERED_MODAL}
       >
+        { checkOpen() &&
         <Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
           <div style={{display: 'flex', justifyContent: 'space-between'}}>
             <Typography variant='h5'>
               {`Редактирование рода "${model.name || '...'}":`}
             </Typography>
-            <IconButton onClick={() => {
-              setModel(null);
-              dispatch(editItem(null));
-            }}>
+            <IconButton onClick={closeModal}>
               <CloseIcon/>
             </IconButton>
           </div>
@@ -80,8 +85,7 @@ const EditGenusModal = ({genusId, openTypeCallback, dispatch}) => {
                 onClick={() => {
                   openTypeCallback(type.id);
                   dispatch(editItem(index));
-                }
-                }
+                }}
               >
                 {`${type.name}`}
               </p>
@@ -92,7 +96,9 @@ const EditGenusModal = ({genusId, openTypeCallback, dispatch}) => {
             style={{marginTop: '10px', marginRight: '10px'}}
             variant='outlined'
             color='success'
-            onClick={() => handleSubmitChange(OPEN_GENUSES, model)}
+            onClick={() => {
+              makeRequest('/rod/send', {method: 'POST', body:JSON.stringify(model)});
+            }}
           >
             Сохранить изменения
           </Button>
@@ -100,9 +106,7 @@ const EditGenusModal = ({genusId, openTypeCallback, dispatch}) => {
             style={{marginTop: '10px', marginRight: '10px'}}
             variant='outlined'
             color='warning'
-            onClick={() => {
-              dispatch(editItem(null));
-            }}
+            onClick={closeModal}
           >
             Отменить изменения
           </Button>
@@ -117,6 +121,7 @@ const EditGenusModal = ({genusId, openTypeCallback, dispatch}) => {
             Удалить элемент
           </Button>
         </Paper>
+        }
       </Modal>
 
       <Dialog
@@ -134,9 +139,13 @@ const EditGenusModal = ({genusId, openTypeCallback, dispatch}) => {
           </Button>
           <Button
             onClick={() => {
-              handleDeleteElement(OPEN_GENUSES, genusId);
-              // TODO: получить ответ обработки, только затем закрыть
-              dispatch(editItem(null));
+              makeRequest(`/rod/delete/${genusId}`, {})
+                .then(res => {
+                  if (res) {
+                    setOpenConfirmDeleteDialog(false)
+                    closeModal()
+                  }
+                })
             }}
           >
             Удалить
