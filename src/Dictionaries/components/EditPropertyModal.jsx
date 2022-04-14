@@ -23,7 +23,7 @@ const EditPropertyModal = ({propId, dispatch}) => {
     return <></>
   }
 
-  const [model, setModel] = useState({name: ''});
+  const [model, setModel] = useState({name: '', description: ''});
   const [subprops, setSubprops] = useState([]);
   const [funcs, setFuncs] = useState([]);
   const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
@@ -62,7 +62,6 @@ const EditPropertyModal = ({propId, dispatch}) => {
               className='dictionary-button-delete'
               onClick={() => {
                 const copy = JSON.parse(JSON.stringify(subprops)).splice(index, 1);
-                debugger
                 setSubprops(copy);
               }}
             >
@@ -75,7 +74,7 @@ const EditPropertyModal = ({propId, dispatch}) => {
 
   const makeFunctionalComponents = () =>
     funcs.map((func, index) =>
-      <div style={{display: 'flex', alignItems: 'center'}}>
+      <div style={{ alignItems: 'center'}}>
         <TextField
           label='Название функции'
           value={func.name}
@@ -88,7 +87,6 @@ const EditPropertyModal = ({propId, dispatch}) => {
           style={{marginTop: '15px', marginBottom: '5px'}}
           fullWidth
         />
-        <Divider/>
 
         <Typography variant='p'>Вертикальная ось</Typography>
         <div style={{display: 'flex'}}>
@@ -117,10 +115,9 @@ const EditPropertyModal = ({propId, dispatch}) => {
             fullWidth
           />
         </div>
-        <Divider/>
 
         <Typography variant='p'>Горизонтальная ось</Typography>
-        <div style={{func: 'flex'}}>
+        <div style={{display: 'flex'}}>
           <TextField
             label='Подпись'
             value={func.secondParam.name}
@@ -146,6 +143,7 @@ const EditPropertyModal = ({propId, dispatch}) => {
             fullWidth
           />
         </div>
+        <Divider/>
       </div>
     )
 
@@ -228,7 +226,6 @@ const EditPropertyModal = ({propId, dispatch}) => {
             </div>
             {makeFunctionalComponents()}
           </div>
-          <Divider/>
 
           <Button
             style={{marginTop: '10px', marginRight: '10px'}}
