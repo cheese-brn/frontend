@@ -77,18 +77,29 @@ const EditPropertyModal = ({propId, dispatch}) => {
   const makeFunctionalComponents = () =>
     funcs.map((func, index) =>
       <div style={{ alignItems: 'center'}}>
-        <TextField
-          label='Название функции'
-          value={func.name}
-          size='small'
-          onChange={event => {
-            let dataCopy = JSON.parse(JSON.stringify(funcs))
-            dataCopy[index].name = event.target.value;
-            setFuncs(dataCopy);
-          }}
-          style={{marginTop: '15px', marginBottom: '5px'}}
-          fullWidth
-        />
+        <div style={{display: 'flex'}}>
+          <TextField
+            label='Название функции'
+            value={func.name}
+            size='small'
+            onChange={event => {
+              let dataCopy = JSON.parse(JSON.stringify(funcs))
+              dataCopy[index].name = event.target.value;
+              setFuncs(dataCopy);
+            }}
+            style={{marginTop: '15px', marginBottom: '5px'}}
+            fullWidth
+          />
+          <IconButton
+            className='dictionary-button-delete'
+            onClick={() => {
+              let copy = JSON.parse(JSON.stringify(funcs)).splice(index, 1);
+              setFuncs(copy);
+            }}
+          >
+            <DeleteOutlineIcon/>
+          </IconButton>
+        </div>
 
         <Typography variant='p'>Вертикальная ось</Typography>
         <div style={{display: 'flex'}}>
