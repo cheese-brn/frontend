@@ -55,6 +55,7 @@ const EditGenusModal = ({genusId, openTypeCallback, dispatch}) => {
               <CloseIcon/>
             </IconButton>
           </div>
+
           <TextField
             sx={{
               marginTop: '10px',

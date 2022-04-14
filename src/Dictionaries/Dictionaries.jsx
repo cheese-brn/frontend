@@ -12,9 +12,6 @@ import {
   FormControl,
   InputLabel,
   IconButton,
-  Dialog,
-  DialogActions,
-  DialogTitle,
 } from '@mui/material';
 
 import {Link} from 'react-router-dom'
@@ -34,6 +31,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import DictionaryTable from "./components/DictionaryTable";
 import NewElemModal from "./components/NewElemModal";
 import EditGenusModal from "./components/EditGenusModal";
+import EditTypeModal from "./components/EditTypeModal";
+import EditPropertyModal from "./components/EditPropertyModal";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -76,8 +75,6 @@ const Dictionaries = () => {
   const [tableUpdateTrigger, setTableUpdateTrigger] = useState(0);
 
   const [state, dispatch] = useReducer(reducer, null, stateInitializer);
-
-  const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
 
   // TODO: протестировать баг с не обновляющимся списком
   useEffect(() => {
@@ -130,8 +127,6 @@ const Dictionaries = () => {
     }
   }, [state.itemId]);
 
-
-
   const removeSubproperty = (elementIndex) => {
     let modelCpy = JSON.parse(JSON.stringify(model));
     modelCpy.children.splice(elementIndex, 1);
@@ -175,59 +170,42 @@ const Dictionaries = () => {
       case OPEN_GENUSES:
         return <EditGenusModal genusId={state.itemId} openTypeCallback={replaceGenusWithType} dispatch={dispatch}/>
       case OPEN_TYPES:
-        return <>редакт вида</>
+        return <EditTypeModal typeId={state.itemId} dispatch={dispatch}/>
       case OPEN_PROPERTIES:
-        return <></>
+        return <EditPropertyModal propId={state.itemId} dispatch={dispatch}/>
     }
   }
 
-  const handleSubmitChange = () => {
-    switch (dictionaryTarget) {
-    case OPEN_GENUSES:
-      fetch('/rod/send', {
-        method: 'POST',
-        body: JSON.stringify({rodId: state.itemId, name: model.newName})
-      })
-      break;
-    case OPEN_TYPES:
-      fetch('/vid/send', {
-        method: 'POST',
-        body: JSON.stringify({vidId: state.itemId, name: model.newName, rodId: model.rodId})
-      })
-      break;
-    case OPEN_PROPERTIES:
-      fetch('/property/send', {
-        method: 'POST',
-        body: JSON.stringify({
-          id: model.id,
-          name: model.newName,
-          description: model.description,
-          isFunc: model.isFunc,
-          subProps: model.children
-        })
-      })
-      break;
-    }
-    setModel(null);
-    state.itemId = null;
-  }
-
-  const handleDeleteElement = () => {
-    setOpenConfirmDeleteDialog(false);
-    switch (dictionaryTarget) {
-    case OPEN_GENUSES:
-      fetch(`/rod/delete/${state.itemId}`)
-      break;
-    case OPEN_TYPES:
-      fetch(`/vid/delete/${state.itemId}`)
-      break;
-    case OPEN_PROPERTIES:
-      fetch(`/property/delete/${state.itemId}`)
-      break;
-    }
-    setModel(null);
-    state.itemId = null;
-  }
+  // const handleSubmitChange = () => {
+  //   switch (dictionaryTarget) {
+  //   case OPEN_GENUSES:
+  //     fetch('/rod/send', {
+  //       method: 'POST',
+  //       body: JSON.stringify({rodId: state.itemId, name: model.newName})
+  //     })
+  //     break;
+  //   case OPEN_TYPES:
+  //     fetch('/vid/send', {
+  //       method: 'POST',
+  //       body: JSON.stringify({vidId: state.itemId, name: model.newName, rodId: model.rodId})
+  //     })
+  //     break;
+  //   case OPEN_PROPERTIES:
+  //     fetch('/property/send', {
+  //       method: 'POST',
+  //       body: JSON.stringify({
+  //         id: model.id,
+  //         name: model.newName,
+  //         description: model.description,
+  //         isFunc: model.isFunc,
+  //         subProps: model.children
+  //       })
+  //     })
+  //     break;
+  //   }
+  //   setModel(null);
+  //   state.itemId = null;
+  // }
 
   // TODO: Переход по первым символам названия
   // TODO: Объединить модалку создания и редактирования, мб вынести в компонент
@@ -269,142 +247,142 @@ const Dictionaries = () => {
       {/*Редактирование элемента*/}
       {getEditModal()}
 
-      <Modal
-        open={false}
-        onClose={() => {
-          setModel(null);
-          state.itemId = null;
-        }}
-        style={CENTERED_MODAL}
-      >
-          {model !== null ?
-            <Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <Typography variant='h5'>
-                  {`Редактирование: ${getDictionaryByType(model.elementType)} - ${model.name}`}
-                </Typography>
-                <IconButton onClick={() => {
-                  setModel(null);
-                  state.itemId = null;
-                }}>
-                  <CloseIcon/>
-                </IconButton>
-              </div>
-              <TextField
-                sx={{
-                  marginTop: '10px',
-                  marginBottom: '10px',
-                  width: '100%',
-                }}
-                label='Название элемента'
-                value={model.newName}
-                onChange={event => {setModel({...model, newName: event.target.value})}}
-              />
+      {/*<Modal*/}
+      {/*  open={false}*/}
+      {/*  onClose={() => {*/}
+      {/*    setModel(null);*/}
+      {/*    state.itemId = null;*/}
+      {/*  }}*/}
+      {/*  style={CENTERED_MODAL}*/}
+      {/*>*/}
+      {/*    {model !== null ?*/}
+      {/*      <Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>*/}
+      {/*        <div style={{display: 'flex', justifyContent: 'space-between'}}>*/}
+      {/*          <Typography variant='h5'>*/}
+      {/*            {`Редактирование: ${getDictionaryByType(model.elementType)} - ${model.name}`}*/}
+      {/*          </Typography>*/}
+      {/*          <IconButton onClick={() => {*/}
+      {/*            setModel(null);*/}
+      {/*            state.itemId = null;*/}
+      {/*          }}>*/}
+      {/*            <CloseIcon/>*/}
+      {/*          </IconButton>*/}
+      {/*        </div>*/}
+      {/*        <TextField*/}
+      {/*          sx={{*/}
+      {/*            marginTop: '10px',*/}
+      {/*            marginBottom: '10px',*/}
+      {/*            width: '100%',*/}
+      {/*          }}*/}
+      {/*          label='Название элемента'*/}
+      {/*          value={model.newName}*/}
+      {/*          onChange={event => {setModel({...model, newName: event.target.value})}}*/}
+      {/*        />*/}
 
-              {model.elementType === OPEN_PROPERTIES &&
-              <div>
-                <Button
-                  variant='outlined'
-                  onClick={() => {
-                    let dataCopy = JSON.parse(JSON.stringify(model))
-                    dataCopy.children.push({id: 0, name: '', dataType: 'string'});
-                    setModel(dataCopy);
-                  }}
-                >
-                  Добавить подсвойство
-                </Button>
-                <Typography style={{marginTop: '10px'}}>
-                  Подсвойства:
-                </Typography>
-                {makeSubpropComponents(model.children)}
-              </div>
-              }
+      {/*        {model.elementType === OPEN_PROPERTIES &&*/}
+      {/*        <div>*/}
+      {/*          <Button*/}
+      {/*            variant='outlined'*/}
+      {/*            onClick={() => {*/}
+      {/*              let dataCopy = JSON.parse(JSON.stringify(model))*/}
+      {/*              dataCopy.children.push({id: 0, name: '', dataType: 'string'});*/}
+      {/*              setModel(dataCopy);*/}
+      {/*            }}*/}
+      {/*          >*/}
+      {/*            Добавить подсвойство*/}
+      {/*          </Button>*/}
+      {/*          <Typography style={{marginTop: '10px'}}>*/}
+      {/*            Подсвойства:*/}
+      {/*          </Typography>*/}
+      {/*          {makeSubpropComponents(model.children)}*/}
+      {/*        </div>*/}
+      {/*        }*/}
 
-              {model.elementType === OPEN_GENUSES &&
-              <div style={{marginBottom: '10px'}}>
-                <Typography>
-                  Связанные виды:
-                </Typography>
-                {model.children.map((type, index) =>
-                  <p
-                    key={`type-${index}`}
-                    style={{textDecoration: 'underline', cursor: 'pointer'}}
-                    onClick={() => replaceGenusWithType(type.id)}
-                  >
-                    {`${type.name}`}
-                  </p>
-                )}
-              </div>
-              }
+      {/*        {model.elementType === OPEN_GENUSES &&*/}
+      {/*        <div style={{marginBottom: '10px'}}>*/}
+      {/*          <Typography>*/}
+      {/*            Связанные виды:*/}
+      {/*          </Typography>*/}
+      {/*          {model.children.map((type, index) =>*/}
+      {/*            <p*/}
+      {/*              key={`type-${index}`}*/}
+      {/*              style={{textDecoration: 'underline', cursor: 'pointer'}}*/}
+      {/*              onClick={() => replaceGenusWithType(type.id)}*/}
+      {/*            >*/}
+      {/*              {`${type.name}`}*/}
+      {/*            </p>*/}
+      {/*          )}*/}
+      {/*        </div>*/}
+      {/*        }*/}
 
-              {model.elementType === OPEN_TYPES &&
-              <div style={{marginBottom: '10px'}}>
-                <FormControl
-                  sx={{
-                    marginTop: '10px',
-                    marginBottom: '10px',
-                    width: '100%',
-                  }}>
-                  <InputLabel id='dictionaries__edit-type__genus-select-label'>Относится к роду</InputLabel>
-                  <Select
-                    labelId='dictionaries__edit-type__genus-select-label'
-                    id='dictionaries__edit-type__genus-select'
-                    value={model.rodId || 0}
-                    name='rodId'
+      {/*        {model.elementType === OPEN_TYPES &&*/}
+      {/*        <div style={{marginBottom: '10px'}}>*/}
+      {/*          <FormControl*/}
+      {/*            sx={{*/}
+      {/*              marginTop: '10px',*/}
+      {/*              marginBottom: '10px',*/}
+      {/*              width: '100%',*/}
+      {/*            }}>*/}
+      {/*            <InputLabel id='dictionaries__edit-type__genus-select-label'>Относится к роду</InputLabel>*/}
+      {/*            <Select*/}
+      {/*              labelId='dictionaries__edit-type__genus-select-label'*/}
+      {/*              id='dictionaries__edit-type__genus-select'*/}
+      {/*              value={model.rodId || 0}*/}
+      {/*              name='rodId'*/}
 
-                    onChange={(event => {setModel({...model, rodId: event.target.value})})}
-                  >
-                    {model.availableGenuses?.map(genus =>
-                      <MenuItem value={genus.id} key={genus.id}>{genus.name}</MenuItem>
-                    )}
-                  </Select>
-                </FormControl>
-                <Typography>
-                  Связанные штаммы:
-                </Typography>
-                {model.children.map((strain, index) =>
-                  <Link
-                    to={`/strain/${strain.id}`}
-                    key={`strain-${index}`}
-                    style={{display: 'block', marginTop: '10px', textDecoration: 'underline', color: 'black'}}
-                    target="_blank"
-                  >
-                    {`${strain.name}`}
-                  </Link>
-                )}
-              </div>
-              }
+      {/*              onChange={(event => {setModel({...model, rodId: event.target.value})})}*/}
+      {/*            >*/}
+      {/*              {model.availableGenuses?.map(genus =>*/}
+      {/*                <MenuItem value={genus.id} key={genus.id}>{genus.name}</MenuItem>*/}
+      {/*              )}*/}
+      {/*            </Select>*/}
+      {/*          </FormControl>*/}
+      {/*          <Typography>*/}
+      {/*            Связанные штаммы:*/}
+      {/*          </Typography>*/}
+      {/*          {model.children.map((strain, index) =>*/}
+      {/*            <Link*/}
+      {/*              to={`/strain/${strain.id}`}*/}
+      {/*              key={`strain-${index}`}*/}
+      {/*              style={{display: 'block', marginTop: '10px', textDecoration: 'underline', color: 'black'}}*/}
+      {/*              target="_blank"*/}
+      {/*            >*/}
+      {/*              {`${strain.name}`}*/}
+      {/*            </Link>*/}
+      {/*          )}*/}
+      {/*        </div>*/}
+      {/*        }*/}
 
-              <Button
-                style={{marginTop: '10px', marginRight: '10px'}}
-                variant='outlined'
-                color='success'
-                onClick={handleSubmitChange}
-              >
-                Сохранить изменения
-              </Button>
-              <Button
-                style={{marginTop: '10px', marginRight: '10px'}}
-                variant='outlined'
-                color='warning'
-                onClick={() => {
-                  setModel(null);
-                  state.itemId = null;
-                }}
-              >
-                Отменить изменения
-              </Button>
-              <Button
-                style={{marginTop: '10px', marginRight: '10px'}}
-                variant='outlined'
-                color='error'
-                onClick={() => setOpenConfirmDeleteDialog(true)}
-              >
-                Удалить элемент
-              </Button>
-            </Paper> : <p>Груземса</p>
-          }
-      </Modal>
+      {/*        /!*<Button*!/*/}
+      {/*        /!*  style={{marginTop: '10px', marginRight: '10px'}}*!/*/}
+      {/*        /!*  variant='outlined'*!/*/}
+      {/*        /!*  color='success'*!/*/}
+      {/*        /!*  onClick={handleSubmitChange}*!/*/}
+      {/*        /!*>*!/*/}
+      {/*        /!*  Сохранить изменения*!/*/}
+      {/*        /!*</Button>*!/*/}
+      {/*        /!*<Button*!/*/}
+      {/*        /!*  style={{marginTop: '10px', marginRight: '10px'}}*!/*/}
+      {/*        /!*  variant='outlined'*!/*/}
+      {/*        /!*  color='warning'*!/*/}
+      {/*        /!*  onClick={() => {*!/*/}
+      {/*        /!*    setModel(null);*!/*/}
+      {/*        /!*    state.itemId = null;*!/*/}
+      {/*        /!*  }}*!/*/}
+      {/*        /!*>*!/*/}
+      {/*        /!*  Отменить изменения*!/*/}
+      {/*        /!*</Button>*!/*/}
+      {/*        /!*<Button*!/*/}
+      {/*        /!*  style={{marginTop: '10px', marginRight: '10px'}}*!/*/}
+      {/*        /!*  variant='outlined'*!/*/}
+      {/*        /!*  color='error'*!/*/}
+      {/*        /!*  onClick={() => setOpenConfirmDeleteDialog(true)}*!/*/}
+      {/*        /!*>*!/*/}
+      {/*        /!*  Удалить элемент*!/*/}
+      {/*        /!*</Button>*!/*/}
+      {/*      </Paper> : <p>Груземса</p>*/}
+      {/*    }*/}
+      {/*</Modal>*/}
 
       <NewElemModal elemType={state.newElemType} dispatch={dispatch}/>
 
