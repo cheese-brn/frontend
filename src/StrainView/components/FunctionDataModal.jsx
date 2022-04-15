@@ -4,12 +4,15 @@ import {
   Typography,
   Button,
   Menu,
-  MenuItem
+  MenuItem,
+  Divider
 } from "@mui/material";
-import React, {useMemo, useState, useEffect, useCallback} from "react";
+import React, {useMemo, useState,} from "react";
 import CENTERED_MODAL from "../../constants";
 
 import {useTable} from 'react-table';
+
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 
 import {
   usePopupState,
@@ -21,27 +24,28 @@ const EditableCell = ({
   value: initialValue,
   row: { index },
   column: { id },
-  updateMyData,
+  setter,
+  ...rest
 }) => {
   const [value, setValue] = useState(initialValue)
-
   const onChange = e => {
     setValue(e.target.value)
   }
 
   const onBlur = () => {
-    updateMyData(index, id, value)
+    let origData = rest.rows.map(row => row.original);
+    origData[index][id] = parseFloat(value);
+    setter(origData);
   }
 
   React.useEffect(() => {
     setValue(initialValue)
   }, [initialValue])
 
-  return <input value={value} onChange={onChange} onBlur={onBlur} />
+  return <input value={value} onChange={onChange} onBlur={onBlur} style={{width: '100%'}}/>
 }
 
 const Table = ({ columns, data }) => {
-  debugger
   const {
     getTableProps,
     getTableBodyProps,
@@ -79,7 +83,7 @@ const Table = ({ columns, data }) => {
   )
 }
 
-const CustomCell = ({instance, updateData, addTableRow}) => {
+const CustomCell = ({instance, updateData, setter}) => {
   const popupState = usePopupState({ variant: 'popover', popupId: 'demoMenu' })
   const {onClick, ...props } = bindTrigger(popupState);
 
@@ -91,53 +95,52 @@ const CustomCell = ({instance, updateData, addTableRow}) => {
   }
 
   const handleAdd = (position) => {
+    let origData = instance.rows.map(row => row.original);
+    if (position === 'top') {
+      origData.splice(instance.row.index, 0, {first: 0, second: 0});
+    } else {
+      origData.splice(instance.row.index + 1, 0, {first: 0, second: 0});
+    }
+    setter(origData);
     popupState.close();
-    addTableRow(instance.row.index, position)
+  }
+
+  const handleDelete = () => {
+    let origData = instance.rows.map(row => row.original);
+    origData.splice(instance.row.index, 1);
+    setter(origData);
+    popupState.close();
   }
 
   return(
-    <div>
+    <div onContextMenu={(e) => e.preventDefault()}>
       <div {...props} onMouseUp={rmbHandler}>
-        <EditableCell {...instance} updateMyData={updateData} />
+        <EditableCell {...instance} updateMyData={updateData} setter={setter} />
       </div>
       <Menu {...bindMenu(popupState)}>
         <MenuItem onClick={() => handleAdd('top')}>Добавить ряд сверху</MenuItem>
         <MenuItem onClick={() => handleAdd('bottom')}>Добавить ряд снизу</MenuItem>
+        <MenuItem onClick={handleDelete}>Удалить ряд</MenuItem>
       </Menu>
     </div>
   )
 }
 
-const FunctionDataModal = ({open, closeCallback, data, edit}) => {
-  const [tableData, setTableData] = useState([]);
-
-  useEffect(() => {
-    if (!data.firstParam || !data.secondParam) {
-      return [{first: 0, second: 0}];
-    }
-    const count = Math.min(data.firstParam.values.length, data.secondParam.values.length);
-    let val = [];
-    for (let i = 0; i < count; i++) {
-      val.push({first: data.firstParam.values[i], second: data.second.values[i]})
-    }
-
-    if (val.length === 0) {
-      val.push({first: 4, second: 5})
-    }
-    setTableData(val);
-  }, [data])
-
-  useEffect(() => {
-    let val = tableData
-    debugger
-  }, [tableData])
-
-  const updateCellData = (index, id, value) => {
-    debugger
-    const dataCopy = JSON.parse(JSON.stringify(tableData));
-    dataCopy[index][id] = value;
-    setTableData(dataCopy);
+const makeData = (data) => {
+  const count = Math.min(data.firstParam.values.length, data.secondParam.values.length);
+  let val = [];
+  for (let i = 0; i < count; i++) {
+    val.push({first: data.firstParam.values[i], second: data.second.values[i]})
   }
+
+  if (val.length === 0) {
+    val.push({first: 4, second: 5})
+  }
+  return(val);
+}
+
+const FunctionDataModal = ({open, closeCallback, data, edit}) => {
+  const [tableData, setTableData] = useState(makeData(data));
 
   const addTableRow = (index, position) => {
     const dataCopy = JSON.parse(JSON.stringify(tableData));
@@ -146,21 +149,27 @@ const FunctionDataModal = ({open, closeCallback, data, edit}) => {
     } else {
       dataCopy.splice(index + 1, 0, {first: 0, second: 0});
     }
+    debugger
     setTableData(dataCopy);
   }
 
   const columns = useMemo(() => [
       {
-        Header: `Ось X: ${data.firstParam?.name}`,
+        Header: `Ось X: ${data.firstParam?.name}, ${data.firstParam?.unit}`,
         accessor: 'first',
-        Cell: inst => <CustomCell instance={inst} updateData={updateCellData} addTableRow={addTableRow}/>
+        Cell: inst => <CustomCell instance={inst} setter={setTableData} addTableRow={addTableRow}/>
       },
     {
-      Header: `Ось Y: ${data.secondParam?.name}`,
+      Header: `Ось Y: ${data.secondParam?.name}, ${data.secondParam?.unit}`,
       accessor: 'second',
-      Cell: inst => <CustomCell instance={inst} updateData={updateCellData} addTableRow={addTableRow}/>
+      Cell: inst => <CustomCell instance={inst} setter={setTableData} addTableRow={addTableRow}/>
       },
   ], [data.firstParam, data.secondParam])
+
+  const getSortedData = () => {
+    const arrayCopy = JSON.parse(JSON.stringify(tableData)).sort((a, b) => a.first - b.first);
+    return arrayCopy;
+  }
 
   return (
     <Modal
@@ -168,15 +177,27 @@ const FunctionDataModal = ({open, closeCallback, data, edit}) => {
       onClose={closeCallback}
       style={CENTERED_MODAL}
     >
-      <Paper sx={{width: '70%', maxHeight: '70%', padding: '20px', overflowY: 'scroll'}}>
+      <Paper sx={{maxHeight: '70%', padding: '20px', overflowY: 'scroll',}}>
         <Typography
           variant='h5'
         >
           {`${edit ? 'Редактирование данных ' : 'Просмотр '}графика "${data.name}"`}
         </Typography>
-        <Table data={tableData} columns={columns}/>
+        <div style={{display: 'flex', flexDirection: 'row'}}>
+          <div>
+            <Table data={tableData} columns={columns}/>
+          </div>
+          <LineChart data={getSortedData()} width={300} height={300}>
+            <CartesianGrid stroke="#ccc" />
+            <Line type="monotone" dataKey='second' attributeName={data.secondParam.name} stroke="#8884d8" />
+            <XAxis dataKey='first' />
+            <YAxis />
+            <Tooltip/>
+          </LineChart>
+        </div>
+        <Divider/>
         {edit && <Button onClick={() => {
-          const check = data;
+          const check = tableData;
           debugger
         }}>Сохранить данные</Button>}
       </Paper>
