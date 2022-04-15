@@ -15,7 +15,7 @@ import {
   Modal,
   IconButton, DialogTitle, DialogActions, Dialog, Checkbox, FormControlLabel
 } from "@mui/material";
-import SimplePropertyInput from "./components/SimplePropertyInput.jsx";
+import PropertyInput from "./components/PropertyInput.jsx";
 import CloseIcon from '@mui/icons-material/Close';
 
 import CENTERED_MODAL from "../constants"
@@ -24,11 +24,13 @@ import AddBoxIcon from '@mui/icons-material/AddBox';
 import DownloadIcon from '@mui/icons-material/Download';
 
 import downloadStrainDocument from "../commons/utils";
+import {useRequest} from "../commons/hooks";
 
 // TODO: Сделать предупреждение при перезагрузке/закрытии страницыв режиме редактирования
 const StrainView = () => {
   const navigate = useNavigate();
   const {strainId} = useParams();
+  const makeRequest = useRequest();
 
   // TODO: Реализовать сохранение модели в LocalStorage, чтобы при перезагрузке не терялись данные
   // TODO: Быстрое редактирование текста приводит к тормозам. Нужно как-то буферизировать части локально или типо того
@@ -38,13 +40,12 @@ const StrainView = () => {
     vidId: -1,
     isLost: false,
     annotation: "",
-    "exemplar":"",
-    "modification":"",
-    "obtainingMethod":"",
-    "origin":"",
-    "factParams":[],
+    exemplar:"",
+    modification:"",
+    obtainingMethod:"",
+    origin:"",
+    factParams:[],
   });
-  const modelCopy = useRef(null);
 
   const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
 
@@ -52,10 +53,16 @@ const StrainView = () => {
   const [addPropModalOpened, setAddPropModalOpened] = useState(false);
 
   const [newPropId, setNewPropId] = useState(0);
-  // const [basicProps, setBasicProps] = useState([]);
+
   const [genusesList, setGenusesList] = useState(null);
   const [typesList, setTypesList] = useState(null);
   const [propertiesList, setPropertiesList] = useState(null);
+
+  const loadModel = () => {
+    fetch(`/strains/${strainId}`).then(response => response.json()).then(res => {
+      setModel(res);
+    });
+  }
 
   useEffect(() => {
     fetch('/rods').then(response => response.json()).then(res => {
@@ -68,10 +75,7 @@ const StrainView = () => {
     if (!strainId) {
       setIsReadOnly(false);
     } else {
-      fetch(`/strains/${strainId}`).then(response => response.json()).then(res => {
-        setModel(res);
-        modelCopy.current = res;
-      });
+      loadModel()
     }
   }, []);
 
@@ -87,8 +91,7 @@ const StrainView = () => {
   const costilStyle = {
     marginBottom: '14px'
   };
-
-  // TODO: перейти с хэндлов на экшны
+  
   const handleCommonFieldChange = (event) => {
     setModel({...model, [event.target.name]: event.target.value});
   };
@@ -104,13 +107,14 @@ const StrainView = () => {
 
     fetch(`/properties/${newPropId}`).then(response => response.json()).then(propertyData => {
       propertyData.subProps = [];
+      propertyData.functions = [];
       newModel.factParams.push(propertyData);
       setModel(newModel);
     });
     setAddPropModalOpened(false);
   }
 
-  const handleRemoveSimpleProperty = (propIndex) => {
+  const handleRemoveProperty = (propIndex) => {
     const newModel = JSON.parse(JSON.stringify(model));
     newModel.factParams.splice(propIndex, 1);
     setModel(newModel);
@@ -118,11 +122,17 @@ const StrainView = () => {
 
   const handleAddSubproperty = (propKey, value) => {
     const newModel = JSON.parse(JSON.stringify(model));
-    newModel.factParams[propKey].subProps.push(value);
+    if (value.datatype) {
+      newModel.factParams[propKey].subProps.push(value);
+    } else {
+      value.firstParam.values = [];
+      value.secondParam.values = [];
+      newModel.factParams[propKey].functions.push(value);
+    }
     setModel(newModel);
   }
 
-  const handleRemoveSubproperty = (propIndex, subpropIndex) => {
+  const handleRemoveSubproperty = (propIndex, type, subpropIndex) => {
     const newModel = JSON.parse(JSON.stringify(model));
     newModel.factParams[propIndex].subProps.splice(subpropIndex, 1);
     setModel(newModel);
@@ -140,10 +150,8 @@ const StrainView = () => {
         let strain = strainsList.find(elem => elem.id === model.id);
         downloadStrainDocument(strain.name, model.id)
       })
-
   }
 
-  // TODO: Разобраться с цветовой палитрой
   // TODO: Разобраться с внешним видом полей, чтобы точно было всё как надо
   // TODO: Оптимизация вида readOnly
   return(
@@ -235,6 +243,7 @@ const StrainView = () => {
                 size='small'
                 multiline
               />
+              
               <TextField
                 sx={costilStyle}
                 id='stain-view__origin-field'
@@ -246,6 +255,7 @@ const StrainView = () => {
                 size='small'
                 multiline
               />
+              
               <TextField
                 sx={costilStyle}
                 id='stain-view__annotation-field'
@@ -257,6 +267,7 @@ const StrainView = () => {
                 size='small'
                 multiline
               />
+              <Divider/>
 
               <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px'}}>
                 <Typography variant='h5' align='left'>
@@ -268,18 +279,18 @@ const StrainView = () => {
                   </IconButton>
                 }
               </div>
-              {model?.factParams?.map((prop, key) => {
-                return(<SimplePropertyInput
+              {model?.factParams?.map((prop, key) =>
+                <PropertyInput
                   prop={prop}
                   propertyIndex={key}
                   readOnly={isReadOnly}
                   key={`basic-prop-${key}`}
                   valueChangeCallback={handleSubPropChange}
-                  removePropCallback={handleRemoveSimpleProperty}
+                  removePropCallback={handleRemoveProperty}
                   addSubpropCallback={handleAddSubproperty}
                   removeSubpropCallback={handleRemoveSubproperty}
-                />);
-              })}
+                />
+              )}
             </Stack>
           </Grid>
           <Divider orientation="vertical" flexItem/>
@@ -331,7 +342,7 @@ const StrainView = () => {
                 sx={{marginTop: '20px'}}
                 onClick={() => {
                   setIsReadOnly(true);
-                  setModel(modelCopy.current);
+                  loadModel();
                 }}>
                 Отменить изменения
               </Button>
