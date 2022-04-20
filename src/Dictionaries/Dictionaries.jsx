@@ -27,9 +27,9 @@ const reducer = (state, action) => {
   case OPEN_EDIT_MODAL:
     return {...state, itemId: action.payload, open: true};
     case CLOSE_MODAL:
-      return {...state, open: false}
+      return {...state, open: false, openNewElem: false}
   case OPEN_NEW_ELEM_MODAL:
-    return {...state, newElemType: action.payload, open: true};
+    return {...state, newElemType: action.payload, openNewElem: true};
   default:
     return state;
   }
@@ -120,7 +120,7 @@ const Dictionaries = () => {
       {/*Редактирование элемента*/}
       {state.open && getEditModal()}
       {/*Создание элемента*/}
-      <NewElemModal elemType={state.newElemType} dispatch={dispatch} open={state.open}/>
+      <NewElemModal elemType={state.newElemType} dispatch={dispatch} open={state.openNewElem}/>
     </>
   );
 };
