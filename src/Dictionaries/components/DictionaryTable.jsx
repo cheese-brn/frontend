@@ -1,8 +1,8 @@
 import {Button, Divider, TextField, Typography} from "@mui/material";
 import DictionaryRow from "./DictionaryRow";
-import React, {useCallback, useEffect, useState,} from "react";
+import React, {useEffect, useState,} from "react";
 import {debounce} from "debounce";
-import {OPEN_GENUSES, OPEN_PROPERTIES, OPEN_TYPES, openNewElem} from "../constants";
+import {OPEN_GENUSES, OPEN_PROPERTIES, OPEN_TYPES} from "../constants";
 import {getDictionaryByTarget} from "../commons";
 
 const DictionaryTable = ({dictionaryTarget, dispatch, updateTrigger}) => {
@@ -54,7 +54,7 @@ const DictionaryTable = ({dictionaryTarget, dispatch, updateTrigger}) => {
   }, 700);
 
   return(
-    <div style={{width: '70%', marginTop: '15px', display: 'flex', flexDirection: 'column', justifyContent: 'left'}}>
+    <div style={{width: '70vw', marginTop: '15px', display: 'flex', flexDirection: 'column', justifyContent: 'left'}}>
       <TextField
         value={searchString}
         placeholder="Отфильтровать"
@@ -71,15 +71,6 @@ const DictionaryTable = ({dictionaryTarget, dispatch, updateTrigger}) => {
             <Divider/>
           </div>
       )}
-
-      <Button
-        variant='contained'
-        color='success'
-        sx={{marginTop: '10px', display: 'flex'}}
-        onClick={() => dispatch(openNewElem(dictionaryTarget))}
-      >
-        {`Добавить ${getDictionaryByTarget(dictionaryTarget)}`}
-      </Button>
     </div>
   )
 }

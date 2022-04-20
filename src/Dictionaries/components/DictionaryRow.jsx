@@ -1,7 +1,7 @@
 /* eslint react/prop-types: 0 */
 import React from 'react';
 import { Typography, IconButton } from "@mui/material";
-import { editItem } from "../constants";
+import { openEditModal } from "../constants";
 import EditIcon from '@mui/icons-material/Edit';
 import styles from '../styles.css'
 
@@ -16,7 +16,7 @@ const DictionaryRow = ({data, dispatch}) => {
       <div className='dictionary-row-buttons' >
         <IconButton
           className='dictionary-button-edit'
-          onClick={() => dispatch(editItem(data.id))}
+          onClick={() => dispatch(openEditModal(data.id))}
         >
           <EditIcon/>
         </IconButton>

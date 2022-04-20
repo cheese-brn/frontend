@@ -2,7 +2,7 @@ import React, {useEffect, useReducer, useState} from "react";
 import {
   Typography,
   ToggleButtonGroup,
-  ToggleButton,
+  ToggleButton, Button,
 } from '@mui/material';
 
 import styles from './styles.css';
@@ -11,8 +11,8 @@ import {
   OPEN_GENUSES,
   OPEN_PROPERTIES,
   OPEN_TYPES,
-  EDIT_ITEM,
-  OPEN_NEW_ELEM_MODAL,
+  OPEN_EDIT_MODAL,
+  OPEN_NEW_ELEM_MODAL, CLOSE_MODAL, openNewElem,
 } from "./constants";
 
 import DictionaryTable from "./components/DictionaryTable";
@@ -20,13 +20,16 @@ import NewElemModal from "./components/NewElemModal";
 import EditGenusModal from "./components/EditGenusModal";
 import EditTypeModal from "./components/EditTypeModal";
 import EditPropertyModal from "./components/EditPropertyModal";
+import {getDictionaryByTarget} from "./commons";
 
 const reducer = (state, action) => {
   switch (action.type) {
-  case EDIT_ITEM:
-    return({...state, itemId: action.payload});
+  case OPEN_EDIT_MODAL:
+    return {...state, itemId: action.payload, open: true};
+    case CLOSE_MODAL:
+      return {...state, open: false}
   case OPEN_NEW_ELEM_MODAL:
-    return {...state, newElemType: action.payload};
+    return {...state, newElemType: action.payload, open: true};
   default:
     return state;
   }
@@ -37,6 +40,7 @@ const stateInitializer = (initialState) => {
     itemId: initialState,
     items: initialState,
     newElemType: null,
+    open: false,
   };
 };
 
@@ -49,7 +53,7 @@ const Dictionaries = () => {
 
   useEffect(() => {
     setTableUpdateTrigger(tableUpdateTrigger + 1);
-  }, [state.newElemType]);
+  }, [state.open]);
 
   const replaceGenusWithType = () => {
     setDictionaryTarget(OPEN_TYPES);
@@ -69,8 +73,9 @@ const Dictionaries = () => {
   // TODO: Переход по первым символам названия
   return(
     <>
-      <div >
+      <div style={{width: '70vw'}}>
         <Typography variant='h4' component='div' align='left'>Справочники приложения</Typography>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
           <ToggleButtonGroup
             value={dictionaryTarget}
             style={{display: 'flex', marginTop: '5px'}}
@@ -99,13 +104,23 @@ const Dictionaries = () => {
               <Typography sx={{fontWeight: 'bold'}}>Свойства</Typography>
             </ToggleButton>
           </ToggleButtonGroup>
+          { dictionaryTarget &&
+            <Button
+            variant='contained'
+            color='success'
+            sx={{marginTop: '10px', display: 'flex'}}
+            onClick={() => dispatch(openNewElem(dictionaryTarget))}
+          >
+            {`Добавить ${getDictionaryByTarget(dictionaryTarget)}`}
+          </Button>}
+        </div>
         <DictionaryTable dictionaryTarget={dictionaryTarget} dispatch={dispatch} updateTrigger={tableUpdateTrigger}/>
       </div>
 
       {/*Редактирование элемента*/}
-      {getEditModal()}
+      {state.open && getEditModal()}
       {/*Создание элемента*/}
-      <NewElemModal elemType={state.newElemType} dispatch={dispatch}/>
+      <NewElemModal elemType={state.newElemType} dispatch={dispatch} open={state.open}/>
     </>
   );
 };

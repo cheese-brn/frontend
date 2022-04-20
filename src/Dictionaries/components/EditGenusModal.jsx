@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
 
-import {editItem, openNewElem} from "../constants";
+import {closeModal, openEditModal} from "../constants";
 import CloseIcon from "@mui/icons-material/Close";
 import {useRequest} from "../../commons/hooks";
 
@@ -36,27 +36,25 @@ const EditGenusModal = ({genusId, openTypeCallback, dispatch}) => {
       .then(typesList => setTypes(typesList));
   }, [genusId]);
 
-  const closeModal = () => {
+  const handleCloseModal = () => {
     setModel(null);
-    dispatch(openNewElem(null));
+    dispatch(closeModal());
   }
-
-  const checkOpen = () => Boolean(model) && Boolean(genusId);
 
   return (
     <>
       <Modal
-        open={checkOpen()}
-        onClose={closeModal}
+        open={Boolean(model)}
+        onClose={handleCloseModal}
         style={CENTERED_MODAL}
       >
-        { checkOpen() &&
+        { Boolean(model) &&
         <Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
           <div style={{display: 'flex', justifyContent: 'space-between'}}>
             <Typography variant='h5'>
               {`Редактирование рода "${model.name || '...'}":`}
             </Typography>
-            <IconButton onClick={closeModal}>
+            <IconButton onClick={handleCloseModal}>
               <CloseIcon/>
             </IconButton>
           </div>
@@ -84,7 +82,7 @@ const EditGenusModal = ({genusId, openTypeCallback, dispatch}) => {
                 style={{textDecoration: 'underline', cursor: 'pointer'}}
                 onClick={() => {
                   openTypeCallback(type.id);
-                  dispatch(editItem(index));
+                  dispatch(openEditModal(index));
                 }}
               >
                 {`${type.name}`}
@@ -106,7 +104,7 @@ const EditGenusModal = ({genusId, openTypeCallback, dispatch}) => {
             style={{marginTop: '10px', marginRight: '10px'}}
             variant='outlined'
             color='warning'
-            onClick={closeModal}
+            onClick={handleCloseModal}
           >
             Отменить изменения
           </Button>
@@ -121,7 +119,7 @@ const EditGenusModal = ({genusId, openTypeCallback, dispatch}) => {
             Удалить элемент
           </Button>
         </Paper>
-        }
+        || <></>}
       </Modal>
 
       <Dialog
@@ -143,7 +141,7 @@ const EditGenusModal = ({genusId, openTypeCallback, dispatch}) => {
                 .then(res => {
                   if (res) {
                     setOpenConfirmDeleteDialog(false)
-                    closeModal()
+                    handleCloseModal()
                   }
                 })
             }}

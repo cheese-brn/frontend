@@ -11,7 +11,7 @@ import {
   Typography
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import {OPEN_GENUSES, OPEN_PROPERTIES, OPEN_TYPES} from "../constants";
+import {closeModal, OPEN_GENUSES, OPEN_PROPERTIES, OPEN_TYPES} from "../constants";
 import React, {useState, useEffect} from "react";
 import {openNewElem} from "../constants";
 
@@ -20,7 +20,7 @@ import {getDictionaryByTarget} from "../commons";
 import {useRequest} from "../../commons/hooks";
 
 
-const NewElemModal = ({elemType, dispatch}) => {
+const NewElemModal = ({elemType, dispatch, open}) => {
   const [model, setModel] = useState({name: ''})
   const [genusList, setGenusList] = useState([]);
 
@@ -40,8 +40,9 @@ const NewElemModal = ({elemType, dispatch}) => {
     return <></>;
   }
 
-  const closeModal = () => {
-    dispatch(openNewElem(null));
+  const handleCloseModal = () => {
+    setModel({name: ''});
+    dispatch(closeModal());
   }
 
   const handleNewElemSubmit = () => {
@@ -63,24 +64,25 @@ const NewElemModal = ({elemType, dispatch}) => {
       body: JSON.stringify(model),
     }).then((res) => {
       if (res){
-        closeModal()
+        handleCloseModal()
       }
     })
   }
 
   return(
     <Modal
-      open={Boolean(elemType)}
-      onClose={closeModal}
+      open={open}
+      onClose={handleCloseModal}
       style={CENTERED_MODAL}
     >
+      { open &&
       <Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
           <Typography variant='h5'>
             {`Создать элемент: ${getDictionaryByTarget(elemType)}`}
           </Typography>
 
-          <IconButton onClick={closeModal}>
+          <IconButton onClick={handleCloseModal}>
             <CloseIcon/>
           </IconButton>
         </div>
@@ -126,6 +128,7 @@ const NewElemModal = ({elemType, dispatch}) => {
           Отменить
         </Button>
       </Paper>
+      || <></>}
     </Modal>
   )
 }

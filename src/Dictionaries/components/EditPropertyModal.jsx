@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
 
-import {openNewElem} from "../constants";
+import {closeModal} from "../constants";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -161,27 +161,25 @@ const EditPropertyModal = ({propId, dispatch}) => {
       </div>
     )
 
-  const closeModal = () => {
-    dispatch(openNewElem(null));
+  const handleCloseModal = () => {
     setModel(null);
+    dispatch(closeModal());
   }
-
-  const checkOpen = () => Boolean(model) && Boolean(propId);
 
   return (
     <>
       <Modal
-        open={checkOpen()}
-        onClose={closeModal}
+        open={Boolean(model)}
+        onClose={handleCloseModal}
         style={CENTERED_MODAL}
       >
-        {checkOpen() &&
+        {Boolean(model) &&
         <Paper sx={{width: '600px', maxHeight: '80vh', margin: 'auto', padding: '20px', display: 'block'}}>
           <div style={{display: 'flex', justifyContent: 'space-between'}}>
             <Typography variant='h5'>
               {`Редактирование названия свойства "${model.name || '...'}" и его подсвойств:`}
             </Typography>
-            <IconButton onClick={closeModal}>
+            <IconButton onClick={handleCloseModal}>
               <CloseIcon/>
             </IconButton>
           </div>
@@ -261,7 +259,7 @@ const EditPropertyModal = ({propId, dispatch}) => {
             style={{marginTop: '10px', marginRight: '10px'}}
             variant='outlined'
             color='warning'
-            onClick={closeModal}
+            onClick={handleCloseModal}
           >
             Отменить изменения
           </Button>
@@ -276,7 +274,7 @@ const EditPropertyModal = ({propId, dispatch}) => {
             Удалить элемент
           </Button>
         </Paper>
-        }
+        || <></>}
 
       </Modal>
 
@@ -299,7 +297,7 @@ const EditPropertyModal = ({propId, dispatch}) => {
                 .then(res => {
                   if (res) {
                     setOpenConfirmDeleteDialog(false);
-                    closeModal();
+                    handleCloseModal();
                   }
                 })
             }}
