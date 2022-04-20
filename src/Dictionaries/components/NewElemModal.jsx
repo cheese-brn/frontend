@@ -41,7 +41,6 @@ const NewElemModal = ({elemType, dispatch}) => {
   }
 
   const closeModal = () => {
-    // setModel(null);
     dispatch(openNewElem(null));
   }
 

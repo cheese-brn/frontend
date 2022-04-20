@@ -57,7 +57,7 @@ const EditTypeModal = ({typeId, dispatch}) => {
         style={CENTERED_MODAL}
       >
         { checkOpen() &&
-        <Paper sx={{width: '600px', maxHeight: '350px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
+        <Paper sx={{width: '600px', maxHeight: '80vh', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
           <div style={{display: 'flex', justifyContent: 'space-between'}}>
             <Typography variant='h5'>
               {`Редактирование вида "${model.name || '...'}":`}
@@ -67,53 +67,55 @@ const EditTypeModal = ({typeId, dispatch}) => {
             </IconButton>
           </div>
 
-          <TextField
-            sx={{
-              marginTop: '10px',
-              marginBottom: '10px',
-              width: '100%',
-            }}
-            label='Название вида'
-            value={model.name}
-            onChange={event => {
-              setModel({...model, name: event.target.value})
-            }}
-          />
-          <FormControl
-            sx={{
-              marginTop: '10px',
-              marginBottom: '10px',
-              width: '100%',
-            }}>
-            <InputLabel id='dictionaries__edit-type__genus-select-label'>Относится к роду</InputLabel>
-            <Select
-              labelId='dictionaries__edit-type__genus-select-label'
-              id='dictionaries__edit-type__genus-select'
-              value={model.rodId || 0}
-              name='rodId'
-              onChange={(event => {setModel({...model, rodId: event.target.value})})}
-            >
-              {genuses.map(genus =>
-                <MenuItem value={genus.id} key={genus.id}>{genus.name}</MenuItem>
-              )}
-            </Select>
-          </FormControl>
-          <Divider/>
-
-          <div style={{marginBottom: '10px'}}>
-            <Typography>
-              Связанные штаммы:
-            </Typography>
-            {strains.map((strain, index) =>
-              <Link
-                to={`/strain/${strain.id}`}
-                key={`strain-${index}`}
-                style={{display: 'block', marginTop: '10px', textDecoration: 'underline', color: 'black'}}
-                target="_blank"
+          <div style={{maxHeight: '60vh', overflowY: 'scroll'}}>
+            <TextField
+              sx={{
+                marginTop: '10px',
+                marginBottom: '10px',
+                width: '100%',
+              }}
+              label='Название вида'
+              value={model.name}
+              onChange={event => {
+                setModel({...model, name: event.target.value})
+              }}
+            />
+            <FormControl
+              sx={{
+                marginTop: '10px',
+                marginBottom: '10px',
+                width: '100%',
+              }}>
+              <InputLabel id='dictionaries__edit-type__genus-select-label'>Относится к роду</InputLabel>
+              <Select
+                labelId='dictionaries__edit-type__genus-select-label'
+                id='dictionaries__edit-type__genus-select'
+                value={model.rodId || 0}
+                name='rodId'
+                onChange={(event => {setModel({...model, rodId: event.target.value})})}
               >
-                {`${strain.name}`}
-              </Link>
-            )}
+                {genuses.map(genus =>
+                  <MenuItem value={genus.id} key={genus.id}>{genus.name}</MenuItem>
+                )}
+              </Select>
+            </FormControl>
+            <Divider/>
+
+            <div style={{marginBottom: '10px'}}>
+              <Typography>
+                Связанные штаммы:
+              </Typography>
+              {strains.map((strain, index) =>
+                <Link
+                  to={`/strain/${strain.id}`}
+                  key={`strain-${index}`}
+                  style={{display: 'block', marginTop: '10px', textDecoration: 'underline', color: 'black'}}
+                  target="_blank"
+                >
+                  {`${strain.name}`}
+                </Link>
+              )}
+            </div>
           </div>
           <Divider/>
 

@@ -176,74 +176,75 @@ const EditPropertyModal = ({propId, dispatch}) => {
         style={CENTERED_MODAL}
       >
         {checkOpen() &&
-        <Paper sx={{width: '600px', maxHeight: '450px', margin: 'auto', padding: '20px', overflowY: 'scroll'}}>
+        <Paper sx={{width: '600px', maxHeight: '80vh', margin: 'auto', padding: '20px', display: 'block'}}>
           <div style={{display: 'flex', justifyContent: 'space-between'}}>
             <Typography variant='h5'>
-              {`Редактирование свойства "${model.name || '...'}":`}
+              {`Редактирование названия свойства "${model.name || '...'}" и его подсвойств:`}
             </Typography>
             <IconButton onClick={closeModal}>
               <CloseIcon/>
             </IconButton>
           </div>
 
-          <TextField
-            sx={{
-              marginTop: '10px',
-              marginBottom: '10px',
-              width: '100%',
-            }}
-            label='Название свойства'
-            value={model.name}
-            onChange={event => {
-              setModel({...model, name: event.target.value})
-            }}
-          />
-          <TextField
-            sx={{
-              marginTop: '10px',
-              marginBottom: '10px',
-              width: '100%',
-            }}
-            label='Описание'
-            value={model.description}
-            onChange={event => {
-              setModel({...model, description: event.target.value})
-            }}
-          />
-          <Divider/>
+          <div style={{maxHeight: '60vh', overflowY: 'scroll'}}>
+            <TextField
+              sx={{
+                marginTop: '10px',
+                marginBottom: '10px',
+                width: '100%',
+              }}
+              label='Название свойства'
+              value={model.name}
+              onChange={event => {
+                setModel({...model, name: event.target.value})
+              }}
+            />
+            <TextField
+              sx={{
+                marginTop: '10px',
+                marginBottom: '10px',
+                width: '100%',
+              }}
+              label='Описание'
+              value={model.description}
+              onChange={event => {
+                setModel({...model, description: event.target.value})
+              }}
+            />
+            <Divider/>
 
-          <div style={{marginBottom: '10px'}}>
-            <div style={{display: 'flex', justifyContent: 'space-between'}}>
-              <Typography>
-                Подсвойства:
-              </Typography>
-              <IconButton onClick={() => {
-                setSubprops([...subprops, {name: '', id: 0}])
-              }}>
-                <AddBoxIcon/>
-              </IconButton>
+            <div style={{marginBottom: '10px'}}>
+              <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <Typography>
+                  Подсвойства:
+                </Typography>
+                <IconButton onClick={() => {
+                  setSubprops([...subprops, {name: '', id: 0}])
+                }}>
+                  <AddBoxIcon/>
+                </IconButton>
+              </div>
+              {makeSubpropsComponents()}
             </div>
-            {makeSubpropsComponents()}
-          </div>
-          <Divider/>
+            <Divider/>
 
-          <div style={{marginBottom: '10px'}}>
-            <div style={{display: 'flex', justifyContent: 'space-between'}}>
-              <Typography>
-                Функциональные подсвойства:
-              </Typography>
-              <IconButton onClick={() => {
-                setFuncs([...funcs, {
-                  name: '',
-                  firstParam: {id: null, name: '', unit: ''},
-                  secondParam: {id: null, name: '', unit: ''}}])
-              }}>
-                <AddBoxIcon/>
-              </IconButton>
+            <div style={{marginBottom: '10px'}}>
+              <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <Typography>
+                  Функциональные подсвойства:
+                </Typography>
+                <IconButton onClick={() => {
+                  setFuncs([...funcs, {
+                    name: '',
+                    firstParam: {id: null, name: '', unit: ''},
+                    secondParam: {id: null, name: '', unit: ''}}])
+                }}>
+                  <AddBoxIcon/>
+                </IconButton>
+              </div>
+              {makeFunctionalComponents()}
             </div>
-            {makeFunctionalComponents()}
           </div>
-
           <Button
             style={{marginTop: '10px', marginRight: '10px'}}
             variant='outlined'
