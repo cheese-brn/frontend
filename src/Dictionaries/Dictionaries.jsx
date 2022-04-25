@@ -53,7 +53,7 @@ const Dictionaries = () => {
 
   useEffect(() => {
     setTableUpdateTrigger(tableUpdateTrigger + 1);
-  }, [state.open]);
+  }, [state.open, state.openNewElem]);
 
   const replaceGenusWithType = () => {
     setDictionaryTarget(OPEN_TYPES);

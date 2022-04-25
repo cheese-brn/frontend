@@ -23,18 +23,18 @@ const menuCardsContents = {
     id: 'search',
     route: 'search',
   },
-  research: {
-    title: 'Исследование',
-    logo: '/assets/research-icon.svg',
-    id: 'research',
-    route: '',
-  },
-  utils: {
-    title: 'Сервисы',
-    logo: '/assets/utils-icon.png',
-    id: 'utils',
-    route: 'utils'
-  },
+  // research: {
+  //   title: 'Исследование',
+  //   logo: '/assets/research-icon.svg',
+  //   id: 'research',
+  //   route: '',
+  // },
+  // utils: {
+  //   title: 'Сервисы',
+  //   logo: '/assets/utils-icon.png',
+  //   id: 'utils',
+  //   route: 'utils'
+  // },
 };
 
 export default menuCardsContents;
