@@ -26,14 +26,13 @@ import DownloadIcon from '@mui/icons-material/Download';
 import downloadStrainDocument from "../commons/utils";
 import {useRequest} from "../commons/hooks";
 
-// TODO: Сделать предупреждение при перезагрузке/закрытии страницыв режиме редактирования
+// TODO: Сделать предупреждение при перезагрузке/закрытии страницы в режиме редактирования
 const StrainView = () => {
   const navigate = useNavigate();
   const {strainId} = useParams();
   const makeRequest = useRequest();
 
   // TODO: Реализовать сохранение модели в LocalStorage, чтобы при перезагрузке не терялись данные
-  // TODO: Быстрое редактирование текста приводит к тормозам. Нужно как-то буферизировать части локально или типо того
   const [model, setModel] = useState({
     id: null,
     rodId: -1,
@@ -47,13 +46,13 @@ const StrainView = () => {
     factParams:[],
   });
 
-  const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
-
   const [isReadOnly, setIsReadOnly] = useState(true);
   const [addPropModalOpened, setAddPropModalOpened] = useState(false);
+  const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
 
   const [newPropId, setNewPropId] = useState(0);
 
+  // Справочники
   const [genusesList, setGenusesList] = useState(null);
   const [typesList, setTypesList] = useState(null);
   const [propertiesList, setPropertiesList] = useState(null);
@@ -201,72 +200,16 @@ const StrainView = () => {
                 </Select>
               </FormControl>
 
-              <TextField
-                sx={costilStyle}
-                id='stain-view__name-field'
-                label='Наименование'
-                name='exemplar'
-                inputProps={{readOnly: isReadOnly}}
-                value={model?.exemplar}
-                onChange={ handleCommonFieldChange }
-                size='small'
-              />
-
-              <TextField
-                sx={costilStyle}
-                id='stain-view__modification-field'
-                label='Модификация'
-                name='modification'
-                inputProps={{readOnly: isReadOnly}}
-                value={model?.modification}
-                onChange={ handleCommonFieldChange }
-                size='small'
-              />
-
-              <FormControlLabel
-                control={<Checkbox name='isLost'/>}
-                disabled={isReadOnly}
-                sx={costilStyle}
-                onChange={ (event) => setModel({...model, isLost: event.target.value === 'off'})}
-                value={model?.isLost ? 'on' : 'off'}
-                label="Штамм утерян"
-              />
-
-              <TextField
-                sx={costilStyle}
-                id='stain-view__obtaining-method-field'
-                label='Способ получения'
-                name='obtainingMethod'
-                inputProps={{readOnly: isReadOnly}}
-                value={model?.obtainingMethod}
-                onChange={ handleCommonFieldChange }
-                size='small'
-                multiline
-              />
-              
-              <TextField
-                sx={costilStyle}
-                id='stain-view__origin-field'
-                label='Происхождение'
-                name='origin'
-                inputProps={{readOnly: isReadOnly}}
-                value={model?.origin}
-                onChange={ handleCommonFieldChange }
-                size='small'
-                multiline
-              />
-              
-              <TextField
-                sx={costilStyle}
-                id='stain-view__annotation-field'
-                label='Аннотация'
-                name='annotation'
-                inputProps={{readOnly: isReadOnly}}
-                value={model?.annotation}
-                onChange={ handleCommonFieldChange }
-                size='small'
-                multiline
-              />
+              {basicFields.map(field =>
+                <SimpleProperty
+                  id={field.id}
+                  label={field.label}
+                  name={field.name}
+                  readOnly={state.isReadOnly}
+                  value={state.model[field.name]}
+                  dispatch={dispatch}
+                />
+              )}
               <Divider/>
 
               <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px'}}>
@@ -370,7 +313,7 @@ const StrainView = () => {
           <Paper sx={{width: '600px', maxHeight: '450px', margin: 'auto', padding: '20px'}}>
             <div style={{display: 'flex', justifyContent: 'space-between'}}>
               <Typography variant='h5'>
-                Добавление нового свойства
+                Добавление свойства в паспорт
               </Typography>
               <IconButton onClick={() => setAddPropModalOpened(false)}>
                 <CloseIcon/>
@@ -401,6 +344,7 @@ const StrainView = () => {
           </Paper>
       </Modal>
 
+      {/*Модальное окно удаления свойства из паспорта*/}
       <Dialog
         open={openConfirmDeleteDialog}
         onClose={() => setOpenConfirmDeleteDialog(false)}

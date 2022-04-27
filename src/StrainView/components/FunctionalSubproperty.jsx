@@ -4,11 +4,14 @@ import FunctionDataModal from "./FunctionDataModal";
 import React, {useState} from "react";
 
 
-const FunctionalSubproperty = ({data, funcIndex, propIndex, readOnly}) => {
+const FunctionalSubproperty = ({data, updateData, funcIndex, propIndex, readOnly}) => {
   const [openGraphModal, setOpenGraphModal] = useState(false);
   const [functionData, setFunctionData] = useState(data);
 
-  const closeModal = () => setOpenGraphModal(false);
+  const closeModal = () => {
+    updateData(funcIndex, functionData);
+    setOpenGraphModal(false)
+  };
 
   return(
     <div
@@ -31,11 +34,13 @@ const FunctionalSubproperty = ({data, funcIndex, propIndex, readOnly}) => {
         >
           Редактировать данные
         </Button>
-
       </div>
       }
       <FunctionDataModal
         data={functionData}
+        updateData={(data) => {
+          setFunctionData(data)
+        }}
         open={openGraphModal}
         closeCallback={closeModal}
         edit={!readOnly}

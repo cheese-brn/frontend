@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, {useState, useEffect} from "react";
-import {Typography, Divider, TextField, Menu, MenuItem, IconButton, Chip, Button} from "@mui/material";
+import {Typography, Divider, TextField, Menu, MenuItem, IconButton} from "@mui/material";
 
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -23,10 +23,9 @@ const PropertyInput = props => {
 
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const [openGraphModal, setOpenGraphModal] = useState(false);
-  const closeModal = () => {
-    setOpenGraphModal(false);
-    setGraphData([]);
+  const updateFunctionData = (index, data) => {
+    debugger
+
   }
 
   useEffect(() => {
@@ -137,7 +136,7 @@ const PropertyInput = props => {
         )}
 
         {(currentFunctions || []).map((func, funcIndex) =>
-          <FunctionalSubproperty data={func} propIndex={propertyIndex} funcIndex={funcIndex} readOnly={readOnly}/>
+          <FunctionalSubproperty data={func} propIndex={propertyIndex} funcIndex={funcIndex} updateData={updateFunctionData} readOnly={readOnly}/>
         )}
 
       </div>

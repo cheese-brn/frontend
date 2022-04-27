@@ -106,6 +106,10 @@ const CustomCell = ({instance, updateData, setter}) => {
   }
 
   const handleDelete = () => {
+    if (instance.rows.length < 2) {
+      popupState.close();
+      return;
+    }
     let origData = instance.rows.map(row => row.original);
     origData.splice(instance.row.index, 1);
     setter(origData);
@@ -130,16 +134,16 @@ const makeData = (data) => {
   const count = Math.min(data.firstParam.values.length, data.secondParam.values.length);
   let val = [];
   for (let i = 0; i < count; i++) {
-    val.push({first: data.firstParam.values[i], second: data.second.values[i]})
+    val.push({first: data.firstParam.values[i], second: data.secondParam.values[i]})
   }
 
   if (val.length === 0) {
-    val.push({first: 4, second: 5})
+    val.push({first: 0, second: 0})
   }
   return(val);
 }
 
-const FunctionDataModal = ({open, closeCallback, data, edit}) => {
+const FunctionDataModal = ({open, closeCallback, data, updateData, edit}) => {
   const [tableData, setTableData] = useState(makeData(data));
 
   const addTableRow = (index, position) => {
@@ -149,7 +153,6 @@ const FunctionDataModal = ({open, closeCallback, data, edit}) => {
     } else {
       dataCopy.splice(index + 1, 0, {first: 0, second: 0});
     }
-    debugger
     setTableData(dataCopy);
   }
 
@@ -177,6 +180,7 @@ const FunctionDataModal = ({open, closeCallback, data, edit}) => {
       onClose={closeCallback}
       style={CENTERED_MODAL}
     >
+      {open &&
       <Paper sx={{maxHeight: '70%', padding: '20px', overflowY: 'scroll',}}>
         <Typography
           variant='h5'
@@ -197,10 +201,18 @@ const FunctionDataModal = ({open, closeCallback, data, edit}) => {
         </div>
         <Divider/>
         {edit && <Button onClick={() => {
-          const check = tableData;
-          debugger
+          const copy = JSON.parse(JSON.stringify(data));
+          copy.firstParam.values = [];
+          copy.secondParam.values = [];
+          for (let i = 0; i < tableData.length; i++) {
+            copy.firstParam.values.push(tableData[i].first);
+            copy.secondParam.values.push(tableData[i].first);
+          }
+          updateData(copy)
         }}>Сохранить данные</Button>}
       </Paper>
+      }
+
     </Modal>
   )
 }
