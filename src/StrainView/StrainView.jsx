@@ -25,6 +25,35 @@ import DownloadIcon from '@mui/icons-material/Download';
 
 import downloadStrainDocument from "../commons/utils";
 import {useRequest} from "../commons/hooks";
+import SimpleProperty from "./components/SimpleProperty";
+
+const basicFields = [
+  {
+    id: 'stain-view__name-field',
+    label: 'Наименование',
+    name: 'exemplar',
+  },
+  {
+    id: 'stain-view__modification-field',
+    label: 'Модификация',
+    name: 'modification',
+  },
+  {
+    id: 'stain-view__obtaining-method-field',
+    label: 'Способ получения',
+    name: 'obtainingMethod',
+  },
+  {
+    id: 'stain-view__origin-field',
+    label: 'Происхождение',
+    name: 'origin',
+  },
+  {
+    id: 'stain-view__annotation-field',
+    label: 'Аннотация',
+    name: 'annotation',
+  },
+]
 
 // TODO: Сделать предупреждение при перезагрузке/закрытии страницы в режиме редактирования
 const StrainView = () => {
@@ -101,7 +130,7 @@ const StrainView = () => {
     setModel(newModel);
   };
 
-  const handleAddSimpleProperty = () => {
+  const handleAddProperty = () => {
     const newModel = JSON.parse(JSON.stringify(model));
 
     fetch(`/properties/${newPropId}`).then(response => response.json()).then(propertyData => {
@@ -205,11 +234,19 @@ const StrainView = () => {
                   id={field.id}
                   label={field.label}
                   name={field.name}
-                  readOnly={state.isReadOnly}
-                  value={state.model[field.name]}
-                  dispatch={dispatch}
+                  readOnly={isReadOnly}
+                  value={model[field.name]}
+                  updateCallback={handleCommonFieldChange}
                 />
               )}
+              <FormControlLabel
+                control={<Checkbox name='isLost'/>}
+                disabled={isReadOnly}
+                sx={costilStyle}
+                onChange={ (event) => setModel({...model, isLost: event.target.value === 'off'})}
+                value={model?.isLost ? 'on' : 'off'}
+                label="Штамм утерян"
+              />
               <Divider/>
 
               <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px'}}>
@@ -222,9 +259,9 @@ const StrainView = () => {
                   </IconButton>
                 }
               </div>
-              {model?.factParams?.map((prop, key) =>
+              {model?.factParams?.map((propData, key) =>
                 <PropertyInput
-                  prop={prop}
+                  prop={propData}
                   propertyIndex={key}
                   readOnly={isReadOnly}
                   key={`basic-prop-${key}`}
@@ -239,13 +276,6 @@ const StrainView = () => {
           <Divider orientation="vertical" flexItem/>
           <Grid item sx={{textAlign: 'left', marginLeft: '15px'}}>
             <Stack>
-              {/*TODO: доделать, связано с CB-8*/}
-              {/*<Typography variant='h6'>*/}
-              {/*  {`Последнее редактирование:`}*/}
-              {/*</Typography>*/}
-              {/*<Typography>*/}
-              {/*	{`${model.author}, ${model.lastEdit}`}*/}
-              {/*</Typography>*/}
               {model.id && isReadOnly &&
                 <Button
                   variant='contained'
@@ -337,7 +367,7 @@ const StrainView = () => {
               variant='contained'
               color='success'
               sx={{padding: '3px 8px 3px 8px'}}
-              onClick={handleAddSimpleProperty}
+              onClick={handleAddProperty}
             >
               Добавить
             </Button>

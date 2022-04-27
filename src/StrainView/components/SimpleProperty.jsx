@@ -1,12 +1,11 @@
 import {TextField} from "@mui/material";
 import React, {useState} from "react";
-import {updateSimpleProp} from "../constants";
 
-const SimpleProperty = ({id, label, name, value, readOnly, dispatch}) => {
+const SimpleProperty = ({id, label, name, value, readOnly, updateCallback}) => {
   const [currVal, setVal] = useState(value);
   return(
     <TextField
-      onBlur={() => dispatch(updateSimpleProp(name, currVal))}
+      onBlur={() => updateCallback({target: {value: currVal, name: name}})}
       onChange={(event) => setVal(event.target.value)}
       sx={{marginBottom: '1rem'}}
       id={id}
