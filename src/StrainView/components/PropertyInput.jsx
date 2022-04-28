@@ -13,8 +13,9 @@ import FunctionalSubproperty from "./FunctionalSubproperty";
 
 // TODO: разобраться с PropTypes
 const PropertyInput = props => {
-  const { prop, readOnly, propertyIndex, valueChangeCallback, removePropCallback, addSubpropCallback, removeSubpropCallback } = props;
-  const { name, subProps: currentSubProps, functions: currentFunctions} = prop;
+  const { prop, readOnly, propertyIndex, valueChangeCallback, removePropCallback, addSubpropCallback, removeSubpropCallback, updatePropCallback } = props;
+
+  const [propData, setPropData] = useState(prop);
 
   const [allSubprops, setAllSubprops] = useState(null);
   const [availableSubprops, setAvailableSubprops] = useState([]);
@@ -24,8 +25,28 @@ const PropertyInput = props => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const updateFunctionData = (index, data) => {
+    const copy = JSON.parse(JSON.stringify(propData));
+    copy.functions[index] = data;
     debugger
+    updatePropCallback(copy)
+    setPropData(copy)
+  }
 
+  const updateSubpropVal = (index, newVal) => {
+    const copy = JSON.parse(JSON.stringify(propData));
+    copy.subProps[index].value = newVal;
+    setPropData(copy)
+  }
+
+  const addSubprop = (child) => {
+    const copy = JSON.parse(JSON.stringify(propData));
+    if (!child.datatype) {
+      copy.functions.push(child)
+    } else {
+      copy.subProps.push(child)
+    }
+    updatePropCallback(copy)
+    setPropData(copy)
   }
 
   useEffect(() => {
@@ -44,19 +65,21 @@ const PropertyInput = props => {
 
   useEffect(() => {
     setAvailableSubprops(allSubprops?.filter(
-      subProp => !Boolean(currentSubProps.find(currSubProp => currSubProp.id === subProp.id))
+      subProp => !Boolean(prop.subProps.find(currSubProp => currSubProp.id === subProp.id))
     ) || []);
     setAllAvailableFunctions(allFunctions?.filter(
-      func => !Boolean(currentFunctions.find(currFunc => currFunc.id === func.id))
+      func => !Boolean(prop.functions.find(currFunc => currFunc.id === func.id))
     ) || []);
-  }, [currentSubProps, allSubprops, currentFunctions, allFunctions])
+  }, [prop.subProps, allSubprops, prop.functions, allFunctions])
 
   return(
-    <>
-      <div style={{border: '1px solid grey', borderRadius: '5px', alignItems: 'left', marginBottom: '15px', padding: '10px'}}>
+    <div style={{border: '1px solid grey', borderRadius: '5px', alignItems: 'left', marginBottom: '15px', padding: '10px'}}
+      onBlur={() => updatePropCallback(propData)}
+    >
         <div style={{ display: 'flex', justifyContent: 'space-between'}}>
-          <Typography variant='p' sx={{fontSize: '18px'}}>{name}</Typography>
+          <Typography variant='p' sx={{fontSize: '18px'}}>{propData.name}</Typography>
 
+          {/*Кнопка добавления подсвойства*/}
           <div style={{display: 'flex'}}>
             {!readOnly && [...availableSubprops, ...availableFunctions].length > 0 &&
             <div>
@@ -86,7 +109,7 @@ const PropertyInput = props => {
                     key={`prop-${propertyIndex}-subprop-${id}`}
                     onClick={() => {
                       setAnchorEl(false);
-                      addSubpropCallback(propertyIndex, child);
+                      addSubprop(child)
                     }}
                   >
                     {child.datatype ? null : <TimelineIcon />}
@@ -96,6 +119,7 @@ const PropertyInput = props => {
               </Menu>
             </div>
             }
+            {/*Кнопка удаления свойства*/}
             {!readOnly &&
             <IconButton
               className='delete-property-button'
@@ -108,7 +132,7 @@ const PropertyInput = props => {
           </div>
         </div>
 
-        {currentSubProps.map((subProp, subPropertyIndex)=>
+        {propData.subProps.map((subProp, subPropertyIndex)=>
           <div
             key={`prop-${propertyIndex}-subprop-${subPropertyIndex}`}
             style={{textAlign: 'left', display: 'flex', flexDirection: 'column'}}
@@ -122,11 +146,16 @@ const PropertyInput = props => {
                 sx={{marginTop: '10px', width: 'fill-available'}}
                 size='small'
                 onChange={(event) => {
-                  valueChangeCallback(propertyIndex, subPropertyIndex, event.target.value);
+                  updateSubpropVal(subPropertyIndex, event.target.value);
                 }}
                 multiline
               />
-              <IconButton sx={{padding: '0px'}} onClick={() => removeSubpropCallback(propertyIndex ,subPropertyIndex)}>
+              <IconButton sx={{padding: '0px'}} onClick={() => {
+                const dataCpy = JSON.parse(JSON.stringify(propData));
+                dataCpy.subProps.splice(subPropertyIndex, 1);
+                setPropData(dataCpy);
+                updatePropCallback(dataCpy)
+              }}>
                 <ClearIcon/>
               </IconButton>
             </div>
@@ -135,12 +164,11 @@ const PropertyInput = props => {
           </div>
         )}
 
-        {(currentFunctions || []).map((func, funcIndex) =>
-          <FunctionalSubproperty data={func} propIndex={propertyIndex} funcIndex={funcIndex} updateData={updateFunctionData} readOnly={readOnly}/>
+        {(propData.functions || []).map((func, funcIndex) =>
+          <FunctionalSubproperty data={func} propIndex={propertyIndex} funcIndex={funcIndex} updateData={(data) => updateFunctionData(funcIndex, data)} readOnly={readOnly}/>
         )}
 
       </div>
-    </>
   );
 };
 

@@ -180,6 +180,14 @@ const StrainView = () => {
       })
   }
 
+  const handleUpdateProperty = (propIndex, newVal) => {
+    const newModel = JSON.parse(JSON.stringify(model));
+    newModel.factParams[propIndex] = newVal;
+    setModel(newModel);
+
+  }
+
+
   // TODO: Разобраться с внешним видом полей, чтобы точно было всё как надо
   // TODO: Оптимизация вида readOnly
   return(
@@ -229,8 +237,9 @@ const StrainView = () => {
                 </Select>
               </FormControl>
 
-              {basicFields.map(field =>
+              {basicFields.map((field, key) =>
                 <SimpleProperty
+                  key={`basic-field-${key}`}
                   id={field.id}
                   label={field.label}
                   name={field.name}
@@ -259,17 +268,19 @@ const StrainView = () => {
                   </IconButton>
                 }
               </div>
-              {model?.factParams?.map((propData, key) =>
-                <PropertyInput
-                  prop={propData}
-                  propertyIndex={key}
-                  readOnly={isReadOnly}
-                  key={`basic-prop-${key}`}
-                  valueChangeCallback={handleSubPropChange}
-                  removePropCallback={handleRemoveProperty}
-                  addSubpropCallback={handleAddSubproperty}
-                  removeSubpropCallback={handleRemoveSubproperty}
-                />
+              {model?.factParams?.map((propData, key) => {
+                  return <PropertyInput
+                    prop={propData}
+                    propertyIndex={key}
+                    readOnly={isReadOnly}
+                    key={`basic-prop-${key}`}
+                    updatePropCallback={(newData) => handleUpdateProperty(key, newData)}
+                    valueChangeCallback={handleSubPropChange}
+                    removePropCallback={handleRemoveProperty}
+                    addSubpropCallback={handleAddSubproperty}
+                    removeSubpropCallback={handleRemoveSubproperty}
+                  />
+                }
               )}
             </Stack>
           </Grid>
@@ -302,6 +313,7 @@ const StrainView = () => {
                   sx={{marginTop: '20px'}}
                   onClick={() => {
                     setIsReadOnly(true);
+                    debugger
                     fetch('/strain/send', {
                       method: 'POST', body: JSON.stringify(model)
                     });

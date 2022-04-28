@@ -6,10 +6,8 @@ import React, {useState} from "react";
 
 const FunctionalSubproperty = ({data, updateData, funcIndex, propIndex, readOnly}) => {
   const [openGraphModal, setOpenGraphModal] = useState(false);
-  const [functionData, setFunctionData] = useState(data);
 
   const closeModal = () => {
-    updateData(funcIndex, functionData);
     setOpenGraphModal(false)
   };
 
@@ -20,8 +18,8 @@ const FunctionalSubproperty = ({data, updateData, funcIndex, propIndex, readOnly
     >
       {readOnly &&
       <div>
-        <Typography variant={'p'}><i>{data.name}</i></Typography>
-        <Chip icon={<TimelineIcon />} label="Открыть график" variant="outlined" />
+        <Typography variant={'p'} style={{marginRight: '1rem'}}><i>{data.funcName}</i></Typography>
+        <Chip icon={<TimelineIcon />} label="Открыть график" variant="outlined" onClick={() => setOpenGraphModal(true)}/>
       </div>
       }
       {!readOnly &&
@@ -36,15 +34,14 @@ const FunctionalSubproperty = ({data, updateData, funcIndex, propIndex, readOnly
         </Button>
       </div>
       }
+      {openGraphModal &&
       <FunctionDataModal
-        data={functionData}
-        updateData={(data) => {
-          setFunctionData(data)
-        }}
+        data={data}
         open={openGraphModal}
         closeCallback={closeModal}
+        saveDataCallback={updateData}
         edit={!readOnly}
-      />
+      />}
     </div>
   )
 }

@@ -5,7 +5,7 @@ import {
   Button,
   Menu,
   MenuItem,
-  Divider
+  Divider, IconButton
 } from "@mui/material";
 import React, {useMemo, useState,} from "react";
 import CENTERED_MODAL from "../../constants";
@@ -19,6 +19,7 @@ import {
   bindTrigger,
   bindMenu,
 } from 'material-ui-popup-state/hooks'
+import CloseIcon from "@mui/icons-material/Close";
 
 const EditableCell = ({
   value: initialValue,
@@ -131,8 +132,13 @@ const CustomCell = ({instance, updateData, setter}) => {
 }
 
 const makeData = (data) => {
-  const count = Math.min(data.firstParam.values.length, data.secondParam.values.length);
+  if (!data.firstParam.values || !data.secondParam.values) {
+    return ([{first: 0, second: 0}])
+  }
+
   let val = [];
+  const count = Math.min(data.firstParam.values.length, data.secondParam.values.length);
+
   for (let i = 0; i < count; i++) {
     val.push({first: data.firstParam.values[i], second: data.secondParam.values[i]})
   }
@@ -143,9 +149,8 @@ const makeData = (data) => {
   return(val);
 }
 
-const FunctionDataModal = ({open, closeCallback, data, updateData, edit}) => {
+const FunctionDataModal = ({open, closeCallback, saveDataCallback, data, edit}) => {
   const [tableData, setTableData] = useState(makeData(data));
-
   const addTableRow = (index, position) => {
     const dataCopy = JSON.parse(JSON.stringify(tableData));
     if (position === 'top') {
@@ -182,10 +187,18 @@ const FunctionDataModal = ({open, closeCallback, data, updateData, edit}) => {
     >
       {open &&
       <Paper sx={{maxHeight: '70%', padding: '20px', overflowY: 'scroll',}}>
-        <Typography
-          variant='h5'
-        >
-          {`${edit ? 'Редактирование данных ' : 'Просмотр '}графика "${data.name}"`}
+        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+          <Typography
+            variant='h5'
+          >
+            {`${edit ? 'Редактирование данных ' : 'Просмотр '}графика "${data.funcName}"`}
+          </Typography>
+          <IconButton onClick={closeCallback}>
+            <CloseIcon/>
+          </IconButton>
+        </div>
+        <Typography variant='p'>
+          Для открытия меню действий - ПКМ по таблице
         </Typography>
         <div style={{display: 'flex', flexDirection: 'row'}}>
           <div>
@@ -208,7 +221,7 @@ const FunctionDataModal = ({open, closeCallback, data, updateData, edit}) => {
             copy.firstParam.values.push(tableData[i].first);
             copy.secondParam.values.push(tableData[i].first);
           }
-          updateData(copy)
+          saveDataCallback(copy)
         }}>Сохранить данные</Button>}
       </Paper>
       }
