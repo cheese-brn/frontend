@@ -1,8 +1,8 @@
 import './App.css';
-import React, { useReducer } from 'react';
+import React from 'react';
 import HomePage from "./HomePage";
 import StrainView from "./StrainView";
-import {AppBar, Toolbar, Typography, IconButton, Paper} from "@mui/material";
+import {AppBar, Toolbar, Typography, Paper} from "@mui/material";
 import {BrowserRouter, Routes, Route, Outlet, Link,} from "react-router-dom";
 import Dictionaries from "./Dictionaries";
 import Catalogue from "./Catalogue";
@@ -25,9 +25,6 @@ const App = () => {
                     Штаммы микроорганизмов
                   </Typography>
                 </Link>
-                <IconButton>
-                  <img src='/assets/notifications-icon.svg'/>
-                </IconButton>
               </div>
             </Toolbar>
           </AppBar>
