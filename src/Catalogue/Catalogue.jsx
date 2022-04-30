@@ -5,6 +5,7 @@ import SearchRow from "../StrainSearch/components/SearchRow.jsx";
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import {PageHeader} from "../commons/components";
 
 const Catalogue = () => {
   const [displayData, setDisplayData] = useState(null);
@@ -29,12 +30,7 @@ const Catalogue = () => {
   
   return(
     <div>
-      <Typography
-        variant='h4'
-        align='left'
-      >
-          Каталог микроорганизмов
-      </Typography>
+      <PageHeader header='Каталог микроорганизмов'/>
         <div style={{display: 'flex', marginTop: '30px'}}>
           <Paper elevation={3} style={{width: '25%', marginRight: '20px'}}>
             <Typography variant='h5'>Рода и виды</Typography>

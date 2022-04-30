@@ -26,6 +26,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import downloadStrainDocument from "../commons/utils";
 import {useRequest} from "../commons/hooks";
 import SimpleProperty from "./components/SimpleProperty";
+import {PageHeader} from "../commons/components";
 
 const basicFields = [
   {
@@ -196,9 +197,7 @@ const StrainView = () => {
         <Grid container spacing='5'>
           <Grid container sm={6} md={7} lg={8} sx={{paddingRight: '15px', paddingLeft:'20px', }}>
             <Stack orientation='vertical' width={'100%'}>
-              <Typography variant='h4' sx={{margin: '15px', textAlign: 'left'}}>
-                  Паспорт штамма
-              </Typography>
+              <PageHeader header='Паспорт штамма'/>
               <FormControl>
                 <InputLabel id='stain-view__genus-select-label'>Род</InputLabel>
                 <Select

@@ -21,6 +21,7 @@ import EditGenusModal from "./components/EditGenusModal";
 import EditTypeModal from "./components/EditTypeModal";
 import EditPropertyModal from "./components/EditPropertyModal";
 import {getDictionaryByTarget} from "./commons";
+import {PageHeader} from "../commons/components";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -74,7 +75,7 @@ const Dictionaries = () => {
   return(
     <>
       <div style={{width: '70vw'}}>
-        <Typography variant='h4' component='div' align='left'>Справочники приложения</Typography>
+        <PageHeader header='Справочники приложения'/>
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
           <ToggleButtonGroup
             value={dictionaryTarget}

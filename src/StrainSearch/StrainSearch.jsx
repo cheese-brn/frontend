@@ -2,6 +2,7 @@ import React, {useState, useEffect, } from "react";
 import {Typography, Select, MenuItem, Button, Divider} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import SearchRow from "./components/SearchRow.jsx";
+import {PageHeader} from "../commons/components";
 
 const StrainSearch = () => {
   const [genusList, setGenusList] = useState(null);
@@ -54,7 +55,7 @@ const StrainSearch = () => {
   // TODO: Высота выборки работает некорректно. Нужно найти способ здесь и в других местах прописать высоту на всё оставшееся место
   return(
     <div>
-      <Typography variant='h4' component='div' align='left' style={{marginBottom: '10px'}}>Поиск паспорта штамма</Typography>
+      <PageHeader header='Поиск паспорта штамма'/>
       <div style={{display: 'flex', flexDirection: 'row', marginBottom: '10px'}}>
         <Typography variant='h5' style={{marginRight: '20px'}}>Относится к роду</Typography>
         <Select
