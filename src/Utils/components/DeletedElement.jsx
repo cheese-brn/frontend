@@ -1,5 +1,6 @@
 import React, {useState} from "react";
-import {Paper, Button, Typography} from "@mui/material";
+import {Paper, Typography, IconButton} from "@mui/material";
+import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 
 const DeletedElement = ({label, onRestore}) =>{
   const [hovered, setHovered] = useState(false);
@@ -7,15 +8,23 @@ const DeletedElement = ({label, onRestore}) =>{
     <Paper
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      style={{padding: '10px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: '5px'}}
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        height: '40px',
+        marginBottom: '5em',
+        paddingLeft: '1em'
+      }}
     >
       <Typography style={{fontSize: '20px'}}>
         {label}
       </Typography>
       {hovered &&
-        <Button>
-          <img src='/assets/restore-icon.png' width='20px' onClick={onRestore}/>
-        </Button>
+        <IconButton onClick={onRestore}>
+          <RestoreFromTrashIcon/>
+        </IconButton>
       }
     </Paper>
   )

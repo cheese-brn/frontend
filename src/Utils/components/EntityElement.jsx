@@ -1,13 +1,15 @@
 import React from "react";
-import {Paper, Typography} from "@mui/material";
+import {Card, CardActionArea, Typography} from "@mui/material";
 
 const EntityElement = ({label, onClick}) => {
   return(
-    <Paper onClick={onClick} style={{padding: '10px'}}>
-      <Typography style={{fontSize: '20px'}}>
-        {label}
-      </Typography>
-    </Paper>
+    <Card onClick={onClick} style={{marginBottom: '1rem'}} elevation={4}>
+      <CardActionArea style={{padding: '10px'}}>
+        <Typography style={{fontSize: '20px'}}>
+          {label}
+        </Typography>
+      </CardActionArea>
+    </Card>
   );
 }
 

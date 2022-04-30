@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 
 const UtilListElement = ({label, link}) => {
   return(
-    <Card>
+    <Card elevation={4}>
       <Link to={`/${link}`} style={{ color: 'black', textDecoration: 'none' }}>
         <CardContent>
           <Typography variant='h5' align='left'>

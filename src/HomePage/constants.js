@@ -29,12 +29,12 @@ const menuCardsContents = {
   //   id: 'research',
   //   route: '',
   // },
-  // utils: {
-  //   title: 'Сервисы',
-  //   logo: '/assets/utils-icon.png',
-  //   id: 'utils',
-  //   route: 'utils'
-  // },
+  utils: {
+    title: 'Сервисы',
+    logo: '/assets/utils-icon.png',
+    id: 'utils',
+    route: 'utils'
+  },
 };
 
 export default menuCardsContents;

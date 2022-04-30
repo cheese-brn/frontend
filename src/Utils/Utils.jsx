@@ -1,14 +1,12 @@
 import React from "react";
-import {Typography} from "@mui/material";
 import {utilsList} from "./constants";
 import UtilListElement from "./components/UtilListelement.jsx";
+import PageHeader from "../commons/components/PageHeader";
 
 const Utils = () => {
   return(
     <div>
-      <Typography variant='h5' align='left'>
-        Служебные утилиты:
-      </Typography>
+      <PageHeader header='Служебные утилиты:'/>
       {
         utilsList.map((util, index) => {
           return (<UtilListElement label={util.label} link={util.link} key={`util-${index}`}/>)
