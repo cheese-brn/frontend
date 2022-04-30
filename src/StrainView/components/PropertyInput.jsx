@@ -27,7 +27,6 @@ const PropertyInput = props => {
   const updateFunctionData = (index, data) => {
     const copy = JSON.parse(JSON.stringify(propData));
     copy.functions[index] = data;
-    debugger
     updatePropCallback(copy)
     setPropData(copy)
   }
@@ -64,11 +63,12 @@ const PropertyInput = props => {
   }, [])
 
   useEffect(() => {
+    debugger
     setAvailableSubprops(allSubprops?.filter(
-      subProp => !Boolean(prop.subProps.find(currSubProp => currSubProp.id === subProp.id))
+      subProp => !Boolean(prop.subProps?.find(currSubProp => currSubProp.id === subProp.id))
     ) || []);
     setAllAvailableFunctions(allFunctions?.filter(
-      func => !Boolean(prop.functions.find(currFunc => currFunc.id === func.id))
+      func => !Boolean(prop.functions?.find(currFunc => currFunc.id === func.id))
     ) || []);
   }, [prop.subProps, allSubprops, prop.functions, allFunctions])
 
@@ -132,7 +132,7 @@ const PropertyInput = props => {
           </div>
         </div>
 
-        {propData.subProps.map((subProp, subPropertyIndex)=>
+        {propData.subProps?.map((subProp, subPropertyIndex)=>
           <div
             key={`prop-${propertyIndex}-subprop-${subPropertyIndex}`}
             style={{textAlign: 'left', display: 'flex', flexDirection: 'column'}}
@@ -164,9 +164,9 @@ const PropertyInput = props => {
           </div>
         )}
 
-        {(propData.functions || []).map((func, funcIndex) =>
-          <FunctionalSubproperty data={func} propIndex={propertyIndex} funcIndex={funcIndex} updateData={(data) => updateFunctionData(funcIndex, data)} readOnly={readOnly}/>
-        )}
+          {/*{(propData.functions || []).map((func, funcIndex) =>*/}
+          {/*  <FunctionalSubproperty data={func} propIndex={propertyIndex} funcIndex={funcIndex} updateData={(data) => updateFunctionData(funcIndex, data)} readOnly={readOnly}/>*/}
+          {/*)}*/}
 
       </div>
   );
