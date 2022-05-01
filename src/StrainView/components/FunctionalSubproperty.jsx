@@ -25,7 +25,7 @@ const FunctionalSubproperty = ({data, updateData, funcIndex, propIndex, readOnly
       {!readOnly &&
       <div style={{display: 'flex', alignContent: 'center'}}>
         <TimelineIcon />
-        <Typography variant='p' style={{marginRight: '1em'}}>{data.name}</Typography>
+        <Typography variant='p' style={{marginRight: '1em'}}>{data.funcName}</Typography>
         <Button variant='outlined' size='small' onClick={() => {
           setOpenGraphModal(true);
         }}

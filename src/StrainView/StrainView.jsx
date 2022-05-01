@@ -59,6 +59,7 @@ const basicFields = [
 const StrainView = () => {
   const navigate = useNavigate();
   const {strainId} = useParams();
+  const makeRequest = useRequest()
 
   // TODO: Реализовать сохранение модели в LocalStorage, чтобы при перезагрузке не терялись данные
   const [model, setModel] = useState({
@@ -279,10 +280,9 @@ const StrainView = () => {
                   sx={{marginTop: '20px'}}
                   onClick={() => {
                     setIsReadOnly(true);
-                    debugger
-                    fetch('/strain/send', {
+                    makeRequest('/strain/send', {
                       method: 'POST', body: JSON.stringify(model)
-                    });
+                    })
                   }}>
                     Сохранить изменения
                 </Button>}

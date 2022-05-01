@@ -172,13 +172,13 @@ const PropertyInput = ({ prop, readOnly, propertyIndex, removePropCallback, upda
               </IconButton>
             </div>
             }
-            <Divider/>
+
           </div>
         )}
-
-          {/*{(propData.functions || []).map((func, funcIndex) =>*/}
-          {/*  <FunctionalSubproperty data={func} propIndex={propertyIndex} funcIndex={funcIndex} updateData={(data) => updateFunctionData(funcIndex, data)} readOnly={readOnly}/>*/}
-          {/*)}*/}
+      <Divider/>
+          {(propData.functions || []).map((func, funcIndex) =>
+            <FunctionalSubproperty data={func} propIndex={propertyIndex} funcIndex={funcIndex} updateData={(data) => updateFunctionData(funcIndex, data)} readOnly={readOnly}/>
+          )}
 
       </div>
   );

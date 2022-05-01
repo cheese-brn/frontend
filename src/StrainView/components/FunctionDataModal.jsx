@@ -20,6 +20,7 @@ import {
   bindMenu,
 } from 'material-ui-popup-state/hooks'
 import CloseIcon from "@mui/icons-material/Close";
+import {useSnackbar} from "notistack";
 
 const EditableCell = ({
   value: initialValue,
@@ -174,6 +175,8 @@ const FunctionDataModal = ({open, closeCallback, saveDataCallback, data, edit}) 
       },
   ], [data.firstParam, data.secondParam])
 
+  const { enqueueSnackbar } = useSnackbar();
+
   const getSortedData = () => {
     const arrayCopy = JSON.parse(JSON.stringify(tableData)).sort((a, b) => a.first - b.first);
     return arrayCopy;
@@ -221,11 +224,11 @@ const FunctionDataModal = ({open, closeCallback, saveDataCallback, data, edit}) 
             copy.firstParam.values.push(tableData[i].first);
             copy.secondParam.values.push(tableData[i].first);
           }
+          enqueueSnackbar('Данные обновлены')
           saveDataCallback(copy)
         }}>Сохранить данные</Button>}
       </Paper>
       }
-
     </Modal>
   )
 }
