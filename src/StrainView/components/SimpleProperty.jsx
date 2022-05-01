@@ -18,6 +18,7 @@ const SimpleProperty = ({id, label, name, value, readOnly, updateCallback}) => {
       inputProps={{'readOnly': readOnly}}
       value={currVal}
       size='small'
+      multiline
     />
   )
 }

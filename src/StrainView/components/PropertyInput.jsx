@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, {useState, useEffect} from "react";
 import {Typography, Divider, TextField, Menu, MenuItem, IconButton} from "@mui/material";
 
@@ -11,16 +10,49 @@ import styles from './styles.css';
 import FunctionDataModal from "./FunctionDataModal";
 import FunctionalSubproperty from "./FunctionalSubproperty";
 
-// TODO: разобраться с PropTypes
-const PropertyInput = props => {
-  const { prop, readOnly, propertyIndex, valueChangeCallback, removePropCallback, addSubpropCallback, removeSubpropCallback, updatePropCallback } = props;
-
-  const [propData, setPropData] = useState(prop);
+const PropertyInput = ({ prop, readOnly, propertyIndex, removePropCallback, updatePropCallback }) => {
+  const [propData, setPropData] = useState(null);
+  useEffect(() => setPropData(prop), [prop]);
 
   const [allSubprops, setAllSubprops] = useState(null);
   const [availableSubprops, setAvailableSubprops] = useState([]);
   const [allFunctions, setAllFunctions] = useState(null);
-  const [availableFunctions, setAllAvailableFunctions] = useState([]);
+  const [availableFunctions, setAvailableFunctions] = useState([]);
+  useEffect(() => {
+    fetch(`/subproperties/properties/${prop.id}`)
+      .then(response => response.json())
+      .then(subprops => {
+        setAllSubprops(subprops.properties);
+        setAllFunctions(subprops.functions);
+
+        // TODO: Теоретически, добавление подсвойства, когда оно единственное.
+        // Из-за проблем с моделью вызывает баги
+        // if ([...subprops.properties, ...subprops.functions].length === 1 &&
+        //  [...prop.functions, ...prop.subProps].length === 0) {
+        //   if (subprops.properties.length !== 0) {
+        //     propData.subProps.push(subprops.properties[0]);
+        //     debugger
+        //     updatePropCallback(propData);
+        //   } else {
+        //     propData.functions.push(subprops.functions[0]);
+        //     debugger
+        //     updatePropCallback(propData);
+        //   }
+        // }
+      });
+  }, [prop.id])
+
+  useEffect(() => {
+    const as = allSubprops?.filter(
+      subProp => !Boolean(prop.subProps?.find(currSubProp => currSubProp.id === subProp.id))
+    )
+    setAvailableSubprops(as || []);
+    const af = allFunctions?.filter(
+      func => !Boolean(prop.functions?.find(currFunc => currFunc.id === func.id))
+    )
+    setAvailableFunctions(af || []);
+  }, [prop.subProps, allSubprops, prop.functions, allFunctions])
+
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -48,29 +80,9 @@ const PropertyInput = props => {
     setPropData(copy)
   }
 
-  useEffect(() => {
-    fetch(`/subproperties/properties/${prop.id}`)
-      .then(response => response.json())
-      .then(subprops => {
-        setAllSubprops(subprops.properties);
-        setAllFunctions(subprops.functions);
-
-        // TODO: Это тут автодобавление свойства
-        // if (allSubprops.length === 1 && currentSubProps.length === 0) {
-        //   addSubpropCallback(propertyIndex, allSubprops[0]);
-        // }
-      });
-  }, [])
-
-  useEffect(() => {
-    debugger
-    setAvailableSubprops(allSubprops?.filter(
-      subProp => !Boolean(prop.subProps?.find(currSubProp => currSubProp.id === subProp.id))
-    ) || []);
-    setAllAvailableFunctions(allFunctions?.filter(
-      func => !Boolean(prop.functions?.find(currFunc => currFunc.id === func.id))
-    ) || []);
-  }, [prop.subProps, allSubprops, prop.functions, allFunctions])
+  if (!propData) {
+    return (<p>Загрузка свойства...</p>)
+  }
 
   return(
     <div style={{border: '1px solid grey', borderRadius: '5px', alignItems: 'left', marginBottom: '15px', padding: '10px'}}

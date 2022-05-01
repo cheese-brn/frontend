@@ -1,10 +1,9 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useState} from "react";
 import {useParams, useNavigate} from "react-router-dom";
 import {
   Paper,
   Typography,
   Grid,
-  TextField,
   Divider,
   Stack,
   Button,
@@ -60,7 +59,6 @@ const basicFields = [
 const StrainView = () => {
   const navigate = useNavigate();
   const {strainId} = useParams();
-  const makeRequest = useRequest();
 
   // TODO: Реализовать сохранение модели в LocalStorage, чтобы при перезагрузке не терялись данные
   const [model, setModel] = useState({
@@ -116,6 +114,7 @@ const StrainView = () => {
     }
   }, [model.rodId]);
 
+
   // TODO: Сделать нормально
   const costilStyle = {
     marginBottom: '14px'
@@ -125,19 +124,13 @@ const StrainView = () => {
     setModel({...model, [event.target.name]: event.target.value});
   };
 
-  const handleSubPropChange = (propKey, subPropKey, newValue) => {
-    const newModel = JSON.parse(JSON.stringify(model));
-    newModel.factParams[propKey].subProps[subPropKey].value = newValue;
-    setModel(newModel);
-  };
-
   const handleAddProperty = () => {
     const newModel = JSON.parse(JSON.stringify(model));
 
     fetch(`/properties/${newPropId}`).then(response => response.json()).then(propertyData => {
       propertyData.subProps = [];
       propertyData.functions = [];
-      newModel.factParams.push(propertyData);
+      newModel.factParams = [propertyData, ...newModel.factParams];
       setModel(newModel);
     });
     setAddPropModalOpened(false);
@@ -146,24 +139,6 @@ const StrainView = () => {
   const handleRemoveProperty = (propIndex) => {
     const newModel = JSON.parse(JSON.stringify(model));
     newModel.factParams.splice(propIndex, 1);
-    setModel(newModel);
-  }
-
-  const handleAddSubproperty = (propKey, value) => {
-    const newModel = JSON.parse(JSON.stringify(model));
-    if (value.datatype) {
-      newModel.factParams[propKey].subProps.push(value);
-    } else {
-      value.firstParam.values = [];
-      value.secondParam.values = [];
-      newModel.factParams[propKey].functions.push(value);
-    }
-    setModel(newModel);
-  }
-
-  const handleRemoveSubproperty = (propIndex, type, subpropIndex) => {
-    const newModel = JSON.parse(JSON.stringify(model));
-    newModel.factParams[propIndex].subProps.splice(subpropIndex, 1);
     setModel(newModel);
   }
 
@@ -185,18 +160,14 @@ const StrainView = () => {
     const newModel = JSON.parse(JSON.stringify(model));
     newModel.factParams[propIndex] = newVal;
     setModel(newModel);
-
   }
 
-
-  // TODO: Разобраться с внешним видом полей, чтобы точно было всё как надо
   // TODO: Оптимизация вида readOnly
   return(
     <>
       <div>
-        <Grid container spacing='5'>
-          <Grid container sm={6} md={7} lg={8} sx={{paddingRight: '15px', paddingLeft:'20px', }}>
-            <Stack orientation='vertical' width={'100%'}>
+        <div style={{display: 'flex', flexDirection:'row'}}>
+            <Stack orientation='vertical' width='70%'>
               <PageHeader header='Паспорт штамма'/>
               <FormControl>
                 <InputLabel id='stain-view__genus-select-label'>Род</InputLabel>
@@ -267,22 +238,18 @@ const StrainView = () => {
                   </IconButton>
                 }
               </div>
-              {model?.factParams?.map((propData, key) => {
-                  return <PropertyInput
+              {model?.factParams?.map((propData, key) =>
+                <PropertyInput
                     prop={propData}
                     propertyIndex={key}
                     readOnly={isReadOnly}
-                    key={`basic-prop-${key}`}
                     updatePropCallback={(newData) => handleUpdateProperty(key, newData)}
-                    valueChangeCallback={handleSubPropChange}
                     removePropCallback={handleRemoveProperty}
-                    addSubpropCallback={handleAddSubproperty}
-                    removeSubpropCallback={handleRemoveSubproperty}
-                  />
-                }
+                    key={`basic-prop-${key}`}
+                />
               )}
             </Stack>
-          </Grid>
+
           <Divider orientation="vertical" flexItem/>
           <Grid item sx={{textAlign: 'left', marginLeft: '15px'}}>
             <Stack>
@@ -343,7 +310,7 @@ const StrainView = () => {
               }
             </Stack>
           </Grid>
-        </Grid>
+        </div>
       </div>
 
       <Modal
