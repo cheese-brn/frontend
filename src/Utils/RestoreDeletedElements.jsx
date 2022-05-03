@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useMemo} from "react";
-import {Typography, Stack, Divider} from "@mui/material";
+import {Typography, Stack, Divider, Button} from "@mui/material";
 import {entityTypes} from "./constants";
 import EntityElement from "./components/EntityElement.jsx";
 import DeletedElement from "./components/DeletedElement.jsx";
@@ -39,10 +39,19 @@ const RestoreDeletedElements = () => {
 
   return(
     <div>
-      <PageHeader header='Восстановление удалённых элементов'/>
-      <Typography variant='h5' align='left'>
-        Восстановление удалённых элементов
-      </Typography>
+      <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+        <PageHeader header='Восстановление удалённых элементов'/>
+        <Button
+          variant='contained'
+          color='error'
+          style={{height: 'fit-content'}}
+          onClick={() => {
+            // TODO: удаление
+            debugger
+          }}
+        >Очистить корзину</Button>
+      </div>
+
       <div style={{display: 'flex', flexDirection: 'row'}}>
         <Stack style={{marginRight: '10px'}}>
           {entityElems}

@@ -14,7 +14,7 @@ const DeletedElement = ({label, onRestore}) =>{
         justifyContent: 'space-between',
         alignItems: 'center',
         height: '40px',
-        marginBottom: '5em',
+        marginBottom: '1em',
         paddingLeft: '1em'
       }}
     >

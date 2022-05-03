@@ -6,14 +6,17 @@ export const useRequest = () => {
   return (endpoint, init) =>
     fetch(endpoint, init)
       .then(response => {
-        return response.text()
-          .then(text => {
+        return response.json()
+          .then(res => {
             if (response.status !== 200) {
-              enqueueSnackbar(`${text}`, {variant: 'error'})
-              return false;
+              enqueueSnackbar(`${res.message}`, {variant: 'error'})
+              return res.data;
             }
-            enqueueSnackbar(`${text}`, {variant: 'success'});
-            return true;
+            enqueueSnackbar(`${res.message}`, {variant: 'success'});
+            if (!res.data) {
+              res.data = true;
+            }
+            return res.data;
           })
       });
 }
