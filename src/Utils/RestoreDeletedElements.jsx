@@ -4,14 +4,16 @@ import {entityTypes} from "./constants";
 import EntityElement from "./components/EntityElement.jsx";
 import DeletedElement from "./components/DeletedElement.jsx";
 import {PageHeader} from "../commons/components";
+import {useRequest} from "../commons/hooks";
 
 const RestoreDeletedElements = () => {
   const [deletedElems, setDeletedElems] = useState(null);
   const [selectedEntity, setSelectedEntity] = useState(null);
-  // TODO: сделать нормально
+
   const [costilUpdater, setCostilUpdater] = useState(0);
 
-  // TODO: Выделение цветом текущего элемента
+  const makeRequest = useRequest();
+
   const entityElems = useMemo(() =>
     entityTypes.map((type, index) =>
       <EntityElement
@@ -46,8 +48,7 @@ const RestoreDeletedElements = () => {
           color='error'
           style={{height: 'fit-content'}}
           onClick={() => {
-            // TODO: удаление
-            debugger
+            makeRequest('/bucket/clear', {});
           }}
         >Очистить корзину</Button>
       </div>
