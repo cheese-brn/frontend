@@ -89,6 +89,7 @@ const StrainView = () => {
   const loadModel = () => {
     fetch(`/strains/${strainId}`).then(response => response.json()).then(res => {
       setModel(res);
+      debugger
     });
   }
 
@@ -146,7 +147,7 @@ const StrainView = () => {
   }
 
   const handleDeleteStrain = () => {
-    fetch(`/strain/delete/${model.id}`, {method: 'POST', headers: {'Content-Type': 'application/json'}})
+    makeRequest(`/strain/delete/${model.id}`, {})
     navigate('/');
   }
 
@@ -158,6 +159,27 @@ const StrainView = () => {
         downloadStrainDocument(strain.name, model.id)
       })
   }
+
+  const handleSave = () => {
+    setIsReadOnly(true);
+    makeRequest('/strain/send', {
+      method: 'POST', body: JSON.stringify(model)
+    }).then(val => {
+      if (val && (val !== true)) {
+        const newModel = JSON.parse(JSON.stringify(model));
+        newModel.id = val;
+        setModel(newModel);
+      }
+    })
+  }
+
+  const makeModification = () => {
+    const newModel = JSON.parse(JSON.stringify(model));
+    newModel.id = null;
+    setIsReadOnly(false);
+    setModel(newModel);
+  }
+
 
   const handleUpdateProperty = (propIndex, newVal) => {
     const newModel = JSON.parse(JSON.stringify(model));
@@ -226,7 +248,7 @@ const StrainView = () => {
                 disabled={isReadOnly}
                 sx={costilStyle}
                 onChange={ (event) => setModel({...model, isLost: event.target.value === 'off'})}
-                value={model?.isLost ? 'on' : 'off'}
+                value={model?.isLost}
                 label="Штамм утерян"
               />
               <Divider/>
@@ -264,6 +286,15 @@ const StrainView = () => {
                   <DownloadIcon/> Скачать паспорт
                 </Button>
               }
+              {model.id &&
+                <Button
+                  variant='contained'
+                  onClick={makeModification}
+                  sx={{marginTop: '20px'}}
+                >
+                  Создать модификацию
+                </Button>
+              }
               {isReadOnly &&
                 <Button
                   variant='contained'
@@ -275,19 +306,6 @@ const StrainView = () => {
                   Редактировать
                 </Button>
               }
-              {!isReadOnly &&
-                <Button
-                  variant='contained'
-                  color='success'
-                  sx={{marginTop: '20px'}}
-                  onClick={() => {
-                    setIsReadOnly(true);
-                    makeRequest('/strain/send', {
-                      method: 'POST', body: JSON.stringify(model)
-                    })
-                  }}>
-                    Сохранить изменения
-                </Button>}
               {!isReadOnly && model.id &&
               <Button
                 variant='contained'
@@ -300,6 +318,30 @@ const StrainView = () => {
                 Отменить изменения
               </Button>
               }
+              {!isReadOnly &&
+                <>
+                  <Button
+                    variant='contained'
+                    color='success'
+                    sx={{marginTop: '20px'}}
+                    onClick={handleSave}>
+                    Сохранить изменения
+                  </Button>
+                  <Button
+                    sx={{marginTop: '20px'}}
+                    onClick={() => {
+                      fetch('/properties').then(response => response.json()).then(res => {
+                        setPropertiesList(res);
+                      });
+                      fetch('/rods').then(response => response.json()).then(res => {
+                        setGenusesList(res);
+                      });
+                    }}
+                  >
+                    Обновить справочники
+                  </Button>
+                </>
+                }
               {isReadOnly &&
                 <Button
                   variant='outlined'
@@ -310,6 +352,7 @@ const StrainView = () => {
                   Удалить штамм
                 </Button>
               }
+
             </Stack>
           </Grid>
         </div>
@@ -354,7 +397,7 @@ const StrainView = () => {
           </Paper>
       </Modal>
 
-      {/*Модальное окно удаления свойства из паспорта*/}
+      {/*Модальное окно удаления паспорта*/}
       <Dialog
         open={openConfirmDeleteDialog}
         onClose={() => setOpenConfirmDeleteDialog(false)}
