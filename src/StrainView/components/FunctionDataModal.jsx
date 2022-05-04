@@ -182,8 +182,6 @@ const FunctionDataModal = ({open, closeCallback, saveDataCallback, data, edit}) 
     return arrayCopy;
   }
 
-  debugger
-
   return (
     <Modal
       open={open}

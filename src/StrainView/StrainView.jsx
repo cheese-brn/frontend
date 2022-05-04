@@ -89,6 +89,7 @@ const StrainView = () => {
   const loadModel = () => {
     fetch(`/strains/${strainId}`).then(response => response.json()).then(res => {
       setModel(res);
+
     });
   }
 
@@ -243,11 +244,15 @@ const StrainView = () => {
                 />
               )}
               <FormControlLabel
-                control={<Checkbox name='isLost'/>}
+                control={
+                  <Checkbox name='isLost'/>
+                }
                 disabled={isReadOnly}
                 sx={costilStyle}
-                onChange={ (event) => setModel({...model, isLost: event.target.value === 'off'})}
-                value={model?.isLost}
+                onChange={ (event) => {
+                  setModel({...model, isLost: event.target.checked})
+                }}
+                checked={model?.isLost}
                 label="Штамм утерян"
               />
               <Divider/>
