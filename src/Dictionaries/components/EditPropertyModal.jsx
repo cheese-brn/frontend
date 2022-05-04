@@ -102,7 +102,7 @@ const EditPropertyModal = ({propId, dispatch}) => {
           </IconButton>
         </div>
 
-        <Typography variant='p'>Вертикальная ось</Typography>
+        <Typography variant='p'>Горизонтальная ось</Typography>
         <div style={{display: 'flex'}}>
           <TextField
             label='Подпись'
@@ -130,7 +130,7 @@ const EditPropertyModal = ({propId, dispatch}) => {
           />
         </div>
 
-        <Typography variant='p'>Горизонтальная ось</Typography>
+        <Typography variant='p'>Вертикальная ось</Typography>
         <div style={{display: 'flex'}}>
           <TextField
             label='Подпись'
