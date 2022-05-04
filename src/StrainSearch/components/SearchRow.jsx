@@ -15,7 +15,7 @@ const SearchRow = ({strainName, strainId}) => {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <Link to={`/strain/${strainId}`} style={{color: 'black'}}>{strainName}</Link>
+      <Link to={`/strain/${strainId}`} style={{color: 'black'}} target='_blank'>{strainName}</Link>
       {hovered &&
       <IconButton
         className='search-button-download'

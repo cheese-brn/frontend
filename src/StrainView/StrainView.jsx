@@ -93,6 +93,8 @@ const StrainView = () => {
   }
 
   useEffect(() => {
+    document.title = 'Редактирование паспорта штамма';
+
     fetch('/rods').then(response => response.json()).then(res => {
       setGenusesList(res);
     });

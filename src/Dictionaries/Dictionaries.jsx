@@ -53,6 +53,10 @@ const Dictionaries = () => {
   const [state, dispatch] = useReducer(reducer, null, stateInitializer);
 
   useEffect(() => {
+    document.title = 'Справочники приложения';
+  }, [])
+
+  useEffect(() => {
     setTableUpdateTrigger(tableUpdateTrigger + 1);
   }, [state.open, state.openNewElem]);
 

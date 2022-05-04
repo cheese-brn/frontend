@@ -30,6 +30,7 @@ const HomePage = () => {
   ];
 
   useEffect(() => {
+    document.title = 'Штаммы микроорганизмов - Главная';
     const cards = [];
     Object.keys(menuCardsContents).forEach((card) => {
       cards.push(
