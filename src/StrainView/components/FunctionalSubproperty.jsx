@@ -18,14 +18,14 @@ const FunctionalSubproperty = ({data, updateData, funcIndex, propIndex, readOnly
     >
       {readOnly &&
       <div>
-        <Typography variant={'p'} style={{marginRight: '1rem'}}><i>{data.funcName}</i></Typography>
+        <Typography variant={'p'} style={{marginRight: '1rem'}}><i>{data.name}</i></Typography>
         <Chip icon={<TimelineIcon />} label="Открыть график" variant="outlined" onClick={() => setOpenGraphModal(true)}/>
       </div>
       }
       {!readOnly &&
       <div style={{display: 'flex', alignContent: 'center'}}>
         <TimelineIcon />
-        <Typography variant='p' style={{marginRight: '1em'}}>{data.funcName}</Typography>
+        <Typography variant='p' style={{marginRight: '1em'}}>{data.name}</Typography>
         <Button variant='outlined' size='small' onClick={() => {
           setOpenGraphModal(true);
         }}

@@ -89,7 +89,6 @@ const StrainView = () => {
   const loadModel = () => {
     fetch(`/strains/${strainId}`).then(response => response.json()).then(res => {
       setModel(res);
-      debugger
     });
   }
 
