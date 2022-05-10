@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from "react";
-import {Typography, Divider, TextField, Menu, MenuItem, IconButton} from "@mui/material";
+import {Typography, Divider, TextField, Menu, MenuItem, IconButton, Popover} from "@mui/material";
 
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import ClearIcon from '@mui/icons-material/Clear';
 import TimelineIcon from '@mui/icons-material/Timeline';
+import InfoIcon from '@mui/icons-material/Info';
 
 import styles from './styles.css';
 import FunctionDataModal from "./FunctionDataModal";
@@ -13,6 +14,8 @@ import FunctionalSubproperty from "./FunctionalSubproperty";
 const PropertyInput = ({ prop, readOnly, propertyIndex, removePropCallback, updatePropCallback }) => {
   const [propData, setPropData] = useState(null);
   useEffect(() => setPropData(prop), [prop]);
+
+  const [infoPopoverAnchor, setInfoPopoverAnchor] = useState(null);
 
   const [allSubprops, setAllSubprops] = useState(null);
   const [availableSubprops, setAvailableSubprops] = useState([]);
@@ -89,7 +92,10 @@ const PropertyInput = ({ prop, readOnly, propertyIndex, removePropCallback, upda
       onBlur={() => updatePropCallback(propData)}
     >
         <div style={{ display: 'flex', justifyContent: 'space-between'}}>
-          <Typography variant='p' sx={{fontSize: '18px'}}>{propData.name}</Typography>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <Typography variant='p' sx={{fontSize: '18px'}}>{propData.name}</Typography>
+            {/*<InfoIcon color='primary' style={{width: '20px', marginLeft: '0.5em'}}/>*/}
+          </div>
 
           {/*Кнопка добавления подсвойства*/}
           <div style={{display: 'flex'}}>

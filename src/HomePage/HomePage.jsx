@@ -30,6 +30,7 @@ const HomePage = () => {
   ];
 
   useEffect(() => {
+    document.title = 'Штаммы микроорганизмов - Главная';
     const cards = [];
     Object.keys(menuCardsContents).forEach((card) => {
       cards.push(
@@ -52,7 +53,7 @@ const HomePage = () => {
         {/*  <LastStrainsCard strainsArray={lastStrains} />*/}
         {/*</Grid>*/}
 
-        <Grid container justifyContent="left" spacing="1" sm={6} md={7} lg={8}>
+        <Grid container justifyContent="left" spacing="1" sm={8} md={8} lg={8}>
           {menu}
         </Grid>
       </Grid>

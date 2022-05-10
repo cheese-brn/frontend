@@ -12,6 +12,7 @@ const StrainSearch = () => {
   const [searchResult, setSearchResult] = useState(null)
 
   useEffect(() => {
+    document.title = 'Поиск паспорта';
     fetch('/rods')
       .then(response => response.json())
       .then(genuses => {

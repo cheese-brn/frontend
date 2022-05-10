@@ -194,7 +194,7 @@ const FunctionDataModal = ({open, closeCallback, saveDataCallback, data, edit}) 
           <Typography
             variant='h5'
           >
-            {`${edit ? 'Редактирование данных ' : 'Просмотр '}графика "${data.funcName}"`}
+            {`${edit ? 'Редактирование данных ' : 'Просмотр '}графика "${data.name}"`}
           </Typography>
           <IconButton onClick={closeCallback}>
             <CloseIcon/>
@@ -222,7 +222,7 @@ const FunctionDataModal = ({open, closeCallback, saveDataCallback, data, edit}) 
           copy.secondParam.values = [];
           for (let i = 0; i < tableData.length; i++) {
             copy.firstParam.values.push(tableData[i].first);
-            copy.secondParam.values.push(tableData[i].first);
+            copy.secondParam.values.push(tableData[i].second);
           }
           enqueueSnackbar('Данные обновлены')
           saveDataCallback(copy)

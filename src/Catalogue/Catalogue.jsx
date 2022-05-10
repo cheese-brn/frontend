@@ -13,6 +13,7 @@ const Catalogue = () => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
+    document.title = 'Каталог микроорганизмов';
     fetch(`/rods/rodsWithVids`)
       .then(response => response.json())
       .then(data => {
