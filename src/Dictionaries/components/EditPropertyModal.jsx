@@ -210,6 +210,7 @@ const EditPropertyModal = ({propId, dispatch}) => {
               onChange={event => {
                 setModel({...model, description: event.target.value})
               }}
+              multiline
             />
             <Divider/>
 

@@ -9,6 +9,7 @@ import InfoIcon from '@mui/icons-material/Info';
 
 import styles from './styles.css';
 import FunctionalSubproperty from "./FunctionalSubproperty.jsx";
+import {InfoPopover} from "../../commons/components";
 
 const PropertyInput = ({ prop, readOnly, propertyIndex, removePropCallback, updatePropCallback }) => {
   const [propData, setPropData] = useState(null);
@@ -93,6 +94,7 @@ const PropertyInput = ({ prop, readOnly, propertyIndex, removePropCallback, upda
         <div style={{ display: 'flex', justifyContent: 'space-between'}}>
           <div style={{display: 'flex', alignItems: 'center'}}>
             <Typography variant='p' sx={{fontSize: '18px'}}>{propData.name}</Typography>
+            <InfoPopover id={`property-input-${prop.id}__property-info-popover`} text={prop.description}/>
             {/*<InfoIcon color='primary' style={{width: '20px', marginLeft: '0.5em'}}/>*/}
           </div>
 
