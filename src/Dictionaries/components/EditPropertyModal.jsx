@@ -63,8 +63,10 @@ const EditPropertyModal = ({propId, dispatch}) => {
             <IconButton
               className='dictionary-button-delete'
               onClick={() => {
-                const copy = JSON.parse(JSON.stringify(subprops)).splice(index, 1);
+                const copy = JSON.parse(JSON.stringify(subprops))
+                copy.splice(index, 1);
                 setSubprops(copy);
+                debugger
               }}
             >
               <DeleteOutlineIcon/>
