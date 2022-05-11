@@ -15,11 +15,11 @@ import {
   OPEN_NEW_ELEM_MODAL, CLOSE_MODAL, openNewElem,
 } from "./constants";
 
-import DictionaryTable from "./components/DictionaryTable";
-import NewElemModal from "./components/NewElemModal";
-import EditGenusModal from "./components/EditGenusModal";
-import EditTypeModal from "./components/EditTypeModal";
-import EditPropertyModal from "./components/EditPropertyModal";
+import DictionaryTable from "./components/DictionaryTable.jsx";
+import NewElemModal from "./components/NewElemModal.jsx";
+import EditGenusModal from "./components/EditGenusModal.jsx";
+import EditTypeModal from "./components/EditTypeModal.jsx";
+import EditPropertyModal from "./components/EditPropertyModal.jsx";
 import {getDictionaryByTarget} from "./commons";
 import {PageHeader} from "../commons/components";
 

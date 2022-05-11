@@ -1,7 +1,7 @@
 import React from "react";
 import {utilsList} from "./constants";
 import UtilListElement from "./components/UtilListelement.jsx";
-import PageHeader from "../commons/components/PageHeader";
+import PageHeader from "../commons/components/PageHeader.jsx";
 
 const Utils = () => {
   return(

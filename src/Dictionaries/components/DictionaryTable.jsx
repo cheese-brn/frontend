@@ -1,9 +1,8 @@
 import {Button, Divider, TextField, Typography} from "@mui/material";
-import DictionaryRow from "./DictionaryRow";
+import DictionaryRow from "./DictionaryRow.jsx";
 import React, {useEffect, useState,} from "react";
 import {debounce} from "debounce";
 import {OPEN_GENUSES, OPEN_PROPERTIES, OPEN_TYPES} from "../constants";
-import {getDictionaryByTarget} from "../commons";
 
 const DictionaryTable = ({dictionaryTarget, dispatch, updateTrigger}) => {
   if (!dictionaryTarget) {

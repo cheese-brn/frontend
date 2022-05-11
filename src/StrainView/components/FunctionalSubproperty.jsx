@@ -1,6 +1,6 @@
 import {Button, Chip, Typography} from "@mui/material";
 import TimelineIcon from "@mui/icons-material/Timeline";
-import FunctionDataModal from "./FunctionDataModal";
+import FunctionDataModal from "./FunctionDataModal.jsx";
 import React, {useState} from "react";
 
 

@@ -24,7 +24,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 
 import downloadStrainDocument from "../commons/utils";
 import {useRequest} from "../commons/hooks";
-import SimpleProperty from "./components/SimpleProperty";
+import SimpleProperty from "./components/SimpleProperty.jsx";
 import {PageHeader} from "../commons/components";
 
 const basicFields = [

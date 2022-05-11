@@ -8,8 +8,7 @@ import TimelineIcon from '@mui/icons-material/Timeline';
 import InfoIcon from '@mui/icons-material/Info';
 
 import styles from './styles.css';
-import FunctionDataModal from "./FunctionDataModal";
-import FunctionalSubproperty from "./FunctionalSubproperty";
+import FunctionalSubproperty from "./FunctionalSubproperty.jsx";
 
 const PropertyInput = ({ prop, readOnly, propertyIndex, removePropCallback, updatePropCallback }) => {
   const [propData, setPropData] = useState(null);
