@@ -87,7 +87,7 @@ const StrainView = () => {
   const [propertiesList, setPropertiesList] = useState(null);
 
   const loadModel = () => {
-    fetch(`/strains/${strainId}`).then(response => response.json()).then(res => {
+    fetch(`http://127.0.0.1:8080/strains/${strainId}`).then(response => response.json()).then(res => {
       setModel(res);
 
     });
@@ -96,10 +96,10 @@ const StrainView = () => {
   useEffect(() => {
     document.title = 'Редактирование паспорта штамма';
 
-    fetch('/rods').then(response => response.json()).then(res => {
+    fetch('http://127.0.0.1:8080/rods').then(response => response.json()).then(res => {
       setGenusesList(res);
     });
-    fetch('/properties').then(response => response.json()).then(res => {
+    fetch('http://127.0.0.1:8080/properties').then(response => response.json()).then(res => {
       setPropertiesList(res);
     });
 
@@ -112,7 +112,7 @@ const StrainView = () => {
 
   useEffect(() => {
     if(model.rodId !== -1) {
-      fetch(`/vids/rods/${model.rodId}`).then(response => response.json()).then(res => {
+      fetch(`http://127.0.0.1:8080/vids/rods/${model.rodId}`).then(response => response.json()).then(res => {
         setTypesList(res);
       });
     }
@@ -131,7 +131,7 @@ const StrainView = () => {
   const handleAddProperty = () => {
     const newModel = JSON.parse(JSON.stringify(model));
 
-    fetch(`/properties/${newPropId}`).then(response => response.json()).then(propertyData => {
+    fetch(`http://127.0.0.1:8080/properties/${newPropId}`).then(response => response.json()).then(propertyData => {
       propertyData.subProps = [];
       propertyData.functions = [];
       newModel.factParams = [propertyData, ...newModel.factParams];
@@ -152,7 +152,7 @@ const StrainView = () => {
   }
 
   const handleDownloadDocument = () => {
-    fetch('/strains')
+    fetch('http://127.0.0.1:8080/strains')
       .then(response => response.json())
       .then(strainsList => {
         let strain = strainsList.find(elem => elem.id === model.id);
@@ -334,10 +334,10 @@ const StrainView = () => {
                   <Button
                     sx={{marginTop: '20px'}}
                     onClick={() => {
-                      fetch('/properties').then(response => response.json()).then(res => {
+                      fetch('http://127.0.0.1:8080/properties').then(response => response.json()).then(res => {
                         setPropertiesList(res);
                       });
-                      fetch('/rods').then(response => response.json()).then(res => {
+                      fetch('http://127.0.0.1:8080/rods').then(response => response.json()).then(res => {
                         setGenusesList(res);
                       });
                     }}

@@ -31,7 +31,7 @@ const NewElemModal = ({elemType, dispatch, open}) => {
       return
     }
 
-    fetch('/rods')
+    fetch('http://127.0.0.1:8080/rods')
       .then(response => response.json())
       .then(genusList => setGenusList(genusList));
   }, [elemType])

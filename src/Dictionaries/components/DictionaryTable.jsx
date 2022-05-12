@@ -14,7 +14,7 @@ const DictionaryTable = ({dictionaryTarget, dispatch, updateTrigger}) => {
 
   const updateItemsList = () => {
     setTimeout(() => {
-      fetch(`/${dictionaryTarget}`)
+      fetch(`http://127.0.0.1:8080/${dictionaryTarget}`)
         .then(response => response.json())
         .then(dataArray => {
           setDictionaryElements(dataArray);
@@ -43,7 +43,7 @@ const DictionaryTable = ({dictionaryTarget, dispatch, updateTrigger}) => {
         break;
     }
 
-    fetch(`/${target}/searchByName`, {
+    fetch(`http://127.0.0.1:8080/${target}/searchByName`, {
       method: 'POST',
       body: query,
     }).then(response => response.json())

@@ -31,12 +31,12 @@ const EditPropertyModal = ({propId, dispatch}) => {
   const makeRequest = useRequest();
 
   useEffect(() => {
-    fetch(`/properties/${propId}`)
+    fetch(`http://127.0.0.1:8080/properties/${propId}`)
       .then(response => response.json())
       .then(prop => {
         setModel(prop)
       });
-    fetch(`/subproperties/properties/${propId}`)
+    fetch(`http://127.0.0.1:8080/subproperties/properties/${propId}`)
       .then(response => response.json())
       .then(subprops => {
         setSubprops(subprops.properties);

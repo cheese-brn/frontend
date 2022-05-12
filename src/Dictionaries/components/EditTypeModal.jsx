@@ -30,13 +30,13 @@ const EditTypeModal = ({typeId, dispatch}) => {
   const makeRequest = useRequest();
 
   useEffect(() => {
-    fetch(`/vids/${typeId}`)
+    fetch(`http://127.0.0.1:8080/vids/${typeId}`)
       .then(response => response.json())
       .then(typeData => setModel(typeData));
-    fetch(`/strains/vids/${typeId}`)
+    fetch(`http://127.0.0.1:8080/strains/vids/${typeId}`)
       .then(response => response.json())
       .then(strainsList => setStrains(strainsList));
-    fetch('/rods')
+    fetch('http://127.0.0.1:8080/rods')
       .then(response => response.json())
       .then(rods => setGenuses(rods));
   }, [typeId]);

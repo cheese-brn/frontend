@@ -14,7 +14,7 @@ const Catalogue = () => {
 
   useEffect(() => {
     document.title = 'Каталог микроорганизмов';
-    fetch(`/rods/rodsWithVids`)
+    fetch(`http://127.0.0.1:8080/rods/rodsWithVids`)
       .then(response => response.json())
       .then(data => {
         setData(data)
@@ -22,7 +22,7 @@ const Catalogue = () => {
   }, []);
 
   const handleLoadStrains = (strainId) => {
-    fetch(`/strains/vids/${strainId}`)
+    fetch(`http://127.0.0.1:8080/strains/vids/${strainId}`)
       .then(response => response.json())
       .then(strains => {
         setDisplayData(strains);

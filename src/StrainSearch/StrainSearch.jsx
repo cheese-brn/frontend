@@ -13,7 +13,7 @@ const StrainSearch = () => {
 
   useEffect(() => {
     document.title = 'Поиск паспорта';
-    fetch('/rods')
+    fetch('http://127.0.0.1:8080/rods')
       .then(response => response.json())
       .then(genuses => {
         setGenusList(genuses);
@@ -22,11 +22,11 @@ const StrainSearch = () => {
 
   useEffect(() => {
     if (searchParams.genus === -1) {
-      fetch('/vids')
+      fetch('http://127.0.0.1:8080/vids')
         .then(response => response.json())
         .then(types => setTypeList(types));
     } else if (searchParams.genus !== -1) {
-      fetch(`/vids/rods/${searchParams.genus}`)
+      fetch(`http://127.0.0.1:8080/vids/rods/${searchParams.genus}`)
         .then(response => response.json())
         .then(types => setTypeList(types));
     }
@@ -34,14 +34,14 @@ const StrainSearch = () => {
 
   const findStrains = () => {
     if (searchParams.type !== -1) {
-      fetch(`/strains/vids/${searchParams.type}`)
+      fetch(`http://127.0.0.1:8080/strains/vids/${searchParams.type}`)
         .then(response => response.json())
         .then(strains => {
           setSearchResult(strains);
         });
     }
     else if (searchParams.genus !== -1) {
-      fetch(`/strains/rods/${searchParams.genus}`)
+      fetch(`http://127.0.0.1:8080/strains/rods/${searchParams.genus}`)
         .then(response => response.json())
         .then(strains => {
           if (strains === []) {}

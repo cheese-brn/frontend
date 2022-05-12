@@ -20,7 +20,7 @@ const PropertyInput = ({ prop, readOnly, propertyIndex, removePropCallback, upda
   const [availableFunctions, setAvailableFunctions] = useState([]);
 
   useEffect(() => {
-    fetch(`/subproperties/properties/${prop.id}`)
+    fetch(`http://127.0.0.1:8080/subproperties/properties/${prop.id}`)
       .then(response => response.json())
       .then(subprops => {
         setAllSubprops(subprops.properties);

@@ -1,5 +1,5 @@
 const downloadStrainDocument = (documentName, strainId) => {
-  fetch(`/strainToDocument/${strainId}`)
+  fetch(`http://127.0.0.1:8080/strainToDocument/${strainId}`)
     .then((response) => response.blob())
     .then((blob) => {
       // Create blob link to download

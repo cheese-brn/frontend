@@ -20,7 +20,7 @@ export const handleSubmitChange = (dictionaryTarget, model) => {
       break;
   }
 
-  return fetch(`/${target}/send`, {
+  return fetch(`http://127.0.0.1:8080/${target}/send`, {
     method: 'POST',
     body: JSON.stringify(model)
   })
@@ -45,5 +45,5 @@ export const handleDeleteElement = (dictionaryTarget, id) => {
       target = 'property'
       break;
   }
-  return fetch(`/${target}/delete/${id}`)
+  return fetch(`http://127.0.0.1:8080/${target}/delete/${id}`)
 }

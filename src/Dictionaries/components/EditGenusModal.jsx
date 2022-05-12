@@ -28,10 +28,10 @@ const EditGenusModal = ({genusId, openTypeCallback, dispatch}) => {
   const makeRequest = useRequest();
 
   useEffect(() => {
-    fetch(`/rods/${genusId}`)
+    fetch(`http://127.0.0.1:8080/rods/${genusId}`)
       .then(response => response.json())
       .then(genusData => setModel(genusData));
-    fetch(`/vids/rods/${genusId}`)
+    fetch(`http://127.0.0.1:8080/vids/rods/${genusId}`)
       .then(response => response.json())
       .then(typesList => setTypes(typesList));
   }, [genusId]);
