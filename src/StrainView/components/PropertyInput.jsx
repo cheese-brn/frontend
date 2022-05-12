@@ -5,7 +5,6 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import ClearIcon from '@mui/icons-material/Clear';
 import TimelineIcon from '@mui/icons-material/Timeline';
-import InfoIcon from '@mui/icons-material/Info';
 
 import styles from './styles.css';
 import FunctionalSubproperty from "./FunctionalSubproperty.jsx";
@@ -15,12 +14,11 @@ const PropertyInput = ({ prop, readOnly, propertyIndex, removePropCallback, upda
   const [propData, setPropData] = useState(null);
   useEffect(() => setPropData(prop), [prop]);
 
-  const [infoPopoverAnchor, setInfoPopoverAnchor] = useState(null);
-
   const [allSubprops, setAllSubprops] = useState(null);
   const [availableSubprops, setAvailableSubprops] = useState([]);
   const [allFunctions, setAllFunctions] = useState(null);
   const [availableFunctions, setAvailableFunctions] = useState([]);
+
   useEffect(() => {
     fetch(`/subproperties/properties/${prop.id}`)
       .then(response => response.json())
@@ -95,7 +93,6 @@ const PropertyInput = ({ prop, readOnly, propertyIndex, removePropCallback, upda
           <div style={{display: 'flex', alignItems: 'center'}}>
             <Typography variant='p' sx={{fontSize: '18px'}}>{propData.name}</Typography>
             <InfoPopover id={`property-input-${prop.id}__property-info-popover`} text={prop.description}/>
-            {/*<InfoIcon color='primary' style={{width: '20px', marginLeft: '0.5em'}}/>*/}
           </div>
 
           {/*Кнопка добавления подсвойства*/}

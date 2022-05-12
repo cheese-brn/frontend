@@ -132,7 +132,7 @@ const CustomCell = ({instance, updateData, setter}) => {
   )
 }
 
-const makeData = (data) => {
+export const makeData = (data) => {
   if (!data.firstParam.values || !data.secondParam.values) {
     return ([{first: 0, second: 0}])
   }
@@ -215,18 +215,22 @@ const FunctionDataModal = ({open, closeCallback, saveDataCallback, data, edit}) 
             <Tooltip/>
           </LineChart>
         </div>
+
         <Divider/>
-        {edit && <Button onClick={() => {
-          const copy = JSON.parse(JSON.stringify(data));
-          copy.firstParam.values = [];
-          copy.secondParam.values = [];
-          for (let i = 0; i < tableData.length; i++) {
-            copy.firstParam.values.push(tableData[i].first);
-            copy.secondParam.values.push(tableData[i].second);
-          }
-          enqueueSnackbar('Данные обновлены')
-          saveDataCallback(copy)
-        }}>Сохранить данные</Button>}
+        {edit &&
+        <Button
+          onClick={() => {
+            const copy = JSON.parse(JSON.stringify(data));
+            copy.firstParam.values = [];
+            copy.secondParam.values = [];
+            for (let i = 0; i < tableData.length; i++) {
+              copy.firstParam.values.push(tableData[i].first);
+              copy.secondParam.values.push(tableData[i].second);
+            }
+            enqueueSnackbar('Данные обновлены')
+            saveDataCallback(copy)
+          }}
+        >Сохранить данные</Button>}
       </Paper>
       }
     </Modal>
