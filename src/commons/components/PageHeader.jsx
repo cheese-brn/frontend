@@ -3,7 +3,6 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import React from "react";
 import {useNavigate} from "react-router-dom";
 
-
 const PageHeader = ({header}) => {
   const navigate = useNavigate();
   return (<div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: '1em'}}>

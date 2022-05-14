@@ -284,6 +284,7 @@ const StrainView = () => {
             <Stack>
               {model.id && isReadOnly &&
                 <Button
+                  id='strain-view__download-document-button'
                   variant='contained'
                   onClick={handleDownloadDocument}
                 >
@@ -301,6 +302,7 @@ const StrainView = () => {
               }
               {isReadOnly &&
                 <Button
+                  id='strain-view__edit-button'
                   variant='contained'
                   onClick={() => {
                     setIsReadOnly(false);

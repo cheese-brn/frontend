@@ -1,11 +1,11 @@
-import Enzyme, {shallow, mount} from 'enzyme';
+import Enzyme, {mount} from 'enzyme';
 import FunctionDataModal, {makeData} from "../StrainView/components/FunctionDataModal";
 
 import {Button} from '@mui/material'
+import {SnackbarProvider} from "notistack";
 
 import { configure } from 'enzyme';
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
-import {SnackbarProvider} from "notistack";
 configure({ adapter: new Adapter() });
 
 describe('Data conversion testing', () => {
@@ -44,18 +44,19 @@ describe('Data conversion testing', () => {
     ]
     expect(makeData(givenData)).toStrictEqual(res);
   })
+  })
 
-  const givenData = {
-    firstParam: {
-      values: [1, 2, 3],
-      name: 'firstParam',
-    },
-    secondParam: {
-      values: [7, 8, 9],
-      name: 'secondParam',
-    }
-  }
   it('Function data saves correctly from table', () => {
+    const givenData = {
+      firstParam: {
+        values: [1, 2, 3],
+        name: 'firstParam',
+      },
+      secondParam: {
+        values: [7, 8, 9],
+        name: 'secondParam',
+      }
+    }
     const saveCallback = jest.fn();
     const wrapper = mount(
       <SnackbarProvider>
@@ -66,16 +67,5 @@ describe('Data conversion testing', () => {
     expect(saveCallback).toBeCalledWith(givenData);
   })
 
-  it('Adding rows works correctly', () => {
-    const saveCallback = jest.fn();
-    const wrapper = mount(
-      <SnackbarProvider>
-        <FunctionDataModal open={true} saveDataCallback={saveCallback} data={JSON.parse(JSON.stringify(givenData))} edit={true}/>
-      </SnackbarProvider>
-    )
-    const test = wrapper.find(FunctionDataModal)
-    debugger
-  })
-})
 
 
