@@ -32,9 +32,9 @@ const App = () => {
           <Paper elevation={3} sx={{margin: '0 10px 0 10px', padding: '20px', minHeight: '85vh'}}>
             <Routes>
               <Route path='/' element={<HomePage/>}/>
-              <Route path='strain' element={<StrainView/>}>
-                <Route path=':strainId' element={<StrainView/>}/>
+              <Route path='strain/' element={<StrainView/>}>
               </Route>
+              <Route path='strain/:strainId' element={<StrainView/>}/>
               <Route path='dictionaries' element={<Dictionaries/>}/>
               <Route path='catalogue' element={<Catalogue/>}/>
               <Route path='utils' element={<Utils/>}/>

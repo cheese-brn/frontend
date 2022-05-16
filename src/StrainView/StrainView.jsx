@@ -87,6 +87,7 @@ const StrainView = () => {
   const [propertiesList, setPropertiesList] = useState(null);
 
   const loadModel = () => {
+    console.log('in load function')
     fetch(`http://127.0.0.1:8080/strains/${strainId}`).then(response => response.json()).then(res => {
       setModel(res);
 
